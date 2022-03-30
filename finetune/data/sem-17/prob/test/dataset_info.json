@@ -1,0 +1,113 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_size": 4283903,
+  "description": "",
+  "download_checksums": {
+    "/work/test/finetune/data/sem-17/train.json": {
+      "num_bytes": 2824697,
+      "checksum": "54a09b7d85a640b7f0e576b32565f007fc6c926819bafc760ad8188b7e81f249"
+    },
+    "/work/test/finetune/data/sem-17/dev.json": {
+      "num_bytes": 314603,
+      "checksum": "2356bc0d2aad3f845107f7325cdc5b891b9c5016bd4443bcfe21cc148b686015"
+    },
+    "/work/test/finetune/data/sem-17/test.json": {
+      "num_bytes": 1813894,
+      "checksum": "c8135aa54eccf70a27c0bb9b40f4f04319c7b63e9fd81009aa6ac2302a56efbc"
+    }
+  },
+  "download_size": 4953194,
+  "features": {
+    "label": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "token_type_ids": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "special_tokens_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "prob_map": {
+      "feature": {
+        "dtype": "float64",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "post_processed": null,
+  "post_processing_size": null,
+  "size_in_bytes": 9237097,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 2453399,
+      "num_examples": 18569,
+      "dataset_name": "json"
+    },
+    "dev": {
+      "name": "dev",
+      "num_bytes": 273247,
+      "num_examples": 2063,
+      "dataset_name": "json"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 1557257,
+      "num_examples": 12284,
+      "dataset_name": "json"
+    }
+  },
+  "supervised_keys": null,
+  "task_templates": null,
+  "version": {
+    "version_str": "0.0.0",
+    "description": null,
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

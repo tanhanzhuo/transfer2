@@ -1,0 +1,113 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_size": 169396,
+  "description": "",
+  "download_checksums": {
+    "/work/test/finetune_newdata/data/stance/school_closures/train.json": {
+      "num_bytes": 125080,
+      "checksum": "1ca9871f3ba0ec683bca2eb4be9912aa979c8dff48d737b00e9ad522504ec8c2"
+    },
+    "/work/test/finetune_newdata/data/stance/school_closures/dev.json": {
+      "num_bytes": 31906,
+      "checksum": "6a1d899e0decf70643d4b32b557e894e62f06977909305458fedb449fc3e10cb"
+    },
+    "/work/test/finetune_newdata/data/stance/school_closures/test.json": {
+      "num_bytes": 29177,
+      "checksum": "1cff604abc706d551388b7914f666c3ef784164d04600c80a6cd760836c88581"
+    }
+  },
+  "download_size": 186163,
+  "features": {
+    "label": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "token_type_ids": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "special_tokens_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "prob_map": {
+      "feature": {
+        "dtype": "float64",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "post_processed": null,
+  "post_processing_size": null,
+  "size_in_bytes": 355559,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 113923,
+      "num_examples": 545,
+      "dataset_name": "json"
+    },
+    "dev": {
+      "name": "dev",
+      "num_bytes": 28950,
+      "num_examples": 145,
+      "dataset_name": "json"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 26523,
+      "num_examples": 131,
+      "dataset_name": "json"
+    }
+  },
+  "supervised_keys": null,
+  "task_templates": null,
+  "version": {
+    "version_str": "0.0.0",
+    "description": null,
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
