@@ -184,6 +184,8 @@ def parse_args():
     parser.add_argument(
         "--seed", default=42, type=int, help="random seed for initialization")
     parser.add_argument(
+        "--ratio", default=10, type=int, help="ratio for loss")
+    parser.add_argument(
         "--device",
         default="gpu:3",
         type=str,
@@ -380,7 +382,7 @@ def do_train(args):
 
                 loss = loss_fct(logits, labels)
                 loss_seq = loss_fct_seq(logits_seq, labels_seq)
-                loss_all = loss + loss_seq*2.0
+                loss_all = loss*args.ratio/10.0 + loss_seq*(10-args.ratio)/10.0
             if args.use_amp:
                 scaler.scale(loss_all).backward()
                 scaler.minimize(optimizer, loss_all)
@@ -433,24 +435,26 @@ def do_train(args):
 if __name__ == "__main__":
     args = parse_args()
     r_dir = '/work/test/finetune/continue/'
-    for task in ['sem-18']:
+    for task in ['sem-17']:
         for model_name in [r_dir+'bertweet/']:
-            ave_metric = []
-            for seed in [1, 10, 100, 1000, 10000]:
-                args_tmp = copy.deepcopy(args)
-                args_tmp.input_dir = '/work/test/finetune/data/' + task + '/prob'
-                args_tmp.output_dir = '/work/test/finetune/model/' + task + '/'
-                args_tmp.seed = seed
-                args_tmp.model_name_or_path = model_name
-                args_tmp.token_name_or_path = 'vinai/bertweet-base'
-                ave_metric.append(do_train(args_tmp))
-            ave_metric = np.array(ave_metric)
-            print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:,0])/5, 
-                                                                sum(ave_metric[:,1])/5, 
-                                                                sum(ave_metric[:,2])/5) )
-            with open('results_hate_continue_bertweet.txt', 'a') as f_res:
-                f_res.write(model_name + '\n')
-                f_res.write('Task: %s, aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (task, sum(ave_metric[:,0])/5, 
-                                                                            sum(ave_metric[:,1])/5, 
-                                                                            sum(ave_metric[:,2])/5) )
-                f_res.close()
+            for ratio in range(10,0,-2):
+                ave_metric = []
+                for seed in [1, 10, 100, 1000, 10000, 2,20,200,2000,20000]:
+                    args_tmp = copy.deepcopy(args)
+                    args_tmp.input_dir = '/work/test/finetune/data/' + task + '/prob'
+                    args_tmp.output_dir = '/work/test/finetune/model/' + task + '/'
+                    args_tmp.seed = seed
+                    args_tmp.model_name_or_path = model_name
+                    args_tmp.token_name_or_path = 'vinai/bertweet-base'
+                    args_tmp.ratio = ratio
+                    ave_metric.append(do_train(args_tmp))
+                ave_metric = np.array(ave_metric)
+                print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:,0])/10, 
+                                                                    sum(ave_metric[:,1])/10, 
+                                                                    sum(ave_metric[:,2])/10) )
+                with open('results_sem17_continue_bertweet.txt', 'a') as f_res:
+                    f_res.write(str(ratio) + '\n')
+                    f_res.write('Task: %s, aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (task, sum(ave_metric[:,0])/10, 
+                                                                                sum(ave_metric[:,1])/10, 
+                                                                                sum(ave_metric[:,2])/10) )
+                    f_res.close()

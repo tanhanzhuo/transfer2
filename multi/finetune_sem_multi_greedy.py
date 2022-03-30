@@ -186,8 +186,10 @@ def parse_args():
     parser.add_argument(
         "--ratio", default=10, type=int, help="ratio for loss")
     parser.add_argument(
+        "--ratio2", default=10, type=int, help="ratio for loss")
+    parser.add_argument(
         "--device",
-        default="gpu:2",
+        default="gpu:1",
         type=str,
         choices=["cpu", "gpu", "xpu"],
         help="The device to select to train the model, is must be cpu/gpu/xpu.")
@@ -227,15 +229,37 @@ def evaluate(model, data_loader):
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.cpu().numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
-
+    names = ['neu', 'neg', 'pos']
     rep = classification_report(label_all, pred_all,
-                            digits=5, output_dict=True)
-    f1_macro =  rep['macro avg']['f1-score']
+                            target_names=names, digits=5, output_dict=True)
+    aveRec =  rep['macro avg']['recall']
+    f1PN = (rep['pos']['f1-score'] + rep['neg']['f1-score'])/2
     acc = rep['accuracy']
-    print("macro:%.5f, acc: %.5f " % (f1_macro, acc))
+    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % ( aveRec, f1PN, acc))
     model.train()
-    return f1_macro, acc, acc
+    return aveRec, f1PN, acc
 
+@paddle.no_grad()
+def evaluate_18(model, data_loader):
+    model.eval()
+    label_all = []
+    pred_all = []
+    for batch in data_loader:
+        input_ids, segment_ids, labels, labels_seq = batch
+        logits, logits_seq = model(input_ids, segment_ids)
+
+        preds = logits.argmax(axis=1)
+        label_all += [tmp for tmp in labels.cpu().numpy()]
+        pred_all += [tmp for tmp in preds.cpu().numpy()]
+    names = ['not', 'irony']
+    rep = classification_report(label_all, pred_all,
+                            target_names=names, digits=5, output_dict=True)
+    f1_pos =  rep['irony']['f1-score']
+    f1PN = (rep['not']['f1-score'] + rep['irony']['f1-score'])/2
+    acc = rep['accuracy']
+    print("f1_pos:%.5f, f1PN:%.5f, acc: %.5f " % (f1_pos, f1PN, acc))
+    model.train()
+    return f1_pos, f1PN, acc
 
 def read_label(data):
     label_name = set()
@@ -266,7 +290,11 @@ def do_train(args):
     # tokenizer = AutoTokenizer.from_pretrained(args.token_name_or_path, normalization=True)
     
     data_all = datasets.load_from_disk(args.input_dir)
-    label2idx = read_label(data_all['train'])
+    if 'sem-18' in args.input_dir:
+        label2idx = {'0': 0, '1': 1}
+    else:
+        # label2idx = read_label(data_all['train'])
+        label2idx = {'neutral': 0, 'negative': 1, 'positive':2}
     train_ds = data_all['train']
     trans_func = partial(
         convert_example,
@@ -332,10 +360,11 @@ def do_train(args):
         apply_decay_param_fun=lambda x: x in decay_params)
 
     loss_fct = paddle.nn.loss.CrossEntropyLoss()
-    # weight = [1.0,5.0]
-    # weight = paddle.to_tensor(np.array(weight), dtype="float32")
-    # loss_fct_seq = paddle.nn.loss.CrossEntropyLoss(weight=weight, ignore_index=ignore_label)
-    loss_fct_seq = paddle.nn.loss.CrossEntropyLoss(ignore_index=ignore_label)
+
+    weight = [args.ratio2/5.0,2.0-args.ratio2/5.0]
+    weight = paddle.to_tensor(np.array(weight), dtype="float32")
+    loss_fct_seq = paddle.nn.loss.CrossEntropyLoss(weight=weight, ignore_index=ignore_label)
+    # loss_fct_seq = paddle.nn.loss.CrossEntropyLoss(ignore_index=ignore_label)
 
     if args.use_amp:
         scaler = paddle.amp.GradScaler(init_loss_scaling=args.scale_loss)
@@ -373,8 +402,10 @@ def do_train(args):
             tic_train = time.time()
         if (epoch+1) % args.save_steps == 0:
             tic_eval = time.time()
-
-            cur_metric = evaluate(model, dev_data_loader)
+            if 'sem-18' in args.input_dir:
+                cur_metric = evaluate_18(model, dev_data_loader)
+            else:
+                cur_metric = evaluate(model, dev_data_loader)
             print("eval done total : %s s" % (time.time() - tic_eval))
             if cur_metric[0] > best_metric[0]:
                 if paddle.distributed.get_rank() == 0:
@@ -393,8 +424,10 @@ def do_train(args):
         num_workers=0,
         batch_size=args.batch_size,
         return_list=True)
-
-    cur_metric = evaluate(model, test_data_loader)
+    if 'sem-18' in args.input_dir:
+        cur_metric = evaluate_18(model, test_data_loader)
+    else:
+        cur_metric = evaluate(model, test_data_loader)
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
@@ -404,26 +437,28 @@ def do_train(args):
 if __name__ == "__main__":
     args = parse_args()
     r_dir = '/work/test/finetune/continue/'
-    for task in ['hate']:
+    for task in ['sem-18']:
         for model_name in [r_dir+'bertweet/']:
             for ratio in range(10,0,-2):
-                ave_metric = []
-                for seed in [1, 10, 100, 1000, 10000, 2,20,200,2000,20000]:
-                    args_tmp = copy.deepcopy(args)
-                    args_tmp.input_dir = '/work/test/finetune_newdata/data/' + task + '/prob'
-                    args_tmp.output_dir = '/work/test/finetune_newdata/model/' + task + '/'
-                    args_tmp.seed = seed
-                    args_tmp.model_name_or_path = model_name
-                    args_tmp.token_name_or_path = 'vinai/bertweet-base'
-                    args_tmp.ratio = ratio
-                    ave_metric.append(do_train(args_tmp))
-                ave_metric = np.array(ave_metric)
-                print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:,0])/10, 
-                                                                    sum(ave_metric[:,1])/10, 
-                                                                    sum(ave_metric[:,2])/10) )
-                with open('results_hate_continue_bertweet.txt', 'a') as f_res:
-                    f_res.write(str(ratio) + '\n')
-                    f_res.write('Task: %s, aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (task, sum(ave_metric[:,0])/10, 
-                                                                                sum(ave_metric[:,1])/10, 
-                                                                                sum(ave_metric[:,2])/10) )
-                    f_res.close()
+                for ratio2 in range(10,-2,-2):
+                    ave_metric = []
+                    for seed in [1, 10, 100, 1000, 10000, 2,20,200,2000,20000]:
+                        args_tmp = copy.deepcopy(args)
+                        args_tmp.input_dir = '/work/test/finetune/data/' + task + '/prob'
+                        args_tmp.output_dir = '/work/test/finetune/model/' + task + '/'
+                        args_tmp.seed = seed
+                        args_tmp.model_name_or_path = model_name
+                        args_tmp.token_name_or_path = 'vinai/bertweet-base'
+                        args_tmp.ratio = ratio
+                        args_tmp.ratio2 = ratio2
+                        ave_metric.append(do_train(args_tmp))
+                    ave_metric = np.array(ave_metric)
+                    print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:,0])/10, 
+                                                                        sum(ave_metric[:,1])/10, 
+                                                                        sum(ave_metric[:,2])/10) )
+                    with open('results_sem_continue_bertweet.txt', 'a') as f_res:
+                        f_res.write('loss ratio: '+str(ratio) + ' weight ratio: '+str(ratio2)+ '\n')
+                        f_res.write('Task: %s, aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (task, sum(ave_metric[:,0])/10, 
+                                                                                    sum(ave_metric[:,1])/10, 
+                                                                                    sum(ave_metric[:,2])/10) )
+                        f_res.close()
