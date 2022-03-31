@@ -1,0 +1,16 @@
+10
+Task: sem-17, aveRec:0.67765, f1PN:0.64755, acc: 0.69875 
+8
+Task: sem-17, aveRec:0.72002, f1PN:0.72180, acc: 0.72546 
+6
+Task: sem-17, aveRec:0.71952, f1PN:0.72053, acc: 0.72196 
+4
+Task: sem-17, aveRec:0.71857, f1PN:0.71886, acc: 0.71872 
+2
+Task: sem-17, aveRec:0.67386, f1PN:0.64207, acc: 0.69420 
+10
+Task: sem-17, aveRec:0.71754, f1PN:0.72084, acc: 0.72577 
+8
+Task: sem-17, aveRec:0.71999, f1PN:0.72306, acc: 0.72686 
+6
+Task: sem-17, aveRec:0.72036, f1PN:0.72087, acc: 0.72261 
