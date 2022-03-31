@@ -1,0 +1,2 @@
+/work/test/finetune/continue/bertweet/
+Task: fakepomt, aveRec:0.30481, f1PN:0.29714, acc: 0.29714 

@@ -1,0 +1,2 @@
+bert-base-uncased
+Task: hate_all, aveRec:0.60331, f1PN:0.61019, acc: 0.61019 

@@ -1,0 +1,162 @@
+/work/test/finetune_newdata/convert_model/pd/bertweet/
+Task: sem-17, aveRec:0.71475, f1PN:0.70721, acc: 0.71918 
+/work/test/finetune_newdata/convert_model/pd/400000/
+Task: sem-17, aveRec:0.70615, f1PN:0.70765, acc: 0.72263 
+/work/test/finetune_newdata/convert_model/pd/800000/
+Task: sem-17, aveRec:0.70702, f1PN:0.71367, acc: 0.72275 
+/work/test/finetune_newdata/convert_model/pd/bertweet/
+Task: sem-18, aveRec:0.80298, f1PN:0.81031, acc: 0.81071 
+/work/test/finetune_newdata/convert_model/pd/400000/
+Task: sem-18, aveRec:0.78677, f1PN:0.79636, acc: 0.79694 
+/work/test/finetune_newdata/convert_model/pd/800000/
+Task: sem-18, aveRec:0.78617, f1PN:0.80241, acc: 0.80383 
+
+
+/work/test/finetune_newdata/convert_model/mlm/100000/
+Task: sem-17, aveRec:0.70896, f1PN:0.70728, acc: 0.72077 
+/work/test/finetune_newdata/convert_model/mlm/200000/
+Task: sem-17, aveRec:0.71103, f1PN:0.71431, acc: 0.72870 
+/work/test/finetune_newdata/convert_model/mlm/300000/
+Task: sem-17, aveRec:0.62071, f1PN:0.61661, acc: 0.62973 
+/work/test/finetune_newdata/convert_model/mlm/400000/
+Task: sem-17, aveRec:0.67191, f1PN:0.68490, acc: 0.69007 
+/work/test/finetune_newdata/convert_model/mlm/100000/
+Task: sem-18, aveRec:0.79457, f1PN:0.80680, acc: 0.80765 
+/work/test/finetune_newdata/convert_model/mlm/200000/
+Task: sem-18, aveRec:0.80762, f1PN:0.82395, acc: 0.82551 
+/work/test/finetune_newdata/convert_model/mlm/300000/
+Task: sem-18, aveRec:0.65710, f1PN:0.63744, acc: 0.64031 
+/work/test/finetune_newdata/convert_model/mlm/400000/
+Task: sem-18, aveRec:0.68276, f1PN:0.70892, acc: 0.71148 
+
+
+/work/test/finetune_newdata/convert_model/pd/900000/
+Task: sem-17, aveRec:0.71507, f1PN:0.72179, acc: 0.72921 
+/work/test/finetune_newdata/convert_model/pd/1000000/
+Task: sem-17, aveRec:0.71012, f1PN:0.71586, acc: 0.72203 
+/work/test/finetune_newdata/convert_model/pd/1100000/
+Task: sem-17, aveRec:0.71269, f1PN:0.71940, acc: 0.72537 
+/work/test/finetune_newdata/convert_model/pd/1200000/
+Task: sem-17, aveRec:0.70414, f1PN:0.71106, acc: 0.72248 
+/work/test/finetune_newdata/convert_model/pd/900000/
+Task: sem-18, aveRec:0.78092, f1PN:0.79794, acc: 0.79974 
+/work/test/finetune_newdata/convert_model/pd/1000000/
+Task: sem-18, aveRec:0.76676, f1PN:0.78423, acc: 0.78571 
+/work/test/finetune_newdata/convert_model/pd/1100000/
+Task: sem-18, aveRec:0.77757, f1PN:0.79430, acc: 0.79592 
+/work/test/finetune_newdata/convert_model/pd/1200000/
+Task: sem-18, aveRec:0.79357, f1PN:0.80492, acc: 0.80587 
+/work/test/finetune_newdata/convert_model/pd/1400000/
+Task: sem-17, aveRec:0.70983, f1PN:0.71581, acc: 0.72439 
+/work/test/finetune_newdata/convert_model/pd/1600000/
+Task: sem-17, aveRec:0.70535, f1PN:0.71090, acc: 0.72003 
+/work/test/finetune_newdata/convert_model/pd/1800000/
+Task: sem-17, aveRec:0.62544, f1PN:0.61648, acc: 0.62441 
+/work/test/finetune_newdata/convert_model/pd/2000000/
+Task: sem-17, aveRec:0.70662, f1PN:0.71324, acc: 0.72468 
+/work/test/finetune_newdata/convert_model/pd/1400000/
+Task: sem-18, aveRec:0.77477, f1PN:0.79620, acc: 0.79847 
+/work/test/finetune_newdata/convert_model/pd/1600000/
+Task: sem-18, aveRec:0.77750, f1PN:0.78946, acc: 0.79056 
+/work/test/finetune_newdata/convert_model/pd/1800000/
+Task: sem-18, aveRec:0.63170, f1PN:0.65828, acc: 0.66122 
+/work/test/finetune_newdata/convert_model/pd/2000000/
+Task: sem-18, aveRec:0.77615, f1PN:0.79810, acc: 0.80051 
+/work/test/finetune_newdata/convert_model/pd/200000/
+Task: sem-17, aveRec:0.70973, f1PN:0.70372, acc: 0.71767 
+/work/test/finetune_newdata/convert_model/pd/600000/
+Task: sem-17, aveRec:0.70470, f1PN:0.70488, acc: 0.71773 
+/work/test/finetune_newdata/convert_model/pd/2200000/
+Task: sem-17, aveRec:0.63184, f1PN:0.61603, acc: 0.62413 
+/work/test/finetune_newdata/convert_model/pd/2400000/
+Task: sem-17, aveRec:0.63150, f1PN:0.62819, acc: 0.63079 
+/work/test/finetune_newdata/convert_model/pd/200000/
+Task: sem-18, aveRec:0.78363, f1PN:0.80046, acc: 0.80204 
+/work/test/finetune_newdata/convert_model/pd/600000/
+Task: sem-18, aveRec:0.77939, f1PN:0.79275, acc: 0.79362 
+/work/test/finetune_newdata/convert_model/pd/2200000/
+Task: sem-18, aveRec:0.66496, f1PN:0.66474, acc: 0.66480 
+/work/test/finetune_newdata/convert_model/pd/2400000/
+Task: sem-18, aveRec:0.65060, f1PN:0.66195, acc: 0.66250 
+
+
+/work/test/finetune_newdata/convert_model/pd_group/10000/
+Task: sem-17, aveRec:0.71915, f1PN:0.72162, acc: 0.71941 
+/work/test/finetune_newdata/convert_model/pd_group/10000/
+Task: sem-18, aveRec:0.81510, f1PN:0.82800, acc: 0.82908 
+
+
+/work/test/finetune_newdata/convert_model/pd_group/5000_1e5/
+Task: sem-17, aveRec:0.71722, f1PN:0.72379, acc: 0.71916 
+
+
+
+
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/5000_3e5/
+Task: sem-17, aveRec:0.71518, f1PN:0.71877, acc: 0.71636 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/10000_3e5/
+Task: sem-17, aveRec:0.72326, f1PN:0.72348, acc: 0.71898 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/15000_3e5/
+Task: sem-17, aveRec:0.72302, f1PN:0.72192, acc: 0.72188 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/20000_3e5/
+Task: sem-17, aveRec:0.71698, f1PN:0.72003, acc: 0.72149 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/25000_3e5/
+Task: sem-17, aveRec:0.71487, f1PN:0.71818, acc: 0.71944 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/30000_3e5/
+Task: sem-17, aveRec:0.71775, f1PN:0.71944, acc: 0.71486 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/35000_3e5/
+Task: sem-17, aveRec:0.71918, f1PN:0.72131, acc: 0.72086 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/40000_3e5/
+Task: sem-17, aveRec:0.71571, f1PN:0.71738, acc: 0.72156 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/45000_3e5/
+Task: sem-17, aveRec:0.71298, f1PN:0.71682, acc: 0.71607 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/50000_3e5/
+Task: sem-17, aveRec:0.71673, f1PN:0.72012, acc: 0.71529 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/55000_3e5/
+Task: sem-17, aveRec:0.71574, f1PN:0.71878, acc: 0.71954 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/60000_3e5/
+Task: sem-17, aveRec:0.71809, f1PN:0.72031, acc: 0.72144 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/65000_3e5/
+Task: sem-17, aveRec:0.71571, f1PN:0.71799, acc: 0.71496 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/5000_3e5/
+Task: sem-18, aveRec:0.80279, f1PN:0.81035, acc: 0.81071 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/10000_3e5/
+Task: sem-18, aveRec:0.82880, f1PN:0.84058, acc: 0.84158 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/15000_3e5/
+Task: sem-18, aveRec:0.82402, f1PN:0.83784, acc: 0.83903 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/20000_3e5/
+Task: sem-18, aveRec:0.81170, f1PN:0.82288, acc: 0.82372 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/25000_3e5/
+Task: sem-18, aveRec:0.81783, f1PN:0.82987, acc: 0.83087 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/30000_3e5/
+Task: sem-18, aveRec:0.81548, f1PN:0.82836, acc: 0.82934 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/35000_3e5/
+Task: sem-18, aveRec:0.81045, f1PN:0.82110, acc: 0.82194 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/40000_3e5/
+Task: sem-18, aveRec:0.81778, f1PN:0.83129, acc: 0.83240 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/45000_3e5/
+Task: sem-18, aveRec:0.82694, f1PN:0.84099, acc: 0.84235 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/50000_3e5/
+Task: sem-18, aveRec:0.80998, f1PN:0.81971, acc: 0.82041 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/55000_3e5/
+Task: sem-18, aveRec:0.79900, f1PN:0.80582, acc: 0.80638 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/60000_3e5/
+Task: sem-18, aveRec:0.81241, f1PN:0.82461, acc: 0.82551 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/65000_3e5/
+Task: sem-18, aveRec:0.79554, f1PN:0.80264, acc: 0.80306 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/70000_3e5/
+Task: sem-17, aveRec:0.71789, f1PN:0.72223, acc: 0.71827 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/75000_3e5/
+Task: sem-17, aveRec:0.71510, f1PN:0.72392, acc: 0.71858 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/80000_3e5/
+Task: sem-17, aveRec:0.71363, f1PN:0.72144, acc: 0.71705 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/85000_3e5/
+Task: sem-17, aveRec:0.71516, f1PN:0.72813, acc: 0.72314 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/90000_3e5/
+Task: sem-17, aveRec:0.71615, f1PN:0.72249, acc: 0.71740 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/95000_3e5/
+Task: sem-17, aveRec:0.71634, f1PN:0.72444, acc: 0.71900 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/100000_3e5/
+Task: sem-17, aveRec:0.71466, f1PN:0.71045, acc: 0.71771 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/105000_3e5/
+Task: sem-17, aveRec:0.71286, f1PN:0.71253, acc: 0.71877 

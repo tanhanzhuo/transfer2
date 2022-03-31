@@ -1,0 +1,8 @@
+/work/test/finetune/continue/bertweet/
+Task: stance/face_masks, F1:0.78698, precision:0.79556, recall: 0.78693 
+/work/test/finetune/continue/bertweet/
+Task: stance/fauci, F1:0.72605, precision:0.73431, recall: 0.73190 
+/work/test/finetune/continue/bertweet/
+Task: stance/school_closures, F1:0.75530, precision:0.76463, recall: 0.75912 
+/work/test/finetune/continue/bertweet/
+Task: stance/stay_at_home_orders, F1:0.80876, precision:0.78748, recall: 0.83895 

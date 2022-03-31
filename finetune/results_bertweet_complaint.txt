@@ -1,0 +1,41 @@
+/work/test/finetune/continue/bertweet/
+Task: complaint, aveF1: 0.55928, aveRec:0.56271, avePre:0.57385 
+/work/test/finetune_newdata/convert_model/pd/bertweet/
+Task: complaint, aveF1: 0.56020, aveRec:0.56530, avePre:0.57045 
+/work/test/finetune_newdata/convert_model/pd/400000/
+Task: complaint, aveF1: 0.55821, aveRec:0.56002, avePre:0.57645 
+/work/test/finetune_newdata/convert_model/pd/800000/
+Task: complaint, aveF1: 0.54504, aveRec:0.54372, avePre:0.56652 
+
+
+/work/test/finetune_newdata/convert_model/mlm/100000/
+Task: complaint, aveF1: 0.55246, aveRec:0.55360, avePre:0.57578 
+/work/test/finetune_newdata/convert_model/mlm/200000/
+Task: complaint, aveF1: 0.53966, aveRec:0.53978, avePre:0.56029 
+
+
+/work/test/finetune_newdata/convert_model/pd/900000/
+Task: complaint, aveF1: 0.54536, aveRec:0.54459, avePre:0.56616 
+/work/test/finetune_newdata/convert_model/pd/1000000/
+Task: complaint, aveF1: 0.54272, aveRec:0.54349, avePre:0.56312 
+/work/test/finetune_newdata/convert_model/pd/1100000/
+Task: complaint, aveF1: 0.53007, aveRec:0.52969, avePre:0.55032 
+/work/test/finetune_newdata/convert_model/pd/1200000/
+Task: complaint, aveF1: 0.54242, aveRec:0.54047, avePre:0.56433 
+
+/work/test/finetune_newdata/convert_model/pd/1400000/
+Task: complaint, aveF1: 0.52152, aveRec:0.52127, avePre:0.54569 
+/work/test/finetune_newdata/convert_model/pd/1600000/
+Task: complaint, aveF1: 0.54443, aveRec:0.54332, avePre:0.56218 
+/work/test/finetune_newdata/convert_model/pd/1800000/
+Task: complaint, aveF1: 0.43016, aveRec:0.43384, avePre:0.44710 
+/work/test/finetune_newdata/convert_model/pd/2000000/
+Task: complaint, aveF1: 0.51804, aveRec:0.51866, avePre:0.53974 
+/work/test/finetune_newdata/convert_model/pd/200000/
+Task: complaint, aveF1: 0.53673, aveRec:0.53966, avePre:0.56059 
+/work/test/finetune_newdata/convert_model/pd/600000/
+Task: complaint, aveF1: 0.53453, aveRec:0.53544, avePre:0.55363 
+/work/test/finetune_newdata/convert_model/pd/2200000/
+Task: complaint, aveF1: 0.43687, aveRec:0.44226, avePre:0.45282 
+/work/test/finetune_newdata/convert_model/pd/2400000/
+Task: complaint, aveF1: 0.43116, aveRec:0.43686, avePre:0.44659 

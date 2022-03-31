@@ -1,0 +1,4 @@
+/work/test/finetune/continue/bertweet/
+Task: hate_all, aveRec:0.61551, f1PN:0.62484, acc: 0.62484 
+/work/test/finetune/continue/bertweet/
+Task: hate, aveRec:0.51693, f1PN:0.66531, acc: 0.66531 

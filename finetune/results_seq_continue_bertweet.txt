@@ -1,0 +1,194 @@
+/work/test/finetune_newdata/convert_model/pd/bertweet/
+Task: ner-16, accuracy: 0.55732 
+/work/test/finetune_newdata/convert_model/pd/400000/
+Task: ner-16, accuracy: 0.51610 
+/work/test/finetune_newdata/convert_model/pd/800000/
+Task: ner-16, accuracy: 0.52929 
+/work/test/finetune_newdata/convert_model/pd/bertweet/
+Task: ner-17, accuracy: 0.58391 
+/work/test/finetune_newdata/convert_model/pd/400000/
+Task: ner-17, accuracy: 0.54887 
+/work/test/finetune_newdata/convert_model/pd/800000/
+Task: ner-17, accuracy: 0.54831 
+/work/test/finetune_newdata/convert_model/pd/100000/
+Task: ner-16, accuracy: 0.53485 
+/work/test/finetune_newdata/convert_model/pd/200000/
+Task: ner-16, accuracy: 0.52216 
+/work/test/finetune_newdata/convert_model/pd/300000/
+Task: ner-16, accuracy: 0.51355 
+/work/test/finetune_newdata/convert_model/pd/500000/
+Task: ner-16, accuracy: 0.51630 
+/work/test/finetune_newdata/convert_model/pd/600000/
+Task: ner-16, accuracy: 0.51949 
+/work/test/finetune_newdata/convert_model/pd/700000/
+Task: ner-16, accuracy: 0.52180 
+/work/test/finetune_newdata/convert_model/pd/100000/
+Task: ner-17, accuracy: 0.57428 
+/work/test/finetune_newdata/convert_model/pd/200000/
+Task: ner-17, accuracy: 0.55710 
+/work/test/finetune_newdata/convert_model/pd/300000/
+Task: ner-17, accuracy: 0.56133 
+/work/test/finetune_newdata/convert_model/pd/500000/
+Task: ner-17, accuracy: 0.55459 
+/work/test/finetune_newdata/convert_model/pd/600000/
+Task: ner-17, accuracy: 0.55245 
+/work/test/finetune_newdata/convert_model/pd/700000/
+Task: ner-17, accuracy: 0.56606 
+
+
+/work/test/finetune_newdata/convert_model/mlm/100000/
+Task: ner-16, accuracy: 0.53142 
+/work/test/finetune_newdata/convert_model/mlm/200000/
+Task: ner-16, accuracy: 0.53849 
+/work/test/finetune_newdata/convert_model/mlm/300000/
+Task: ner-16, accuracy: 0.04915 
+/work/test/finetune_newdata/convert_model/mlm/400000/
+Task: ner-16, accuracy: 0.05303 
+/work/test/finetune_newdata/convert_model/mlm/100000/
+Task: ner-17, accuracy: 0.57058 
+/work/test/finetune_newdata/convert_model/mlm/200000/
+Task: ner-17, accuracy: 0.55104 
+
+
+/work/test/finetune_newdata/convert_model/pd/900000/
+Task: ner-16, accuracy: 0.52612 
+/work/test/finetune_newdata/convert_model/pd/1000000/
+Task: ner-16, accuracy: 0.51425 
+/work/test/finetune_newdata/convert_model/pd/1100000/
+Task: ner-16, accuracy: 0.53351 
+/work/test/finetune_newdata/convert_model/pd/1200000/
+Task: ner-16, accuracy: 0.52082 
+/work/test/finetune_newdata/convert_model/pd/900000/
+Task: ner-17, accuracy: 0.55838 
+/work/test/finetune_newdata/convert_model/pd/1000000/
+Task: ner-17, accuracy: 0.55434 
+/work/test/finetune_newdata/convert_model/pd/1100000/
+Task: ner-17, accuracy: 0.55483 
+/work/test/finetune_newdata/convert_model/pd/1200000/
+Task: ner-17, accuracy: 0.55461 
+
+
+/work/test/finetune_newdata/convert_model/pd/1400000/
+Task: ner-16, accuracy: 0.51272 
+/work/test/finetune_newdata/convert_model/pd/1600000/
+Task: ner-16, accuracy: 0.52672 
+/work/test/finetune_newdata/convert_model/pd/1800000/
+Task: ner-16, accuracy: 0.04201 
+/work/test/finetune_newdata/convert_model/pd/2000000/
+Task: ner-16, accuracy: 0.52315 
+/work/test/finetune_newdata/convert_model/pd/1400000/
+Task: ner-17, accuracy: 0.55802 
+/work/test/finetune_newdata/convert_model/pd/1600000/
+Task: ner-17, accuracy: 0.56051 
+/work/test/finetune_newdata/convert_model/pd/1800000/
+Task: ner-17, accuracy: 0.02979 
+/work/test/finetune_newdata/convert_model/pd/2000000/
+Task: ner-17, accuracy: 0.55282 
+
+
+/work/test/finetune_newdata/convert_model/pd_group/10000/
+Task: ner-16, accuracy: 0.54497 
+/work/test/finetune_newdata/convert_model/pd_group/10000/
+Task: ner-17, accuracy: 0.58913 
+
+
+/work/test/finetune_newdata/convert_model/pd_group/5000_1e5/
+Task: ner-16, accuracy: 0.54627 
+/work/test/finetune_newdata/convert_model/pd_group/10000_1e5/
+Task: ner-16, accuracy: 0.02007 
+/work/test/finetune_newdata/convert_model/pd_group/15000_1e5/
+Task: ner-16, accuracy: 0.55120 
+/work/test/finetune_newdata/convert_model/pd_group/5000_1e4/
+Task: ner-16, accuracy: 0.54771 
+/work/test/finetune_newdata/convert_model/pd_group/10000_1e4/
+Task: ner-16, accuracy: 0.53679 
+/work/test/finetune_newdata/convert_model/pd_group/5000_1e5/
+Task: ner-17, accuracy: 0.58976 
+
+
+
+
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/5000_3e5/
+Task: ner-16, accuracy: 0.55036 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/10000_3e5/
+Task: ner-16, accuracy: 0.55447 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/15000_3e5/
+Task: ner-16, accuracy: 0.54717 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/20000_3e5/
+Task: ner-16, accuracy: 0.55235 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/25000_3e5/
+Task: ner-16, accuracy: 0.55086 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/30000_3e5/
+Task: ner-16, accuracy: 0.55003 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/35000_3e5/
+Task: ner-16, accuracy: 0.55032 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/40000_3e5/
+Task: ner-16, accuracy: 0.55313 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/45000_3e5/
+Task: ner-16, accuracy: 0.55263 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/50000_3e5/
+Task: ner-16, accuracy: 0.55332 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/55000_3e5/
+Task: ner-16, accuracy: 0.54973 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/60000_3e5/
+Task: ner-16, accuracy: 0.55336 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/65000_3e5/
+Task: ner-16, accuracy: 0.55450 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/5000_3e5/
+Task: ner-17, accuracy: 0.58474 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/10000_3e5/
+Task: ner-17, accuracy: 0.58974 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/15000_3e5/
+Task: ner-17, accuracy: 0.59395 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/20000_3e5/
+Task: ner-17, accuracy: 0.58787 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/25000_3e5/
+Task: ner-17, accuracy: 0.59036 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/30000_3e5/
+Task: ner-17, accuracy: 0.58758 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/35000_3e5/
+Task: ner-17, accuracy: 0.59390 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/40000_3e5/
+Task: ner-17, accuracy: 0.58902 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/45000_3e5/
+Task: ner-17, accuracy: 0.58424 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/50000_3e5/
+Task: ner-17, accuracy: 0.59176 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/55000_3e5/
+Task: ner-17, accuracy: 0.59385 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/60000_3e5/
+Task: ner-17, accuracy: 0.59407 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/65000_3e5/
+Task: ner-17, accuracy: 0.58581 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/70000_3e5/
+Task: ner-16, accuracy: 0.54387 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/75000_3e5/
+Task: ner-16, accuracy: 0.54708 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/80000_3e5/
+Task: ner-16, accuracy: 0.54490 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/85000_3e5/
+Task: ner-16, accuracy: 0.54414 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/90000_3e5/
+Task: ner-16, accuracy: 0.54748 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/95000_3e5/
+Task: ner-16, accuracy: 0.54766 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/100000_3e5/
+Task: ner-16, accuracy: 0.54763 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/105000_3e5/
+Task: ner-16, accuracy: 0.54399 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/70000_3e5/
+Task: ner-17, accuracy: 0.58873 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/75000_3e5/
+Task: ner-17, accuracy: 0.58783 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/80000_3e5/
+Task: ner-17, accuracy: 0.58937 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/85000_3e5/
+Task: ner-17, accuracy: 0.58390 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/90000_3e5/
+Task: ner-17, accuracy: 0.58716 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/95000_3e5/
+Task: ner-17, accuracy: 0.58834 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/100000_3e5/
+Task: ner-17, accuracy: 0.58806 
+/work/test/finetune_newdata/convert_model/pd_group_prob_1/105000_3e5/
+Task: ner-17, accuracy: 0.58294 
