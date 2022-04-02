@@ -409,12 +409,12 @@ if __name__ == "__main__":
                         args_tmp.ratio2 = ratio2
                         ave_metric.append(do_train(args_tmp))
                     ave_metric = np.array(ave_metric)
-                    print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:,0])/10, 
-                                                                        sum(ave_metric[:,1])/10, 
-                                                                        sum(ave_metric[:,2])/10) )
+                    print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:,0])/5, 
+                                                                        sum(ave_metric[:,1])/5, 
+                                                                        sum(ave_metric[:,2])/5) )
                     with open('results_sem_bertweet_hf.txt', 'a') as f_res:
                         f_res.write('loss ratio: '+str(ratio) + ' weight ratio: '+str(ratio2)+ '\n')
-                        f_res.write('Task: %s, aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (task, sum(ave_metric[:,0])/10, 
-                                                                                    sum(ave_metric[:,1])/10, 
-                                                                                    sum(ave_metric[:,2])/10) )
+                        f_res.write('Task: %s, aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (task, sum(ave_metric[:,0])/5, 
+                                                                                    sum(ave_metric[:,1])/5, 
+                                                                                    sum(ave_metric[:,2])/5) )
                         f_res.close()
