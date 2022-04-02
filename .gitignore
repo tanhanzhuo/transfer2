@@ -1,2 +1,9 @@
 
 *.arrow
+multi/model/stance/face_masks/added_tokens.json
+multi/model/stance/face_masks/bpe.codes
+multi/model/stance/face_masks/config.json
+multi/model/stance/face_masks/pytorch_model.bin
+multi/model/stance/face_masks/special_tokens_map.json
+multi/model/stance/face_masks/tokenizer_config.json
+multi/model/stance/face_masks/vocab.txt

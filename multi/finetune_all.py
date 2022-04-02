@@ -121,33 +121,33 @@ def parse_args():
     # Required parameters
     parser.add_argument(
         "--task_name",
-        default=None,
+        default='stance/face_masks,stance/fauci,stance/school_closures,stance/stay_at_home_orders,hate,sem-17,sem-18',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
     parser.add_argument(
         "--model_name_or_path",
-        default='bert-base-cased',
+        default='vinai/bertweet-base',
         type=str,
         required=False,
         help="Path to pre-trained model or shortcut name selected in the list: "
     )
     parser.add_argument(
         "--token_name_or_path",
-        default='bert-base-cased',
+        default='vinai/bertweet-base',
         type=str,
         required=False,
     )
     parser.add_argument(
         "--input_dir",
-        default='./tmp/',
+        default='../finetune/data/',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
     )
     parser.add_argument(
         "--output_dir",
-        default='./tmp/',
+        default='./model/',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -207,9 +207,9 @@ def parse_args():
     parser.add_argument(
         "--seed", default=42, type=int, help="random seed for initialization")
     parser.add_argument(
-        "--ratio", default=10, type=int, help="ratio for loss")
+        "--ratio", default='10', type=str, help="ratio for loss")
     parser.add_argument(
-        "--ratio2", default=10, type=int, help="ratio for loss")
+        "--ratio2", default='5', type=str, help="ratio for loss")
     parser.add_argument(
         "--device",
         default="0",
@@ -365,7 +365,7 @@ def do_train(args):
     )
 
     loss_fct = nn.CrossEntropyLoss().cuda()
-    weight = [args.ratio2 / 5.0, 2.0 - args.ratio2 / 5.0]
+    weight = [int(args.ratio2) / 5.0, 2.0 - int(args.ratio2) / 5.0]
     weight = torch.FloatTensor(weight).cuda()
     loss_fct_seq = nn.CrossEntropyLoss(weight=weight).cuda()
 
@@ -381,7 +381,7 @@ def do_train(args):
             logits, logits_seq = model(input_ids, segment_ids)
             loss = loss_fct(logits, labels.view(-1))
             loss_seq = loss_fct_seq(logits_seq.view(-1, 2), labels_seq.view(-1))
-            loss_all = loss * args.ratio / 10.0 + loss_seq * (10 - args.ratio) / 10.0
+            loss_all = loss * int(args.ratio) / 10.0 + loss_seq * (10 - int(args.ratio)) / 10.0
             # print(step)
             accelerator.backward(loss_all)
             optimizer.step()
@@ -428,18 +428,17 @@ if __name__ == "__main__":
     args = parse_args()
     os.environ["CUDA_VISIBLE_DEVICES"] = args.device
     # r_dir = '/work/test/finetune/continue/'
-    for task in ['stance/face_masks', 'stance/fauci', 'stance/school_closures', 'stance/stay_at_home_orders','hate','sem-17','sem-18']:
-        for model_name in ['vinai/bertweet-base']:  # [r_dir+'bertweet/']:
-            for ratio in [10]:#range(10, 0, -2):
-                for ratio2 in [5]#range(10, -2, -2):
+    for task in args.task_name.split(','):
+        for model_name in args.model_name_or_path.split(','):  # [r_dir+'bertweet/']:
+            for ratio in args.ratio.split(','):#range(10, 0, -2):
+                for ratio2 in args.ratio2.split(','):#range(10, -2, -2):
                     ave_metric = []
                     for seed in [1, 10, 100, 1000, 10000]:
                         args_tmp = copy.deepcopy(args)
-                        args_tmp.input_dir = '../finetune/data/' + task + '/prob'
-                        args_tmp.output_dir = './model/' + task + '/'
+                        args_tmp.input_dir = args.input_dir + task + '/prob'
+                        args_tmp.output_dir = args.output_dir + task + '/'
                         args_tmp.seed = seed
                         args_tmp.model_name_or_path = model_name
-                        args_tmp.token_name_or_path = 'vinai/bertweet-base'
                         args_tmp.ratio = ratio
                         args_tmp.ratio2 = ratio2
                         ave_metric.append(do_train(args_tmp))
@@ -447,9 +446,10 @@ if __name__ == "__main__":
                     print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
                                                                         sum(ave_metric[:, 1]) / 5,
                                                                         sum(ave_metric[:, 2]) / 5))
-                    with open('results_sem_bertweet_hf.txt', 'a') as f_res:
-                        #f_res.write('loss ratio: ' + str(ratio) + ' weight ratio: ' + str(ratio2) + '\n')
-                        f_res.write('Task: %s, aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (task, sum(ave_metric[:, 0]) / 5,
-                                                                                        sum(ave_metric[:, 1]) / 5,
-                                                                                        sum(ave_metric[:, 2]) / 5))
+                    with open('results_all.txt', 'a') as f_res:
+
+                        f_res.write('Task: %s, model: %s, loss ration: %s, weight ratio: %s\n' % (task, model_name, ratio, ratio2 ) )
+                        f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / 5,
+                                                                                sum(ave_metric[:, 1]) / 5,
+                                                                                sum(ave_metric[:, 2]) / 5))
                         f_res.close()
