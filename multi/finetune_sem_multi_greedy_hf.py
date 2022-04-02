@@ -400,8 +400,8 @@ if __name__ == "__main__":
                     ave_metric = []
                     for seed in [1, 10, 100, 1000, 10000]:
                         args_tmp = copy.deepcopy(args)
-                        args_tmp.input_dir = '/work/test/finetune/data/' + task + '/prob'
-                        args_tmp.output_dir = '/work/test/finetune_newdata/model/' + task + '/'
+                        args_tmp.input_dir = '../finetune/data/' + task + '/prob'
+                        args_tmp.output_dir = './model/' + task + '/'
                         args_tmp.seed = seed
                         args_tmp.model_name_or_path = model_name
                         args_tmp.token_name_or_path = 'vinai/bertweet-base'
