@@ -153,6 +153,13 @@ def parse_args():
         help="The output directory where the model predictions and checkpoints will be written.",
     )
     parser.add_argument(
+        "--results_name",
+        default='results_all.txt',
+        type=str,
+        required=False,
+        help="The output directory where the model predictions and checkpoints will be written.",
+    )
+    parser.add_argument(
         "--max_seq_length",
         default=128,
         type=int,
@@ -446,7 +453,7 @@ if __name__ == "__main__":
                     print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
                                                                         sum(ave_metric[:, 1]) / 5,
                                                                         sum(ave_metric[:, 2]) / 5))
-                    with open('results_all.txt', 'a') as f_res:
+                    with open(args.results_name, 'a') as f_res:
 
                         f_res.write('Task: %s, model: %s, loss ration: %s, weight ratio: %s\n' % (task, model_name, ratio, ratio2 ) )
                         f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / 5,
