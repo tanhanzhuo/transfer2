@@ -448,7 +448,7 @@ if __name__ == "__main__":
                         args_tmp.ratio2 = ratio2
                         ave_metric=(do_train(args_tmp))
                         print("*************************************************************************************")
-                        print('Task: %s, model: %s, loss ration: %s, weight ratio: %s' % (task, model_name, ratio, ratio2))
+                        print('Task: %s, model: %s, loss ration: %s, weight ratio: %s, time: %d' % (task, model_name, ratio, ratio2, times))
                         print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (ave_metric[0],
                                                                             ave_metric[1],
                                                                             ave_metric[2]))
