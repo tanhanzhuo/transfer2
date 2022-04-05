@@ -7,3 +7,8 @@ multi/model/stance/face_masks/pytorch_model.bin
 multi/model/stance/face_masks/special_tokens_map.json
 multi/model/stance/face_masks/tokenizer_config.json
 multi/model/stance/face_masks/vocab.txt
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/transfer2.iml
+.idea/vcs.xml
