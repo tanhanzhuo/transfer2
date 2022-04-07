@@ -311,7 +311,10 @@ def convert_example(example, label2idx):
 
 def do_train(args):
     accelerator = Accelerator()
-    set_seed(args.seed)
+    torch.manual_seed(args.seed)
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.cuda.manual_seed(args.seed)
     data_all = datasets.load_from_disk(args.input_dir)
     if 'sem-18' in args.input_dir:
         label2idx = {'0': 0, '1': 1}
