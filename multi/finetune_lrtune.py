@@ -439,7 +439,7 @@ def do_train(args):
 
 if __name__ == "__main__":
     args = parse_args()
-    os.environ["CUDA_VISIBLE_DEVICES"] = args.device
+    # os.environ["CUDA_VISIBLE_DEVICES"] = args.device
     # r_dir = '/work/test/finetune/continue/'
     for task in args.task_name.split(','):
         for model_name in args.model_name_or_path.split(','):  # [r_dir+'bertweet/']:
