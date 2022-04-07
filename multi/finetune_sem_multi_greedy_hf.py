@@ -168,7 +168,7 @@ def parse_args():
     parser.add_argument(
         "--save_steps",
         type=int,
-        default=3,
+        default=1,
         help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--batch_size",
