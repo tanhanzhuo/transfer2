@@ -311,7 +311,7 @@ def convert_example(example, label2idx):
 
 def do_train(args):
     accelerator = Accelerator()
-    set_seed(args.seed)
+
     data_all = datasets.load_from_disk(args.input_dir)
     if 'sem-18' in args.input_dir:
         label2idx = {'0': 0, '1': 1}
@@ -444,6 +444,7 @@ if __name__ == "__main__":
                 for ratio2 in args.ratio2.split(','):#range(10, -2, -2):
                     ave_metric = []
                     for seed in [1, 10, 100, 1000, 10000]:
+                        set_seed(args.seed)
                         args_tmp = copy.deepcopy(args)
                         args_tmp.input_dir = args.input_dir + task + '/prob'
                         args_tmp.output_dir = args.output_dir + task + '/'
