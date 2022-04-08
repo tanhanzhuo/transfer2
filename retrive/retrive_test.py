@@ -9,7 +9,7 @@ def read_data(fileName):
             data.append(line.split('\t')[1])
     return data
 
-hash_set = set()
+hash_dic = {}
 for task in ['stance/face_masks','stance/fauci','stance/school_closures','stance/stay_at_home_orders','hate','sem-17','sem-18']:
     input_dir = '../finetune/data/' + task + '/'
     for SP in ['train','dev','test']:
@@ -20,7 +20,10 @@ for task in ['stance/face_masks','stance/fauci','stance/school_closures','stance
                 hash_sep = wordpunct_tokenize(hash_one)
                 if hash_sep[0] == '#':
                     hash_one = hash_sep[1].lower()
-                    hash_set.add(hash_one)
+                    if hash_one in hash_dic.keys():
+                        continue
+                    else:
+                        hash_dic[hash_one] = 0
 
 
 
@@ -28,6 +31,7 @@ for task in ['stance/face_masks','stance/fauci','stance/school_closures','stance
 import os
 from tqdm import tqdm, trange
 import numpy as np
+import random
 
 filePath = '/work/data/twitter_hash.txt'
 with open(filePath, 'r') as f:
@@ -43,8 +47,10 @@ for idx in trange(len(lines)):
             hash_sep = wordpunct_tokenize(hash_one)
             if hash_sep[0] == '#':
                 hash_one = hash_sep[1].lower()
-                if hash_one in hash_set:
-                    data.append(line)
+                if hash_one in hash_dic.keys():
+                    if hash_dic[hash_one] < 100:
+                        data.append(line)
+                        hash_dic[hash_one]+=1
 
 with open('data_extension.txt', 'w') as f:
     for line in data:
