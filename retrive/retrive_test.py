@@ -29,7 +29,7 @@ import os
 from tqdm import tqdm, trange
 import numpy as np
 
-filePath = '/home/thz/data/twitter_hash.txt'
+filePath = '/work/data/twitter_hash.txt'
 with open(filePath, 'r') as f:
     lines = f.readlines()
     print(len(lines))
