@@ -36,6 +36,7 @@ import random
 filePath = '/work/data/twitter_hash.txt'
 with open(filePath, 'r') as f:
     lines = f.readlines()
+    random.shuffle(lines)
     print(len(lines))
 
 data = []
