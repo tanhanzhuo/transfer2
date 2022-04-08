@@ -294,7 +294,7 @@ def read_label(data):
     for one in data:
         label_name.add(one['label'])
     label2idx = {}
-    label_name = list(label_name)
+    label_name = sorted(list(label_name))
     for idx in range(0, len(label_name)):
         label2idx[label_name[idx]] = idx
     return label2idx
