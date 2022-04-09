@@ -174,7 +174,7 @@ def parse_args():
     parser.add_argument(
         "--line_by_line",
         type=bool,
-        default=True,
+        default=False,
         help="Whether distinct lines of text in the dataset are to be handled as distinct sequences.",
     )
     parser.add_argument(
