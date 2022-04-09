@@ -52,7 +52,7 @@ from transformers import (
 )
 from transformers.file_utils import get_full_repo_name
 from transformers.utils.versions import require_version
-from my_collator_key import DataCollatorForHashtagModeling
+# from my_collator_key import DataCollatorForHashtagModeling
 
 logger = logging.getLogger(__name__)
 require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/language-modeling/requirements.txt")
@@ -299,8 +299,8 @@ def main():
 
     # Data collator
     # This one will take care of randomly masking the tokens.
-    # data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=args.mlm_probability)
-    data_collator = DataCollatorForHashtagModeling(tokenizer=tokenizer, mlm_probability=args.mlm_probability)
+    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=args.mlm_probability)
+    # data_collator = DataCollatorForHashtagModeling(tokenizer=tokenizer, mlm_probability=args.mlm_probability)
 
     # DataLoaders creation:
     train_dataloader = DataLoader(
