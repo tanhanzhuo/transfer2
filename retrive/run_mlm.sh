@@ -1,13 +1,13 @@
-CUDA_VISIBLE_DEVICES=7 accelerate launch mlm.py \
+CUDA_VISIBLE_DEVICES=4,5,7 accelerate launch mlm.py \
 --train_file /work/transfer2/retrive/data_extension/TrainData_line \
 --model_name_or_path vinai/bertweet-base \
 --tokenizer_name vinai/bertweet-base \
---output_dir /work/transfer2/retrive/epoch1 \
+--output_dir /work/transfer2/retrive/epoch100 \
 --per_device_train_batch_size 16 \
 --gradient_accumulation_steps 8 \
 --max_seq_length 128 \
 --save_step 1000000 \
---num_train_epoch 1 \
+--num_train_epoch 100 \
 --learning_rate 1e-5 \
 --weight_decay 1e-2 \
---num_warmup_steps 100
+--num_warmup_steps 3000
