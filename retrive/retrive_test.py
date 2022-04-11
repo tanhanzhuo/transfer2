@@ -10,7 +10,7 @@ def read_data(fileName):
     return data
 
 hash_dic = {}
-for task in ['stance/face_masks','stance/fauci','stance/school_closures','stance/stay_at_home_orders','hate','sem-17','sem-18']:
+for task in ['hate','sem-17','sem-18']:#['stance/face_masks','stance/fauci','stance/school_closures','stance/stay_at_home_orders','hate','sem-17','sem-18']:
     input_dir = '../finetune/data/' + task + '/'
     for SP in ['train','dev','test']:
         data = read_data(input_dir+SP)
