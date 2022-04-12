@@ -1,5 +1,5 @@
 
-*.arrow
+
 multi/model/stance/face_masks/added_tokens.json
 multi/model/stance/face_masks/bpe.codes
 multi/model/stance/face_masks/config.json
@@ -12,3 +12,30 @@ multi/model/stance/face_masks/vocab.txt
 .idea/modules.xml
 .idea/transfer2.iml
 .idea/vcs.xml
+finetune/data/sem-18/prob/dev/cache-c3c951ebaef50ef8.arrow
+finetune/data/sem-18/prob/dev/cache-d7a284ecf824c71c.arrow
+finetune/data/sem-18/prob/test/cache-7ce9540c4e2bc63c.arrow
+finetune/data/sem-18/prob/test/cache-d7a2cabf41bd6f48.arrow
+finetune/data/sem-18/prob/train/cache-5bba61b3eb9a9597.arrow
+finetune/data/sem-18/prob/train/cache-f3efd05e84a27e29.arrow
+finetune/data/stance/face_masks/prob/dev/cache-423908d5e2340975.arrow
+finetune/data/stance/face_masks/prob/dev/cache-4f23991b4f1cadf6.arrow
+finetune/data/stance/face_masks/prob/dev/cache-667d2823761f47df.arrow
+finetune/data/stance/face_masks/prob/dev/cache-7bd8ce0f29dee79e.arrow
+finetune/data/stance/face_masks/prob/dev/cache-96b035b204ab0912.arrow
+finetune/data/stance/face_masks/prob/dev/cache-b1c74a6e39cd9670.arrow
+finetune/data/stance/face_masks/prob/dev/cache-ffb48134847c89f8.arrow
+finetune/data/stance/face_masks/prob/test/cache-1da6aac592225c89.arrow
+finetune/data/stance/face_masks/prob/test/cache-5c35854f3e15dcd3.arrow
+finetune/data/stance/face_masks/prob/test/cache-7015e9128628c655.arrow
+finetune/data/stance/face_masks/prob/test/cache-a01e0c85b3ba5d87.arrow
+finetune/data/stance/face_masks/prob/test/cache-a1301b7b70763d79.arrow
+finetune/data/stance/face_masks/prob/test/cache-cbe98a56da232504.arrow
+finetune/data/stance/face_masks/prob/test/cache-ec80b799d197b9b0.arrow
+finetune/data/stance/face_masks/prob/train/cache-2677450253fc377c.arrow
+finetune/data/stance/face_masks/prob/train/cache-3f320ab9d8db7cff.arrow
+finetune/data/stance/face_masks/prob/train/cache-aa23bf9e8df196c7.arrow
+finetune/data/stance/face_masks/prob/train/cache-de7c3ecd5d52068f.arrow
+finetune/data/stance/face_masks/prob/train/cache-eef661b424eca1ff.arrow
+finetune/data/stance/face_masks/prob/train/cache-f81ed5208e4c99f8.arrow
+finetune/data/stance/face_masks/prob/train/cache-f9c359fa728cc38c.arrow
