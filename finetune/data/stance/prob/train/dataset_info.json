@@ -1,0 +1,113 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_size": 739793,
+  "description": "",
+  "download_checksums": {
+    "D:\\polyNew\\multi\\not_trans\\transfer2-master\\finetune\\data\\stance\\train.json": {
+      "num_bytes": 608663,
+      "checksum": "ee3afb6c73834ffa6c9894eda4fc9574f92c3d09780c82b5d9dce74f218e2051"
+    },
+    "D:\\polyNew\\multi\\not_trans\\transfer2-master\\finetune\\data\\stance\\dev.json": {
+      "num_bytes": 110236,
+      "checksum": "b70f17f967774435566ce25c1ac6f093e7b8fd70363d581c3b31c653c772c8cf"
+    },
+    "D:\\polyNew\\multi\\not_trans\\transfer2-master\\finetune\\data\\stance\\test.json": {
+      "num_bytes": 105969,
+      "checksum": "a9444664fbce375fabeae8237b34a1f92496fdb5ef1ffccfcdf1ef2bbd1a2f6a"
+    }
+  },
+  "download_size": 824868,
+  "features": {
+    "label": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "token_type_ids": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "special_tokens_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "prob_map": {
+      "feature": {
+        "dtype": "float64",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "post_processed": null,
+  "post_processing_size": null,
+  "size_in_bytes": 1564661,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 545966,
+      "num_examples": 2927,
+      "dataset_name": "json"
+    },
+    "dev": {
+      "name": "dev",
+      "num_bytes": 98856,
+      "num_examples": 529,
+      "dataset_name": "json"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 94971,
+      "num_examples": 516,
+      "dataset_name": "json"
+    }
+  },
+  "supervised_keys": null,
+  "task_templates": null,
+  "version": {
+    "version_str": "0.0.0",
+    "description": null,
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
