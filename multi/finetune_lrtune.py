@@ -417,7 +417,7 @@ def do_train(args):
                     unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
                     tokenizer.save_pretrained(args.output_dir)
                     best_metric = cur_metric
-        del model, optimizer, accelerator, logits, logits_seq, loss, loss_seq, loss_all
+        del model, optimizer, logits, logits_seq, loss, loss_seq, loss_all
 
     model = RobertaForMulti.from_pretrained(
         args.output_dir, config=config, key_labels=2)
