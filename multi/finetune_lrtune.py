@@ -121,7 +121,7 @@ def parse_args():
     # Required parameters
     parser.add_argument(
         "--task_name",
-        default='stance/face_masks,stance/fauci,stance/school_closures,stance/stay_at_home_orders,hate,sem-17,sem-18',
+        default='stance,hate,sem-17,sem-18,wtwt',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
@@ -470,4 +470,7 @@ if __name__ == "__main__":
                         f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / 5,
                                                                                 sum(ave_metric[:, 1]) / 5,
                                                                                 sum(ave_metric[:, 2]) / 5))
+                        for tmp in range(5):
+                            f_res.write('%.5f, %.5f, %.5f \n' % (ave_metric[tmp, 0],ave_metric[tmp, 1],ave_metric[tmp, 2]))
+
                         f_res.close()
