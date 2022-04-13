@@ -310,8 +310,6 @@ def convert_example(example, label2idx):
 
 
 def do_train(args):
-    accelerator = Accelerator()
-
     data_all = datasets.load_from_disk(args.input_dir)
     if 'sem-18' in args.input_dir:
         label2idx = {'0': 0, '1': 1}
@@ -332,6 +330,7 @@ def do_train(args):
     learning_rate = args.learning_rate.split(',')
     best_metric = [0, 0, 0]
     for lr in learning_rate:
+        accelerator = Accelerator()
         num_classes = len(label2idx.keys())
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
@@ -418,8 +417,8 @@ def do_train(args):
                     unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
                     tokenizer.save_pretrained(args.output_dir)
                     best_metric = cur_metric
-        del model
-    del model
+        del model, optimizer
+    del model, optimizer
 
     model = RobertaForMulti.from_pretrained(
         args.output_dir, config=config, key_labels=2)
