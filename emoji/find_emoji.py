@@ -3,7 +3,7 @@ from tqdm import tqdm
 emoji_dic = {}
 with open('/work/data/twitter_ref.txt', 'r') as f:
     for line in tqdm(f):
-        emoji_list = emoji.distinct_emoji_lis(line)
+        emoji_list = emoji.distinct_emoji_list(line)
         for emoji_one in emoji_list:
             if emoji_one in emoji_dic.keys():
                 emoji_dic[emoji_one] += 1
