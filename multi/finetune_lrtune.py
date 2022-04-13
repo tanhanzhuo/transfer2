@@ -418,6 +418,8 @@ def do_train(args):
                     unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
                     tokenizer.save_pretrained(args.output_dir)
                     best_metric = cur_metric
+        del model
+    del model
 
     model = RobertaForMulti.from_pretrained(
         args.output_dir, config=config, key_labels=2)
@@ -431,6 +433,7 @@ def do_train(args):
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
+    del model
     return cur_metric
 
 
