@@ -418,6 +418,7 @@ def do_train(args):
                     tokenizer.save_pretrained(args.output_dir)
                     best_metric = cur_metric
         del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
+        torch.cuda.empty_cache()
 
     model = RobertaForMulti.from_pretrained(
         args.output_dir, config=config, key_labels=2)
