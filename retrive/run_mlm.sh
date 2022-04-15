@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=3,4 accelerate launch mlm.py \
+CUDA_VISIBLE_DEVICES=4,5,6,7 accelerate launch mlm.py \
 --train_file /work/transfer2/retrive/data_extension/TrainData_line \
 --model_name_or_path vinai/bertweet-base \
 --tokenizer_name vinai/bertweet-base \
