@@ -214,8 +214,8 @@ def do_train(args):
         num_training_steps=args.max_train_steps,
     )
 
-    model, optimizer, train_data_loader, dev_data_loader = accelerator.prepare(
-        model, optimizer, train_data_loader, dev_data_loader
+    model, optimizer, train_data_loader, dev_data_loader, lr_scheduler = accelerator.prepare(
+        model, optimizer, train_data_loader, dev_data_loader, lr_scheduler
     )
 
     print('start Training!!!')
