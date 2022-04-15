@@ -63,7 +63,7 @@ def parse_args():
     )
     parser.add_argument(
         "--input_dir",
-        default='./test/',
+        default='./data/',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -106,7 +106,7 @@ def parse_args():
     parser.add_argument(
         "--save_steps",
         type=int,
-        default=3,
+        default=1,
         help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--batch_size",
@@ -151,18 +151,19 @@ def evaluate(model, data_loader):
     label_all = []
     pred_all = []
     for batch in data_loader:
-        input_ids, segment_ids, labels, labels_seq = batch
-        logits, logits_seq = model(input_ids, segment_ids)
-
-        preds = logits.argmax(axis=1)
+        labels = batch['labels']
+        batch.pop('special_tokens_mask')
+        outputs = model(**batch)
+        preds = outputs.logits.argmax(dim=-1)
         label_all += [tmp for tmp in labels.cpu().numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
     rep = classification_report(label_all, pred_all,
                                 digits=5, output_dict=True)
     f1 = rep['macro avg']['f1-score']
-    acc = rep['accuracy']
-    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (f1, acc, acc))
-    return f1, acc, acc
+    precision = rep['macro avg']['precision']
+    recall = rep['macro avg']['recall']
+    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (f1, precision, recall))
+    return f1, precision, recall
 
 def do_train(args):
     # set_seed(args.seed)
@@ -175,7 +176,7 @@ def do_train(args):
     train_ds = data_all['train']
     dev_ds = data_all['dev']
 
-    best_metric = [0, 0, 0]
+
     accelerator = Accelerator()
     num_classes = len(label2idx.keys())
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
@@ -219,24 +220,25 @@ def do_train(args):
     print('start Training!!!')
     global_step = 0
     tic_train = time.time()
-
+    best_metric = [0, 0, 0]
     for epoch in range(args.num_train_epochs):
         model.train()
         for step, batch in enumerate(train_data_loader):
             global_step += 1
+            batch.pop('special_tokens_mask')
             output = model(**batch)
             loss = output.loss
             accelerator.backward(loss)
             optimizer.step()
             lr_scheduler.step()
             optimizer.zero_grad()
-        if (epoch + 1) % args.logging_steps == 0:
+        if (global_step + 1) % args.logging_steps == 0:
             print(
                 "global step %d/%d, epoch: %d, loss: %f, speed: %.4f step/s"
                 % (global_step, args.max_train_steps, epoch,
                    loss.item(), args.logging_steps / (time.time() - tic_train)))
             tic_train = time.time()
-        if (epoch + 1) % args.save_steps == 0:
+        if (global_step + 1) % args.save_steps == 0:
             tic_eval = time.time()
 
             cur_metric = evaluate(model, dev_data_loader)
