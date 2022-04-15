@@ -1,18 +1,21 @@
-emoji_top = {'👀':0, '🙌':0, '😳':0, '💀':0, '😔':0, '😏':0, '😁':0, '❤':0, '🔥':0, '👌':0,
-        '😒':0, '💯':0, '💕':0, '😘':0, '😊':0, '😩':0, '❤️':0, '😍':0, '😭':0, '😂':0}
+import random
+random.seed(0)
+# emoji_top = {'👀':0, '🙌':0, '😳':0, '💀':0, '😔':0, '😏':0, '😁':0, '❤':0, '🔥':0, '👌':0,
+#         '😒':0, '💯':0, '💕':0, '😘':0, '😊':0, '😩':0, '❤️':0, '😍':0, '😭':0, '😂':0}
+emoji_top = ['🤔', '🙄', '😳', '👌', '😁', '😏', '💯', '🔥', '💕', '😘', '😔', '❤', '♥', '😒', '😊', '😩', '❤️', '😍', '😭', '😂']
+with open('data_emoji.txt', 'r') as f:
+    data_emoji = f.readlines()
 
-import emoji
-from tqdm import tqdm
-
-data_emoji = []
-with open('/work/data/twitter_ref.txt', 'r') as f:
-    for line in tqdm(f):
-        emoji_list = emoji.distinct_emoji_list(line)
-        if len(emoji_list) ==1:
-            if emoji_list[0] in emoji_top.keys():
-                emoji_top[emoji_list[0]] += 1
-                data_emoji.append(line)
-with open('data_emoji.txt', 'w') as f:
-    for line in data_emoji:
-        f.write(line)
-print(emoji_top)
+data_emoji_top = []
+for data_one in data_emoji:
+    emoji_one = data_one.split('\t')[0]
+    if emoji_one in emoji_top:
+        data_emoji_top.append(data_one.replace('https://','https'))
+random.shuffle(data_emoji_top)
+SP = int(len(data_emoji_top)*0.9)
+with open('data_emoji_train', 'w') as f:
+    for idx in range(SP):
+        f.write(data_emoji_top[idx])
+with open('data_emoji_test', 'w') as f:
+    for idx in range(SP,len(data_emoji_top)):
+        f.write(data_emoji_top[idx])

@@ -29,7 +29,7 @@ with open('data_emoji.txt', 'w') as f_write:
                 else:
                     emoji_dic[emoji_one] = 1
                 line_clean = emoji.replace_emoji(line)
-                line_clean = line_clean.replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https://')
+                line_clean = line_clean.replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https')
                 f_write.write(emoji_one + '\t' + line_clean)
 
 emoji_dic_sort = dict(sorted(emoji_dic.items(), key=lambda x: x[1]))
