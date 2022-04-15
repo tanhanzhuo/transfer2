@@ -101,12 +101,12 @@ def parse_args():
     parser.add_argument(
         "--logging_steps",
         type=int,
-        default=1,
+        default=1000,
         help="Log every X updates steps.")
     parser.add_argument(
         "--save_steps",
         type=int,
-        default=1,
+        default=10000,
         help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--batch_size",
@@ -251,6 +251,13 @@ def do_train(args):
                     best_metric = cur_metric
                     del unwrapped_model
                     torch.cuda.empty_cache()
+        accelerator.wait_for_everyone()
+        unwrapped_model = accelerator.unwrap_model(model)
+        unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
+        tokenizer.save_pretrained(args.output_dir + str(epoch))
+        best_metric = cur_metric
+        del unwrapped_model
+        torch.cuda.empty_cache()
     del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
     torch.cuda.empty_cache()
 
