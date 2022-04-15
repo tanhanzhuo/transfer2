@@ -47,14 +47,7 @@ from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_sc
 
 def parse_args():
     parser = argparse.ArgumentParser()
-
     # Required parameters
-    parser.add_argument(
-        "--task_name",
-        default='stance,hate,sem-17,sem-18,wtwt',
-        type=str,
-        required=False,
-        help="The name of the task to train selected in the list: ")
     parser.add_argument(
         "--model_name_or_path",
         default='vinai/bertweet-base',
@@ -70,7 +63,7 @@ def parse_args():
     )
     parser.add_argument(
         "--input_dir",
-        default='../finetune/data/',
+        default='./test/',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -144,10 +137,6 @@ def parse_args():
     parser.add_argument(
         "--seed", default=42, type=int, help="random seed for initialization")
     parser.add_argument(
-        "--ratio", default='10', type=str, help="ratio for loss")
-    parser.add_argument(
-        "--ratio2", default='5', type=str, help="ratio for loss")
-    parser.add_argument(
         "--device",
         default="0",
         type=str,
@@ -175,45 +164,25 @@ def evaluate(model, data_loader):
     print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (f1, acc, acc))
     return f1, acc, acc
 
-def read_label(data):
-    label_name = set()
-    for one in data:
-        label_name.add(one['label'])
-    label2idx = {}
-    label_name = sorted(list(label_name))
-    for idx in range(0, len(label_name)):
-        label2idx[label_name[idx]] = idx
-    return label2idx
-
-
-def convert_example(example, label2idx):
-    example['label'] = label2idx[example['label']]
-    return example  # ['input_ids'], example['token_type_ids'], label, prob
-
 def do_train(args):
     # set_seed(args.seed)
     data_all = datasets.load_from_disk(args.input_dir)
     emoji_top = ['🤔', '🙄', '😳', '👌', '😁', '😏', '💯', '🔥', '💕', '😘', '😔', '❤', '♥', '😒', '😊', '😩', '❤️',
                  '😍', '😭', '😂']
     label2idx = {}
-    for idx in range(emoji_top):
-        label2idx[emoji_top[idx]] = idx
-    trans_func = partial(
-        convert_example,
-        label2idx=label2idx)
+    for idx in range(len(emoji_top)):
+        label2idx[idx] = emoji_top[idx]
     train_ds = data_all['train']
-    train_ds = train_ds.map(trans_func)
     dev_ds = data_all['dev']
-    dev_ds = dev_ds.map(trans_func)
 
     best_metric = [0, 0, 0]
-
     accelerator = Accelerator()
     num_classes = len(label2idx.keys())
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
-    model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path)
+    config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
+    model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config)
 
-    batchify_fn = DataCollatorMulti(tokenizer=tokenizer, ignore_label=-100)
+    batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
     train_data_loader = DataLoader(
         train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
     )
@@ -243,8 +212,8 @@ def do_train(args):
         num_training_steps=args.max_train_steps,
     )
 
-    model, optimizer, train_data_loader, dev_data_loader, test_data_loader = accelerator.prepare(
-        model, optimizer, train_data_loader, dev_data_loader, test_data_loader
+    model, optimizer, train_data_loader, dev_data_loader = accelerator.prepare(
+        model, optimizer, train_data_loader, dev_data_loader
     )
 
     print('start Training!!!')
@@ -288,4 +257,4 @@ def do_train(args):
 
 if __name__ == "__main__":
     args = parse_args()
-    do_train(args_tmp)
+    do_train(args)
