@@ -12,7 +12,7 @@ for data_one in data_emoji:
     line = data_one.split('\t')[1].strip().replace('  ',' ')
     if emoji_one in emoji_top:
         if len(line.split(' ')) > 5:
-            data_emoji_top.append(data_one.replace('https://','https')+'\n')
+            data_emoji_top.append(data_one.replace('https://','https'))
 random.shuffle(data_emoji_top)
 SP = int(len(data_emoji_top)*0.9)
 with open('data_emoji_train', 'w') as f:
