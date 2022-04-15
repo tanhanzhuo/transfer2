@@ -152,7 +152,7 @@ def evaluate(model, data_loader):
     pred_all = []
     for batch in data_loader:
         labels = batch['labels']
-        batch.pop('special_tokens_mask')
+        # batch.pop('special_tokens_mask')
         outputs = model(**batch)
         preds = outputs.logits.argmax(dim=-1)
         label_all += [tmp for tmp in labels.cpu().numpy()]
@@ -225,7 +225,7 @@ def do_train(args):
         model.train()
         for step, batch in enumerate(train_data_loader):
             global_step += 1
-            batch.pop('special_tokens_mask')
+            # batch.pop('special_tokens_mask')
             output = model(**batch)
             loss = output.loss
             accelerator.backward(loss)
