@@ -167,6 +167,7 @@ def evaluate(model, data_loader):
 
 def do_train(args):
     # set_seed(args.seed)
+    accelerator = Accelerator()
     data_all = datasets.load_from_disk(args.input_dir)
     emoji_top = ['🤔', '🙄', '😳', '👌', '😁', '😏', '💯', '🔥', '💕', '😘', '😔', '❤', '♥', '😒', '😊', '😩', '❤️',
                  '😍', '😭', '😂']
@@ -177,7 +178,7 @@ def do_train(args):
     dev_ds = data_all['dev']
 
 
-    accelerator = Accelerator()
+
     num_classes = len(label2idx.keys())
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
     config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
