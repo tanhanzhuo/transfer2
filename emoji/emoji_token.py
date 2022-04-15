@@ -11,7 +11,7 @@ parser.add_argument("--dataset_path", default='/work/transfer2/emoji', type=str,
 parser.add_argument("--use_slow_tokenizer", action="store_true", help="If passed, will use a slow tokenizer (not backed by the 🤗 Tokenizers library).")
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
-parser.add_argument("--preprocessing_num_workers", default=5, type=int, help="multi-processing number.")
+parser.add_argument("--preprocessing_num_workers", default=10, type=int, help="multi-processing number.")
 parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwrite the cached training and evaluation sets")
 
 def read_data(fileName):
