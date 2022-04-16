@@ -287,7 +287,7 @@ def evaluate_18(model, data_loader):
 def read_label(data):
     label_name = set()
     for one in data:
-        label_name.add(one['label'])
+        label_name.add(one['labels'])
     label2idx = {}
     label_name = sorted(list(label_name))
     for idx in range(0, len(label_name)):
