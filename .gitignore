@@ -39,3 +39,16 @@ finetune/data/stance/face_masks/prob/train/cache-de7c3ecd5d52068f.arrow
 finetune/data/stance/face_masks/prob/train/cache-eef661b424eca1ff.arrow
 finetune/data/stance/face_masks/prob/train/cache-f81ed5208e4c99f8.arrow
 finetune/data/stance/face_masks/prob/train/cache-f9c359fa728cc38c.arrow
+finetune/data/stance/emoji/dataset_dict.json
+finetune/data/stance/emoji/dev/cache-053e6daca3ae574c.arrow
+finetune/data/stance/emoji/dev/dataset.arrow
+finetune/data/stance/emoji/dev/dataset_info.json
+finetune/data/stance/emoji/dev/state.json
+finetune/data/stance/emoji/test/cache-0e8dcc67b28b4bf4.arrow
+finetune/data/stance/emoji/test/dataset.arrow
+finetune/data/stance/emoji/test/dataset_info.json
+finetune/data/stance/emoji/test/state.json
+finetune/data/stance/emoji/train/cache-2f94c42af2013f95.arrow
+finetune/data/stance/emoji/train/dataset.arrow
+finetune/data/stance/emoji/train/dataset_info.json
+finetune/data/stance/emoji/train/state.json

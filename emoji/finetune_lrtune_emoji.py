@@ -381,7 +381,7 @@ def do_train(args):
                 input_ids, segment_ids, labels, labels_emoji = batch
                 logits, logits_emoji = model(input_ids, segment_ids)
                 loss = loss_fct(logits, labels.view(-1))
-                loss_emoji = loss_fct_emoji(logits_emoji.view(-1), labels_emoji.view(-1))
+                loss_emoji = loss_fct_emoji(logits_emoji, labels_emoji.view(-1))
                 loss_all = loss * int(args.ratio) / 10.0 + loss_emoji * (10 - int(args.ratio)) / 10.0
                 # print(step)
                 accelerator.backward(loss_all)
