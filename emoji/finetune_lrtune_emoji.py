@@ -162,7 +162,7 @@ def parse_args():
              "than this will be truncated, sequences shorter will be padded.", )
     parser.add_argument(
         "--learning_rate",
-        default='1e-5',
+        default='1e-5,2e-5,3e-5',
         type=str,
         help="The initial learning rate for Adam.")
     parser.add_argument(
@@ -178,7 +178,7 @@ def parse_args():
     parser.add_argument(
         "--save_steps",
         type=int,
-        default=3,
+        default=1,
         help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--batch_size",
@@ -442,7 +442,7 @@ if __name__ == "__main__":
                     for seed in [1, 10, 100, 1000, 10000]:
                         set_seed(seed)
                         args_tmp = copy.deepcopy(args)
-                        args_tmp.input_dir = args.input_dir + task + '/prob'
+                        args_tmp.input_dir = args.input_dir + task + '/emoji'
                         args_tmp.output_dir = args.output_dir + task + '/'
                         args_tmp.seed = seed
                         args_tmp.model_name_or_path = model_name
