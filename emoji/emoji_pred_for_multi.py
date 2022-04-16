@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoConfig,AutoModelForSequenceClassification,DataCollatorWithPadding
 import datasets
 import torch
-import accelerate
+from accelerate import Accelerator
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
@@ -57,6 +57,7 @@ def pred_prob(args):
             train_dataset = train_dataset.add_column("labels", labels)
             tokenized_datasets[SPLIT] = train_dataset
         tokenized_datasets.save_to_disk(args.output_dir + task + '/emoji')
+        print('task done! {}'.format(task))
 
 
 if __name__ == "__main__":
