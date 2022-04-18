@@ -163,6 +163,9 @@ def evaluate(model, data_loader):
     f1 = rep['macro avg']['f1-score']
     precision = rep['macro avg']['precision']
     recall = rep['macro avg']['recall']
+    for key1 in rep.keys():
+        for key2 in rep[key1].keys():
+            print(key1 + ' ' + key2 + ' ' + str(rep[key1][key2]))
     print(rep)
     return f1, precision, recall
 
