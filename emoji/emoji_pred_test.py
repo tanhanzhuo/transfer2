@@ -26,6 +26,7 @@ import numpy as np
 import datasets
 # import paddle
 # from paddle.io import DataLoader
+from tqdm import tqdm
 
 import torch
 from torch.utils.data import DataLoader
@@ -150,7 +151,7 @@ def evaluate(model, data_loader):
     model.eval()
     label_all = []
     pred_all = []
-    for batch in data_loader:
+    for batch in tqdm(data_loader):
         labels = batch['labels']
         # batch.pop('special_tokens_mask')
         outputs = model(**batch)
