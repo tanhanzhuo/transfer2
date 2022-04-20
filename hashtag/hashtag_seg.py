@@ -17,6 +17,6 @@ ws = WordSegmenter(
 )
 
 with open('hash_seg.txt', 'a') as f:
-    for idx in trange(len(data)):
+    for idx in trange(int(len(data)/2)):
         segmentations = ws.segment([data[idx]])
         f.write(data[idx] + '\t' + segmentations[0] + '\t' + num[idx] + '\n')
