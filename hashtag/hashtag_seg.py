@@ -10,9 +10,10 @@ from hashformers import TransformerWordSegmenter as WordSegmenter
 ws = WordSegmenter(
     segmenter_model_name_or_path="gpt2",
     # reranker_model_name_or_path="bert-base-uncased"
-).cuda()
+)
 
 for one in tqdm(data):
     segmentations = ws.segment([
         one
     ])
+    print(segmentations)

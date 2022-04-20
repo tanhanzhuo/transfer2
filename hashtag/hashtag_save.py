@@ -20,4 +20,4 @@ with open(filePath, 'r') as f:
 with open('hash_his.txt', 'w') as f:
     for hash_one in hash_dic.keys():
         if hash_dic[hash_one] > 5:
-            f.write(hash_one + '\t' + str(hash_dic[hash_one]))
+            f.write(hash_one + '\t' + str(hash_dic[hash_one]) + '\n')
