@@ -1,7 +1,7 @@
 import os
 from tqdm import tqdm, trange
 data =[]
-with open('hash_his.json', 'r') as f:
+with open('hash_his.txt', 'r') as f:
     lines = f.readlines()
     for line in lines:
         data.append(line.split('\t')[0])
