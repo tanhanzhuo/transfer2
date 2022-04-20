@@ -1,6 +1,11 @@
 import os
 from tqdm import tqdm, trange
-import re
+import json
+data =[]
+with open('hash_his.json', 'r') as f:
+    lines = f.readlines()
+    for line in lines:
+        data.append(json.loads(line))
 from hashformers import TransformerWordSegmenter as WordSegmenter
 ws = WordSegmenter(
     segmenter_model_name_or_path="gpt2",
@@ -10,14 +15,3 @@ segmentations = ws.segment([
     "#weneedanationalpark",
     "#icecold"
 ])
-
-HASH = re.compile(r"#\S+")
-hash_dic = {}
-filePath = '/work/test/twitter_hash.txt'
-with open(filePath, 'r') as f:
-    for line in f:
-        if not line:
-            continue
-        hash_tmp = HASH.findall(line)
-        for hash_one in hash_tmp:
-            if hash_one[1].isalpha():

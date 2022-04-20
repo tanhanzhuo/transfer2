@@ -16,13 +16,8 @@ with open(filePath, 'r') as f:
                     hash_dic[hash_one] += 1
                 else:
                     hash_dic[hash_one] = 1
-hash_dic_clean = {}
-for hash_one in hash_dic.keys():
-    if hash_dic[hash_one] > 5:
-        hash_dic_clean[hash_one] = hash_dic[hash_one]
 
-
-with open('hash_his.json', 'w') as f:
-    for one in hash_dic_clean:
-        json.dump(one, f)
-        f.write('\n')
+with open('hash_his.txt', 'w') as f:
+    for hash_one in hash_dic.keys():
+        if hash_dic[hash_one] > 5:
+            f.write(hash_one + '\t' + str(hash_dic[hash_one]))
