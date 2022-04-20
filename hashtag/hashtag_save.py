@@ -1,7 +1,7 @@
 import os
 from tqdm import tqdm, trange
 import re
-
+import json
 HASH = re.compile(r"#\S+")
 hash_dic = {}
 filePath = '/work/data/twitter_hash.txt'
