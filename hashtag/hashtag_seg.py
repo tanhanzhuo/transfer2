@@ -13,7 +13,21 @@ ws = WordSegmenter(
 )
 
 for one in tqdm(data):
-    segmentations = ws.segment([
-        one
-    ])
+    segmentations = ws.segment([one])
+    print(segmentations)
+
+BS = 16
+ws = WordSegmenter(
+    segmenter_model_name_or_path="gpt2",
+    segmenter_gpu_batch_size=BS
+    # reranker_model_name_or_path="bert-base-uncased"
+)
+
+data_seg = []
+NUM = int(len(data)/BS)
+for idx in range(NUM):
+    data_seg.append( data[idx*BS:(idx+1)*BS] )
+data_seg.append( data[NUM*BS:] )
+for one in tqdm(data_seg):
+    segmentations = ws.segment(one)
     print(segmentations)
