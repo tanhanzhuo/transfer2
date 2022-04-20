@@ -6,7 +6,7 @@ from transformers import AutoTokenizer, AutoConfig,AutoModelForSequenceClassific
 import datasets
 import torch
 from accelerate import Accelerator
-
+from tqdm import tqdm
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='../retrive/data_extension/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
 parser.add_argument("--dataset_path", default='../retrive/data_extension/TrainData_line', type=str, required=False, help="dataset name")
@@ -41,13 +41,14 @@ def pred_prob(args):
         for SPLIT in ['train']:
             train_dataset = tokenized_datasets[SPLIT]
             train_dataset = train_dataset.remove_columns(['special_tokens_mask'])
+            print(train_dataset["train"].column_names)
             batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
             train_data_loader = DataLoader(
                 train_dataset, shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
             )
             train_data_loader = accelerator.prepare(train_data_loader)
             emoji_pred = []
-            for step, batch in enumerate(train_data_loader):
+            for batch in tqdm(train_data_loader):
                 # batch.pop('special_tokens_mask')
                 outputs = model(**batch)
                 preds = outputs.logits.argmax(dim=-1).cpu().numpy()
