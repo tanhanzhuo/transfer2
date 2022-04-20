@@ -4,7 +4,7 @@ import re
 
 HASH = re.compile(r"#\S+")
 hash_dic = {}
-filePath = '/work/test/twitter_hash.txt'
+filePath = '/work/data/twitter_hash.txt'
 with open(filePath, 'r') as f:
     for line in tqdm(f):
         if not line:
