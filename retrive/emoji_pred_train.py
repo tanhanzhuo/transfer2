@@ -220,7 +220,7 @@ def do_train(args):
     accelerator.wait_for_everyone()
     unwrapped_model = accelerator.unwrap_model(model)
     unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
-    tokenizer.save_pretrained(args.output_dir + str(epoch))
+    tokenizer.save_pretrained(args.output_dir)
     del unwrapped_model
     torch.cuda.empty_cache()
     del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
