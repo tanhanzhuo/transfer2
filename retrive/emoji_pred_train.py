@@ -217,12 +217,12 @@ def do_train(args):
                        loss.item(), args.logging_steps / (time.time() - tic_train)))
                 tic_train = time.time()
 
-        accelerator.wait_for_everyone()
-        unwrapped_model = accelerator.unwrap_model(model)
-        unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
-        tokenizer.save_pretrained(args.output_dir + str(epoch))
-        del unwrapped_model
-        torch.cuda.empty_cache()
+    accelerator.wait_for_everyone()
+    unwrapped_model = accelerator.unwrap_model(model)
+    unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
+    tokenizer.save_pretrained(args.output_dir + str(epoch))
+    del unwrapped_model
+    torch.cuda.empty_cache()
     del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
     torch.cuda.empty_cache()
 
