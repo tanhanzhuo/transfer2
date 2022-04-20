@@ -9,7 +9,7 @@ with open('hash_his.txt', 'r') as f:
 from hashformers import TransformerWordSegmenter as WordSegmenter
 ws = WordSegmenter(
     segmenter_model_name_or_path="gpt2",
-    reranker_model_name_or_path="bert-base-uncased"
+    # reranker_model_name_or_path="bert-base-uncased"
 ).cuda()
 
 for one in tqdm(data):
