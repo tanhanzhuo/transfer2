@@ -41,7 +41,7 @@ def pred_prob(args):
         for SPLIT in ['train']:
             train_dataset = tokenized_datasets[SPLIT]
             train_dataset = train_dataset.remove_columns(['special_tokens_mask'])
-            print(train_dataset["train"].column_names)
+            print(train_dataset.column_names)
             batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
             train_data_loader = DataLoader(
                 train_dataset, shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
