@@ -83,7 +83,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
 
         sequence_output = outputs[0]
         logits = self.classifier(sequence_output)
-        logits_class = self.classifier_emoji(sequence_output)
+        logits_class = self.classifier_class(sequence_output)
         return logits, logits_class
 
 
