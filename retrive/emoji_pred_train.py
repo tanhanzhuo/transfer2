@@ -70,7 +70,7 @@ def parse_args():
     )
     parser.add_argument(
         "--output_dir",
-        default='./model_emoji/',
+        default='./model_emoji_epoch20/',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -164,9 +164,6 @@ def do_train(args):
     batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
     train_data_loader = DataLoader(
         train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
-    )
-    dev_data_loader = DataLoader(
-        dev_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
     )
 
     print('data ready!!!')
