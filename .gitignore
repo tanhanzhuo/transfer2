@@ -52,3 +52,4 @@ finetune/data/stance/emoji/train/cache-2f94c42af2013f95.arrow
 finetune/data/stance/emoji/train/dataset.arrow
 finetune/data/stance/emoji/train/dataset_info.json
 finetune/data/stance/emoji/train/state.json
+hashtag/hash_his.txt

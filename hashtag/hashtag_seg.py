@@ -5,7 +5,7 @@ from tqdm import tqdm, trange
 import re
 data ={}
 num = []
-with open('hash_his.txt', 'r') as f:
+with open('hash_his.txt', 'r',encoding='utf-8') as f:
     lines = f.readlines()
     for line in lines:
         line = line.strip()
@@ -17,7 +17,7 @@ with open('hash_his.txt', 'r') as f:
         if hash[-1] in string.punctuation:
             hash = hash[:-1]
         hash_clean = re.findall('[a-z0-9]*', hash)
-        hash_clean = ''.join(hash_clean)
+        hash_clean = '#'+''.join(hash_clean)
         if hash == hash_clean:
             if hash in data.keys():
                 data[hash] += int(line.split('\t')[1])
