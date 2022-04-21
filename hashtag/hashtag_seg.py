@@ -23,4 +23,7 @@ with torch.no_grad():
         for idx in trange(int(len(data)/2)):
             segmentations = ws.segment([data[idx]])
             f.write(data[idx] + '\t' + segmentations[0] + '\t' + num[idx] + '\n')
-            torch.cuda.empty_cache()
+            if (idx+1) % 10000 ==0:
+                del ws
+                torch.cuda.empty_cache()
+                ws = WordSegmenter(segmenter_model_name_or_path="gpt2")
