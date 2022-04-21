@@ -25,7 +25,7 @@ with open('hash_his.txt', 'r',encoding='utf-8') as f:
                 data[hash] = int(line.split('\t')[1])
 
 
-data_hash = data.keys()
+data_hash = list(data.keys())
 
 from hashformers import TransformerWordSegmenter as WordSegmenter
 with torch.no_grad():

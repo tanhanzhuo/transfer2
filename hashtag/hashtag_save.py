@@ -2,6 +2,7 @@ import os
 from tqdm import tqdm, trange
 import re
 import json
+import string
 HASH = re.compile(r"#\S+")
 hash_dic = {}
 filePath = '/work/data/twitter_hash.txt'
@@ -12,6 +13,13 @@ with open(filePath, 'r') as f:
         hash_tmp = HASH.findall(line)
         for hash_one in hash_tmp:
             if hash_one[1].isalpha():
+                if hash_one[-1] == '…':
+                    continue
+                if len(hash_one) > 3 and hash_one[-3:] == '...':
+                    continue
+                if hash_one[-1] in string.punctuation:
+                    hash_one = hash_one[:-1]
+
                 if hash_one in hash_dic.keys():
                     hash_dic[hash_one] += 1
                 else:
