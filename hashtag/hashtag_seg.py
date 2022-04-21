@@ -23,3 +23,4 @@ with torch.no_grad():
         for idx in trange(int(len(data)/2)):
             segmentations = ws.segment([data[idx]])
             f.write(data[idx] + '\t' + segmentations[0] + '\t' + num[idx] + '\n')
+            torch.cuda.empty_cache()
