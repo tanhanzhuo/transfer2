@@ -38,7 +38,7 @@ with torch.no_grad():
     with open('hash_seg.txt', 'a') as f:
         for idx in trange(int(len(data_hash)/2)):
             segmentations = ws.segment([data_hash[idx]])
-            f.write(data_hash[idx] + '\t' + segmentations[0] + '\t' + data[data_hash[idx]] + '\n')
+            f.write(data_hash[idx] + '\t' + segmentations[0] + '\t' + str(data[data_hash[idx]]) + '\n')
             if (idx+1) % 10000 ==0:
                 del ws,segmentations
                 torch.cuda.empty_cache()
