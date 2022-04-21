@@ -12,6 +12,7 @@ with open(filePath, 'r') as f:
             continue
         hash_tmp = HASH.findall(line)
         for hash_one in hash_tmp:
+            hash_one = hash_one.lower()
             if hash_one[1].isalpha():
                 if hash_one[-1] == '…':
                     continue
