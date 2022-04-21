@@ -1,15 +1,29 @@
 import os
-
+import string
 import torch
 from tqdm import tqdm, trange
-data =[]
+import re
+data ={}
 num = []
 with open('hash_his.txt', 'r') as f:
     lines = f.readlines()
     for line in lines:
         line = line.strip()
-        data.append(line.split('\t')[0])
-        num.append(line.split('\t')[1])
+        hash = line.split('\t')[0].lower()
+        if hash[-1] == '…' or hash[-3:] == '...':
+            continue
+        if hash[-1] in string.punctuation:
+            hash = hash[:-1]
+            hash_clean = re.findall('[a-z0-9]*', hash)
+            hash_clean = ''.join(hash_clean)
+            if hash == hash_clean:
+                if hash in data.keys():
+                    data[hash] += int(line.split('\t')[1])
+                else:
+                    data[hash] = int(line.split('\t')[1])
+
+
+data_hash = data.keys()
 
 from hashformers import TransformerWordSegmenter as WordSegmenter
 with torch.no_grad():
@@ -20,9 +34,9 @@ with torch.no_grad():
     )
 
     with open('hash_seg.txt', 'a') as f:
-        for idx in trange(int(len(data)/2)):
-            segmentations = ws.segment([data[idx]])
-            f.write(data[idx] + '\t' + segmentations[0] + '\t' + num[idx] + '\n')
+        for idx in trange(int(len(data_hash)/2)):
+            segmentations = ws.segment([data_hash[idx]])
+            f.write(data_hash[idx] + '\t' + segmentations[0] + '\t' + data[data_hash[idx]] + '\n')
             if (idx+1) % 10000 ==0:
                 del ws,segmentations
                 torch.cuda.empty_cache()
