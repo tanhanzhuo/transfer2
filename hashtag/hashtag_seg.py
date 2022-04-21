@@ -15,7 +15,7 @@ from hashformers import TransformerWordSegmenter as WordSegmenter
 with torch.no_grad():
     data_seg = []
     ws = WordSegmenter(
-        segmenter_model_name_or_path="gpt2",
+        segmenter_model_name_or_path="distilgpt2"
         # reranker_model_name_or_path="bert-base-uncased"
     )
 
@@ -24,6 +24,6 @@ with torch.no_grad():
             segmentations = ws.segment([data[idx]])
             f.write(data[idx] + '\t' + segmentations[0] + '\t' + num[idx] + '\n')
             if (idx+1) % 10000 ==0:
-                del ws
+                del ws,segmentations
                 torch.cuda.empty_cache()
-                ws = WordSegmenter(segmenter_model_name_or_path="gpt2")
+                ws = WordSegmenter(segmenter_model_name_or_path="distilgpt2")
