@@ -10,17 +10,19 @@ with open('hash_his.txt', 'r') as f:
     for line in lines:
         line = line.strip()
         hash = line.split('\t')[0].lower()
-        if hash[-1] == '…' or hash[-3:] == '...':
+        if hash[-1] == '…':
+            continue
+        if len(hash) > 3 and  hash[-3:] == '...':
             continue
         if hash[-1] in string.punctuation:
             hash = hash[:-1]
-            hash_clean = re.findall('[a-z0-9]*', hash)
-            hash_clean = ''.join(hash_clean)
-            if hash == hash_clean:
-                if hash in data.keys():
-                    data[hash] += int(line.split('\t')[1])
-                else:
-                    data[hash] = int(line.split('\t')[1])
+        hash_clean = re.findall('[a-z0-9]*', hash)
+        hash_clean = ''.join(hash_clean)
+        if hash == hash_clean:
+            if hash in data.keys():
+                data[hash] += int(line.split('\t')[1])
+            else:
+                data[hash] = int(line.split('\t')[1])
 
 
 data_hash = data.keys()
