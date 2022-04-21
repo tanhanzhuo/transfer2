@@ -9,8 +9,9 @@ with open('hash_his.txt', 'r') as f:
     lines = f.readlines()
     for line in lines:
         line = line.strip()
-        data.append(line.split('\t')[0])
-        num.append(line.split('\t')[1])
+        if int(line.split('\t')[1]) > 10:
+            data.append(line.split('\t')[0])
+            num.append(line.split('\t')[1])
 
 from hashformers import TransformerWordSegmenter as WordSegmenter
 with torch.no_grad():
