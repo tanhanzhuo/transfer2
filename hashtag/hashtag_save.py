@@ -19,11 +19,13 @@ with open(filePath, 'r') as f:
                     continue
                 if hash_one[-1] in string.punctuation:
                     hash_one = hash_one[:-1]
-
-                if hash_one in hash_dic.keys():
-                    hash_dic[hash_one] += 1
-                else:
-                    hash_dic[hash_one] = 1
+                hash_clean = re.findall('[a-z0-9]*', hash_one)
+                hash_clean = '#' + ''.join(hash_clean)
+                if hash_one == hash_clean:
+                    if hash_one in hash_dic.keys():
+                        hash_dic[hash_one] += 1
+                    else:
+                        hash_dic[hash_one] = 1
 
 with open('hash_his.txt', 'w') as f:
     for hash_one in hash_dic.keys():
