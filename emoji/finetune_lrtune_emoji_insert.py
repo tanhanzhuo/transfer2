@@ -72,7 +72,7 @@ def parse_args():
     # Required parameters
     parser.add_argument(
         "--task_name",
-        default='stance,hate,sem-17,sem-18,wtwt',
+        default='stance,hate,sem-18,sem-17,wtwt',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
