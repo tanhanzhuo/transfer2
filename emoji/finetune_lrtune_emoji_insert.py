@@ -370,7 +370,7 @@ def do_train(args):
         del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
         torch.cuda.empty_cache()
 
-    model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config)
+    model = AutoModelForSequenceClassification.from_pretrained(args.output_dir, config=config)
     model = accelerator.prepare(model)
     if 'sem-18' in args.input_dir:
         cur_metric = evaluate_18(model, test_data_loader)
