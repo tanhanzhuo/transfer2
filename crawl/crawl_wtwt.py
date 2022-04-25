@@ -1,4 +1,5 @@
 import tweepy
+from tqdm import trange,tqdm
 consumer_key="b0qF9CcEslZWdfTY6Gyfr6k7i"
 consumer_secret="x8tKpNAUbeiCaTCFyIBmDvpXHsCD91ZOx0MHq4rU7ZN92yZI4k"
 access_token="1517497475749539841-9LVF5opQbfkuUnreMz5v3PsyxZCID1"
@@ -22,7 +23,7 @@ data = [i['tweet_id'] for i in data]
 
 data_crawl = []
 total = 0
-for id in range(int(len(data)/100)):
+for id in trange(int(len(data)/100)):
     tweets = client.get_tweets(ids=data[id*100:(id+1)*100])
     for tweet in tweets['data']:
         data_crawl.append(tweet)
