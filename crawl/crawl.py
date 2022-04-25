@@ -44,16 +44,19 @@ for sp in division.keys():
             label = np.argmax(ann_one)
             division_label[sp].append([id.split('_')[0], label])
 test_id = [i[0] for i in division_label['test']]
-
+print(len(test_id))
+total = 0
 for id in range(int(len(test_id)/100)):
     tweets = client.get_tweets(ids=test_id[id*100:(id+1)*100])
     for tweet in tweets['data']:
-        print(tweet['text'])
+        # print(tweet['text'])
+        total+=1
 tweets = client.get_tweets(test_id[(id+1)*100:])
 # tweets = client.get_tweets(ids=test_id[:100])
 for tweet in tweets['data']:
-    print(tweet['text'])
-
+    # print(tweet['text'])
+    total += 1
+print(total)
 # for tweet in tweets.errors:
 #     print(tweet)
 
