@@ -35,9 +35,10 @@ for sp in division.keys():
             division_label[sp].append([id.split('_')[0], label])
 test_id = [i[0] for i in division_label['test']]
 tweets = client.get_tweets(test_id[:100])
-import pickle
-with open('hate_test.pickle', 'wb') as handle:
-    pickle.dump(tweets, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
+print(tweets)
+# import pickle
+# with open('hate_test.pickle', 'wb') as handle:
+#     pickle.dump(tweets, handle, protocol=pickle.HIGHEST_PROTOCOL)
+#
 # with open('hate_test.pickle', 'rb') as handle:
 #     b = pickle.load(handle)
