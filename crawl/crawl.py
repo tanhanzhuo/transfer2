@@ -1,5 +1,5 @@
 import tweepy
-client = tweepy.Client("AAAAAAAAAAAAAAAAAAAAAAV7bwEAAAAAhAiNNg3waFSs8qhlJQC1Q3V7mX0%3DuJztuSt5BI0tcjugQH0bEQdvkWwYxV8EXb1ErCZfpVTK6zw0pc")
+client = tweepy.Client(bearer_token="AAAAAAAAAAAAAAAAAAAAAAV7bwEAAAAAhAiNNg3waFSs8qhlJQC1Q3V7mX0%3DuJztuSt5BI0tcjugQH0bEQdvkWwYxV8EXb1ErCZfpVTK6zw0pc")
 import json
 import numpy as np
 
@@ -36,9 +36,9 @@ for sp in division.keys():
 test_id = [i[0] for i in division_label['test']]
 tweets = client.get_tweets(test_id[:100])
 print(tweets)
-# import pickle
-# with open('hate_test.pickle', 'wb') as handle:
-#     pickle.dump(tweets, handle, protocol=pickle.HIGHEST_PROTOCOL)
+import pickle
+with open('hate_test.pickle', 'wb') as handle:
+    pickle.dump(tweets, handle, protocol=pickle.HIGHEST_PROTOCOL)
 #
 # with open('hate_test.pickle', 'rb') as handle:
 #     b = pickle.load(handle)
