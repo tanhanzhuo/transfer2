@@ -36,7 +36,7 @@ print('total number crawled:' + str(total))
 
 with open('wtwt.json', 'w') as f:
     for tweet in data_crawl:
-        json.dump(tweet, f)
+        json.dump(tweet, f, ensure_ascii=False)
         f.write('\n')
 # for tweet in tweets.errors:
 #     print(tweet)
