@@ -44,6 +44,7 @@ for sp in division.keys():
             label = np.argmax(ann_one)
             division_label[sp].append([id.split('_')[0], label])
 test_id = [i[0] for i in division_label['test']]
+test_id=['696013355715272704','710578503041699840','1290755919404568577','1282319581068042242']
 tweets = client.get_tweets(test_id[:100])
 print(tweets)
 import pickle
