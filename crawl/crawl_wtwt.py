@@ -19,7 +19,7 @@ with open(fileName, 'r', encoding='utf-8') as f:
     data = json.load(f)
 data = [i['tweet_id'] for i in data]
 
-data = data[:25000]
+data = data[25000:]
 
 data_crawl = []
 total = 0
