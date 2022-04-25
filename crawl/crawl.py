@@ -45,25 +45,25 @@ for sp in division.keys():
             division_label[sp].append([id.split('_')[0], label])
 test_id = [i[0] for i in division_label['test']]
 
-# for id in range(int(len(test_id)/100)):
-#     tweets = client.get_tweets(ids=test_id[id*100:(id+1)*100], tweet_fields=['id'])
-#     for tweet in tweets.data:
-#         print(tweet)
-# tweets = client.get_tweets(test_id[(id+1)*100:])
-# tweets = client.get_tweets(ids=test_id[:100], tweet_fields=['id'])
-# for tweet in tweets.data:
-#     print(tweet)
+for id in range(int(len(test_id)/100)):
+    tweets = client.get_tweets(ids=test_id[id*100:(id+1)*100])
+    for tweet in tweets['data']:
+        print(tweet['text'])
+tweets = client.get_tweets(test_id[(id+1)*100:])
+# tweets = client.get_tweets(ids=test_id[:100])
+for tweet in tweets['data']:
+    print(tweet['text'])
 
 # for tweet in tweets.errors:
 #     print(tweet)
 
-data = ['696013355715272704','710578503041699840','1290755919404568577','1282319581068042242']
-tweets = client.get_tweets(ids=data)
-print(tweets)
-print(tweets['data'])
-print(tweets.data[0])
-for tweet in tweets.data:
-    print(tweet['Tweet id'])
+# data = ['696013355715272704','710578503041699840','1290755919404568577','1282319581068042242']
+# tweets = client.get_tweets(ids=data)
+# print(tweets)
+# print(tweets['data'])
+# print(tweets.data[0])
+# for tweet in tweets.data:
+#     print(tweet['Tweet id'])
 
 # import pickle
 # with open('hate_test.pickle', 'wb') as handle:
