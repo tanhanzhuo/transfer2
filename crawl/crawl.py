@@ -1,5 +1,15 @@
 import tweepy
-client = tweepy.Client(bearer_token="AAAAAAAAAAAAAAAAAAAAAAV7bwEAAAAAhAiNNg3waFSs8qhlJQC1Q3V7mX0%3DuJztuSt5BI0tcjugQH0bEQdvkWwYxV8EXb1ErCZfpVTK6zw0pc")
+consumer_key="b0qF9CcEslZWdfTY6Gyfr6k7i"
+consumer_secret="x8tKpNAUbeiCaTCFyIBmDvpXHsCD91ZOx0MHq4rU7ZN92yZI4k"
+access_token="1517497475749539841-9LVF5opQbfkuUnreMz5v3PsyxZCID1"
+access_token_secret="Ok2vxvbvJWS579a3fAgjkytr5iVoZMWwVUGMLr5FkhJcQ"
+bearer_token ="AAAAAAAAAAAAAAAAAAAAAAV7bwEAAAAAhAiNNg3waFSs8qhlJQC1Q3V7mX0%3DuJztuSt5BI0tcjugQH0bEQdvkWwYxV8EXb1ErCZfpVTK6zw0pc"
+client = tweepy.Client( bearer_token=bearer_token,
+                        consumer_key=consumer_key,
+                        consumer_secret=consumer_secret,
+                        access_token=access_token,
+                        access_token_secret=access_token_secret
+                        )
 import json
 import numpy as np
 
