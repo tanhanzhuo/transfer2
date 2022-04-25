@@ -19,7 +19,7 @@ with open(fileName, 'r', encoding='utf-8') as f:
     data = json.load(f)
 data = [i['tweet_id'] for i in data]
 
-# data = data[:101]
+data = data[:25000]
 
 data_crawl = []
 total = 0
@@ -35,7 +35,7 @@ if (id+1)*100 < len(data):
         total += 1
 print('total number crawled:' + str(total))
 
-with open('wtwt.json', 'w') as f:
+with open('wtwt.json', 'a') as f:
     for tweet in data_crawl:
         json.dump(tweet, f, ensure_ascii=False)
         f.write('\n')
