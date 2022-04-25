@@ -17,7 +17,7 @@ def create_url():
     # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
     # source, text, and withheld
     # ids = "ids=1278747501642657792,1255542774432063488"
-    ids = "ids=1179096046653313025,1142522499831226368"
+    ids = "ids=696013355715272704,710578503041699840,1290755919404568577,1282319581068042242"
     # You can adjust ids to include a single Tweets.
     # Or you can add to up to 100 comma-separated IDs
     url = "https://api.twitter.com/2/tweets?{}&{}".format(ids, tweet_fields)
