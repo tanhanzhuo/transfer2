@@ -61,9 +61,9 @@ data = ['696013355715272704','710578503041699840','1290755919404568577','1282319
 tweets = client.get_tweets(ids=data)
 print(tweets)
 print(tweets.data)
-print(tweets.meta)
-print(tweets.includes)
-print(tweets.json())
+print(tweets.data[0])
+for tweet in tweets.data:
+    print(tweet['Tweet id'])
 
 # import pickle
 # with open('hate_test.pickle', 'wb') as handle:
