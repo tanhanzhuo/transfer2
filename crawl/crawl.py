@@ -44,12 +44,17 @@ for sp in division.keys():
             label = np.argmax(ann_one)
             division_label[sp].append([id.split('_')[0], label])
 test_id = [i[0] for i in division_label['test']]
-test_id=['696013355715272704','710578503041699840','1290755919404568577','1282319581068042242']
-tweets = client.get_tweets(test_id[:100])
-print(tweets)
-import pickle
-with open('hate_test.pickle', 'wb') as handle:
-    pickle.dump(tweets, handle, protocol=pickle.HIGHEST_PROTOCOL)
-#
+
+for id in range(int(len(test_id)/100)):
+    tweets = client.get_tweets(test_id[id*100:(id+1)*100])
+    for tweet in tweets.data:
+        print(tweet)
+tweets = client.get_tweets(test_id[(id+1)*100:])
+for tweet in tweets.data:
+    print(tweet)
+# import pickle
+# with open('hate_test.pickle', 'wb') as handle:
+#     pickle.dump(tweets, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# #
 # with open('hate_test.pickle', 'rb') as handle:
 #     b = pickle.load(handle)
