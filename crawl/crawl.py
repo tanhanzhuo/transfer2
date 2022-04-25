@@ -45,12 +45,15 @@ for sp in division.keys():
             division_label[sp].append([id.split('_')[0], label])
 test_id = [i[0] for i in division_label['test']]
 
-for id in range(int(len(test_id)/100)):
-    tweets = client.get_tweets(test_id[id*100:(id+1)*100])
-    for tweet in tweets.data:
-        print(tweet)
-tweets = client.get_tweets(test_id[(id+1)*100:])
+# for id in range(int(len(test_id)/100)):
+#     tweets = client.get_tweets(ids=test_id[id*100:(id+1)*100], tweet_fields=['id'])
+#     for tweet in tweets.data:
+#         print(tweet)
+# tweets = client.get_tweets(test_id[(id+1)*100:])
+tweets = client.get_tweets(ids=test_id[:100], tweet_fields=['id'])
 for tweet in tweets.data:
+    print(tweet)
+for tweet in tweets.errors:
     print(tweet)
 # import pickle
 # with open('hate_test.pickle', 'wb') as handle:
