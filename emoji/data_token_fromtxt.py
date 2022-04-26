@@ -42,7 +42,9 @@ def tokenization(args):
         data_files["dev"] = args.dataset_path + '/dev.json'
         data_files["test"] = args.dataset_path + '/test.json'
         raw_datasets = datasets.load_dataset('json', data_files=data_files)
-
+        raw_datasets["train"] = raw_datasets["train"].shuffle()
+        raw_datasets["dev"] = raw_datasets["dev"].shuffle()
+        raw_datasets["test"] = raw_datasets["test"].shuffle()
     # Load pretrained tokenizer
     if args.tokenizer_name:
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, use_fast=not args.use_slow_tokenizer,
