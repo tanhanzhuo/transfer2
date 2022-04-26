@@ -64,7 +64,7 @@ def tokenization(args):
             padding=padding,
             truncation=True,
             max_length=args.max_seq_length,
-            return_special_tokens_mask=False,
+            return_special_tokens_mask=True,
         )
 
     tokenized_datasets = raw_datasets.map(
