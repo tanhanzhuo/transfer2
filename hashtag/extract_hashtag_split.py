@@ -27,7 +27,7 @@ if __name__ == "__main__":
     for idx in range(len(SELECT)):
         label2idx[SELECT[idx]] = idx
 
-
+    print('top find')
 
     with open('data_hash_' + str(SELECT_HASH) + '_' + str(SELECT_NUM) + '.txt', 'r') as f:
         data_hash = f.readlines()
@@ -42,7 +42,9 @@ if __name__ == "__main__":
             data_hash_top.append(
                 {'label': lab, 'text': txt}
             )
-    
+
+    print('data find')
+
     random.shuffle(data_hash_top)
     SP = int(len(data_hash_top)*0.9)
     os.makedirs('data_hash_' + str(SELECT_HASH) + '_' + str(SELECT_NUM), exist_ok=True)
