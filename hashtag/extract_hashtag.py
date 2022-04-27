@@ -37,7 +37,6 @@ if __name__ == "__main__":
         lines = f.readlines()
     random.shuffle(lines)
 
-    hash_dic = {}
     data_hash = []
     for line in tqdm(lines):
         if not line:
