@@ -3,7 +3,6 @@ SELECT_NUM = 1000
 
 with open('hash_his.txt','r',encoding='utf-8') as f:
     lines = f.readlines()
-
 hash_dic = {}
 for line in lines:
     line = line.strip()
@@ -11,12 +10,12 @@ for line in lines:
     num = int(line.split('\t')[1])
     if num > 10000:
         hash_dic[hashtag] = num
-
 hash_dic_sort = dict(sorted(hash_dic.items(), key=lambda x: x[1], reverse=True))
 SELECT = list(hash_dic_sort.keys())[:SELECT_HASH]
 hash_dic = {}
 for one in SELECT:
     hash_dic[one] = 0
+
 
 import os
 from tqdm import tqdm, trange
