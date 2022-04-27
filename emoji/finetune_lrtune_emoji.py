@@ -393,7 +393,7 @@ def do_train(args):
                     "global step %d/%d, epoch: %d, loss: %f, speed: %.4f step/s, seed: %d,lr: %.5f,task: %s"
                     % (global_step, args.max_train_steps, epoch,
                        loss_all, args.logging_steps / (time.time() - tic_train),
-                       args.seed,lr,args.input_dir))
+                       args.seed,float(lr),args.input_dir))
                 tic_train = time.time()
             if (epoch + 1) % args.save_steps == 0:
                 tic_eval = time.time()
