@@ -1,3 +1,4 @@
+import os
 import random
 import json
 import argparse
@@ -44,11 +45,12 @@ if __name__ == "__main__":
     
     random.shuffle(data_hash_top)
     SP = int(len(data_hash_top)*0.9)
-    with open('train.json', 'w') as f:
+    os.makedirs('data_hash_' + str(SELECT_HASH) + '_' + str(SELECT_NUM), exist_ok=True)
+    with open('./data_hash_' + str(SELECT_HASH) + '_' + str(SELECT_NUM) + '/train.json', 'w') as f:
         for idx in range(SP):
             json.dump(data_hash_top[idx], f)
             f.write('\n')
-    with open('dev.json', 'w') as f:
+    with open('./data_hash_' + str(SELECT_HASH) + '_' + str(SELECT_NUM) + '/dev.json', 'w') as f:
         for idx in range(SP,len(data_hash_top)):
             json.dump(data_hash_top[idx], f)
             f.write('\n')
