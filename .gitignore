@@ -53,3 +53,4 @@ finetune/data/stance/emoji/train/dataset.arrow
 finetune/data/stance/emoji/train/dataset_info.json
 finetune/data/stance/emoji/train/state.json
 hashtag/hash_his.txt
+hashtag/hash_his_one.txt
