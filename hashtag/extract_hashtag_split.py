@@ -7,7 +7,6 @@ parser.add_argument('--hash', default=100,type=int)
 parser.add_argument('--num', default=1000,type=int)
 
 if __name__ == "__main__":
-
     args = parser.parse_args()
     SELECT_HASH = args.hash
     SELECT_NUM = args.num
@@ -23,34 +22,33 @@ if __name__ == "__main__":
             hash_dic[hashtag] = num
     hash_dic_sort = dict(sorted(hash_dic.items(), key=lambda x: x[1], reverse=True))
     SELECT = list(hash_dic_sort.keys())[:SELECT_HASH]
+    label2idx = {}
+    for idx in range(len(SELECT)):
+        label2idx[SELECT[idx]] = idx
 
 
 
-label2idx = {}
-for idx in range(len(emoji_top)):
-    label2idx[emoji_top[idx]] = idx
-with open('data_emoji.txt', 'r') as f:
-    data_emoji = f.readlines()
-
-data_emoji_top = []
-for data_one in data_emoji:
-    emoji_one = data_one.split('\t')[0]
-    line = data_one.split('\t')[1].strip().replace('  ',' ')
-    if emoji_one in emoji_top:
+    with open('data_hash_' + str(SELECT_HASH) + '_' + str(SELECT_NUM) + '.txt', 'r') as f:
+        data_hash = f.readlines()
+    data_hash_top = []
+    for data_one in data_hash:
+        hash_one = data_one.split('\t')[0]
+        line = data_one.split('\t')[1].strip().replace('  ',' ')
+        line = line.replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https')
         if len(line.split(' ')) > 5:
-            txt = line.replace('https://', 'https') + '\n'
-            lab = label2idx[emoji_one]
-            data_emoji_top.append(
+            txt = line+ '\n'
+            lab = label2idx[hash_one]
+            data_hash_top.append(
                 {'label': lab, 'text': txt}
             )
-
-random.shuffle(data_emoji_top)
-SP = int(len(data_emoji_top)*0.9)
-with open('train.json', 'w') as f:
-    for idx in range(SP):
-        json.dump(data_emoji_top[idx], f)
-        f.write('\n')
-with open('dev.json', 'w') as f:
-    for idx in range(SP,len(data_emoji_top)):
-        json.dump(data_emoji_top[idx], f)
-        f.write('\n')
+    
+    random.shuffle(data_hash_top)
+    SP = int(len(data_hash_top)*0.9)
+    with open('train.json', 'w') as f:
+        for idx in range(SP):
+            json.dump(data_hash_top[idx], f)
+            f.write('\n')
+    with open('dev.json', 'w') as f:
+        for idx in range(SP,len(data_hash_top)):
+            json.dump(data_hash_top[idx], f)
+            f.write('\n')
