@@ -440,7 +440,8 @@ if __name__ == "__main__":
     #     filename="{}.log".format(args.results_name.split('.')[0]),
     #     level=logging.INFO
     # )
-    logger = logging.get_logger("{}.log".format(args.results_name.split('.')[0]))
+    logging.disable_default_handler()
+    logging.FileHandler("debug.log")
     # os.environ["CUDA_VISIBLE_DEVICES"] = args.device
     # r_dir = '/work/test/finetune/continue/'
     for task in args.task_name.split(','):
