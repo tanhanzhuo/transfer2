@@ -85,4 +85,4 @@ def tokenization(args):
 if __name__ == "__main__":
     args = parser.parse_args()
     tokenized_datasets = tokenization(args)
-    tokenized_datasets.save_to_disk(args.dataset_path + args.task_name + 'token')
+    tokenized_datasets.save_to_disk(args.dataset_path + args.task_name + '/token')
