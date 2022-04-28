@@ -6,8 +6,9 @@ from transformers import  AutoTokenizer
 from accelerate import Accelerator
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--output_dir", default='/work/transfer2/finetune/data/stance/token', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
-parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/stance', type=str, required=False, help="dataset name")
+parser.add_argument("--output_dir", default='/work/transfer2/finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
+parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/', type=str, required=False, help="dataset name")
+parser.add_argument("--task_name", default='hate', type=str, required=False, help="dataset name")
 parser.add_argument("--use_slow_tokenizer", action="store_true", help="If passed, will use a slow tokenizer (not backed by the 🤗 Tokenizers library).")
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
@@ -30,21 +31,21 @@ def write_json(fileName):
             f.write('\n')
 
 def tokenization(args):
-    if args.output_dir is not None:
-        os.makedirs(args.output_dir, exist_ok=True)
+    # if args.output_dir + args.task_name is not None:
+    #     os.makedirs(args.output_dir+ args.task_name, exist_ok=True)
     # Get the datasets:
-    if args.dataset_path is not None:
-        if not os.path.isfile(args.dataset_path + '/train.json'):
-            for fileName in ['train', 'dev', 'test']:
-                write_json(args.dataset_path + '/' + fileName)
-        data_files = {}
-        data_files["train"] = args.dataset_path + '/train.json'
-        data_files["dev"] = args.dataset_path + '/dev.json'
-        data_files["test"] = args.dataset_path + '/test.json'
-        raw_datasets = datasets.load_dataset('json', data_files=data_files)
-        raw_datasets["train"] = raw_datasets["train"].shuffle()
-        raw_datasets["dev"] = raw_datasets["dev"].shuffle()
-        raw_datasets["test"] = raw_datasets["test"].shuffle()
+    # if args.dataset_path is not None:
+    if not os.path.isfile(args.dataset_path + args.task_name +'/train.json'):
+        for fileName in ['train', 'dev', 'test']:
+            write_json(args.dataset_path + args.task_name + '/' + fileName)
+    data_files = {}
+    data_files["train"] = args.dataset_path + args.task_name + '/train.json'
+    data_files["dev"] = args.dataset_path + args.task_name + '/dev.json'
+    data_files["test"] = args.dataset_path + args.task_name + '/test.json'
+    raw_datasets = datasets.load_dataset('json', data_files=data_files)
+    raw_datasets["train"] = raw_datasets["train"].shuffle()
+    raw_datasets["dev"] = raw_datasets["dev"].shuffle()
+    raw_datasets["test"] = raw_datasets["test"].shuffle()
     # Load pretrained tokenizer
     if args.tokenizer_name:
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, use_fast=not args.use_slow_tokenizer,
@@ -84,4 +85,4 @@ def tokenization(args):
 if __name__ == "__main__":
     args = parser.parse_args()
     tokenized_datasets = tokenization(args)
-    tokenized_datasets.save_to_disk(args.output_dir)
+    tokenized_datasets.save_to_disk(args.dataset_path + args.task_name + 'token')
