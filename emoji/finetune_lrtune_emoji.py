@@ -238,7 +238,7 @@ def evaluate(model, data_loader):
                                 digits=5, output_dict=True)
     f1 = rep['macro avg']['f1-score']
     acc = rep['accuracy']
-    logger.info("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (f1, acc, acc))
+    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (f1, acc, acc))
     return f1, acc, acc
 
 @torch.no_grad()
@@ -259,7 +259,7 @@ def evaluate_17(model, data_loader):
     aveRec = rep['macro avg']['recall']
     f1PN = (rep['pos']['f1-score'] + rep['neg']['f1-score']) / 2
     acc = rep['accuracy']
-    logger.info("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (aveRec, f1PN, acc))
+    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (aveRec, f1PN, acc))
     return aveRec, f1PN, acc
 
 
@@ -281,7 +281,7 @@ def evaluate_18(model, data_loader):
     f1_pos = rep['irony']['f1-score']
     f1PN = (rep['not']['f1-score'] + rep['irony']['f1-score']) / 2
     acc = rep['accuracy']
-    logger.info("f1_pos:%.5f, f1PN:%.5f, acc: %.5f " % (f1_pos, f1PN, acc))
+    print("f1_pos:%.5f, f1PN:%.5f, acc: %.5f " % (f1_pos, f1PN, acc))
     return f1_pos, f1PN, acc
 
 
@@ -304,7 +304,7 @@ def convert_example(example, label2idx):
 
 def do_train(args):
     # set_seed(args.seed)
-    logger.info(args)
+    print(args)
     data_all = datasets.load_from_disk(args.input_dir)
     if 'sem-18' in args.input_dir:
         label2idx = {'0': 0, '1': 1}
@@ -343,7 +343,7 @@ def do_train(args):
         test_data_loader = DataLoader(
             test_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
         )
-        logger.info('data ready!!!')
+        print('data ready!!!')
         no_decay = ["bias", "LayerNorm.weight"]
         optimizer_grouped_parameters = [
             {
@@ -372,7 +372,7 @@ def do_train(args):
         loss_fct = nn.CrossEntropyLoss().cuda()
         loss_fct_emoji = nn.CrossEntropyLoss().cuda()
 
-        logger.info('start Training!!!')
+        print('start Training!!!')
         global_step = 0
         tic_train = time.time()
 
@@ -385,13 +385,13 @@ def do_train(args):
                 loss = loss_fct(logits, labels.view(-1))
                 loss_emoji = loss_fct_emoji(logits_emoji, labels_emoji.view(-1))
                 loss_all = loss * int(args.ratio) / 10.0 + loss_emoji * (10 - int(args.ratio)) / 10.0
-                # logger.info(step)
+                # print(step)
                 accelerator.backward(loss_all)
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
             if (epoch + 1) % args.logging_steps == 0:
-                logger.info(
+                print(
                     "global step %d/%d, epoch: %d, loss: %f, speed: %.4f step/s, seed: %d,lr: %.5f,task: %s"
                     % (global_step, args.max_train_steps, epoch,
                        loss_all, args.logging_steps / (time.time() - tic_train),
@@ -405,7 +405,7 @@ def do_train(args):
                     cur_metric = evaluate_17(model, dev_data_loader)
                 else:
                     cur_metric = evaluate(model, dev_data_loader)
-                logger.info("eval done total : %s s" % (time.time() - tic_eval))
+                print("eval done total : %s s" % (time.time() - tic_eval))
                 if cur_metric[0] > best_metric[0]:
                     accelerator.wait_for_everyone()
                     unwrapped_model = accelerator.unwrap_model(model)
@@ -426,21 +426,14 @@ def do_train(args):
         cur_metric = evaluate_17(model, test_data_loader)
     else:
         cur_metric = evaluate(model, test_data_loader)
-    logger.info('final')
-    logger.info("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
-    logger.info("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
+    print('final')
+    print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
+    print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
     del model
     return cur_metric
 
-args = parse_args()
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    filename="{}.log".format(args.results_name.split('.')[0]),
-    level=logging.INFO
-)
-logger = logging.getLogger()
 if __name__ == "__main__":
-
+    args = parse_args()
     # os.environ["CUDA_VISIBLE_DEVICES"] = args.device
     # r_dir = '/work/test/finetune/continue/'
     for task in args.task_name.split(','):
@@ -459,9 +452,9 @@ if __name__ == "__main__":
                         args_tmp.ratio2 = ratio2
                         ave_metric.append(do_train(args_tmp))
                     ave_metric = np.array(ave_metric)
-                    logger.info("*************************************************************************************")
-                    logger.info('Task: %s, model: %s, loss ration: %s, weight ratio: %s, seed: %d' % (task, model_name, ratio, ratio2, seed))
-                    logger.info('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
+                    print("*************************************************************************************")
+                    print('Task: %s, model: %s, loss ration: %s, weight ratio: %s, seed: %d' % (task, model_name, ratio, ratio2, seed))
+                    print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
                                                                         sum(ave_metric[:, 1]) / 5,
                                                                         sum(ave_metric[:, 2]) / 5))
                     with open(args.results_name, 'a') as f_res:
