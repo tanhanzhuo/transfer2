@@ -306,10 +306,7 @@ def do_train(args):
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(message)s",
-        handlers=[
-            logging.FileHandler("{}.log".format(args.results_name.split('.')[0])),
-            logging.StreamHandler(sys.stdout)
-        ]
+        filename="{}.log".format(args.results_name.split('.')[0])
     )
     logging.info(args)
     data_all = datasets.load_from_disk(args.input_dir)
