@@ -13,7 +13,8 @@
 # limitations under the License.
 
 import argparse
-import logging
+# import logging
+from transformers.utils import logging
 import os
 import sys
 import random
@@ -303,7 +304,7 @@ def convert_example(example, label2idx):
 
 def do_train(args):
     # set_seed(args.seed)
-    logging.error(args)
+    logging.info(args)
     data_all = datasets.load_from_disk(args.input_dir)
     if 'sem-18' in args.input_dir:
         label2idx = {'0': 0, '1': 1}
