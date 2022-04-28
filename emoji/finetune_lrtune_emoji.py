@@ -435,9 +435,10 @@ def do_train(args):
 if __name__ == "__main__":
     args = parse_args()
     logging.basicConfig(
-        level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(message)s",
-        filename="{}.log".format(args.results_name.split('.')[0])
+        filename="{}.log".format(args.results_name.split('.')[0]),
+        filemode='w',
+        level=logging.INFO
     )
     # os.environ["CUDA_VISIBLE_DEVICES"] = args.device
     # r_dir = '/work/test/finetune/continue/'
