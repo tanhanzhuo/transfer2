@@ -303,11 +303,6 @@ def convert_example(example, label2idx):
 
 def do_train(args):
     # set_seed(args.seed)
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s [%(levelname)s] %(message)s",
-        filename="{}.log".format(args.results_name.split('.')[0])
-    )
     logging.info(args)
     data_all = datasets.load_from_disk(args.input_dir)
     if 'sem-18' in args.input_dir:
@@ -439,6 +434,11 @@ def do_train(args):
 
 if __name__ == "__main__":
     args = parse_args()
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        filename="{}.log".format(args.results_name.split('.')[0])
+    )
     # os.environ["CUDA_VISIBLE_DEVICES"] = args.device
     # r_dir = '/work/test/finetune/continue/'
     for task in args.task_name.split(','):
