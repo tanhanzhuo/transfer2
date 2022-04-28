@@ -303,7 +303,7 @@ def convert_example(example, label2idx):
 
 def do_train(args):
     # set_seed(args.seed)
-    logging.info(args)
+    logging.error(args)
     data_all = datasets.load_from_disk(args.input_dir)
     if 'sem-18' in args.input_dir:
         label2idx = {'0': 0, '1': 1}
@@ -437,7 +437,6 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)s [%(levelname)s] %(message)s",
         filename="{}.log".format(args.results_name.split('.')[0]),
-        filemode='w',
         level=logging.INFO
     )
     # os.environ["CUDA_VISIBLE_DEVICES"] = args.device
