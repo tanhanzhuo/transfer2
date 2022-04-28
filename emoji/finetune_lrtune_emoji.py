@@ -308,7 +308,7 @@ def do_train(args):
         format="%(asctime)s [%(levelname)s] %(message)s",
         handlers=[
             logging.FileHandler("{}.log".format(args.results_name.split('.')[0])),
-            logging.StreamHandler()
+            logging.StreamHandler(sys.stdout)
         ]
     )
     logging.info(args)
