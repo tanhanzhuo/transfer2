@@ -329,6 +329,15 @@ def do_train(args):
     num_count = np.sum(num_count) / num_count
     num_count = num_count / np.sum(num_count)
 
+    num_count_show = np.array([0.0] * len(label2idx))
+    for one in dev_ds:
+        num_count_show[one['labels']] += 1
+    print(num_count_show)
+
+    num_count_show = np.array([0.0] * len(label2idx))
+    for one in test_ds:
+        num_count_show[one['labels']] += 1
+    print(num_count_show)
 
     learning_rate = args.learning_rate.split(',')
     best_metric = [0, 0, 0]
