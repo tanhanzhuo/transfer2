@@ -386,7 +386,7 @@ def do_train(args):
             model, optimizer, train_data_loader, dev_data_loader, test_data_loader
         )
 
-        loss_fct = nn.CrossEntropyLoss(weight=torch.from_numpy(num_count)).cuda()
+        loss_fct = nn.CrossEntropyLoss(weight=torch.from_numpy(num_count).float()).cuda()
         loss_fct_emoji = nn.CrossEntropyLoss().cuda()
 
         print('start Training!!!')
