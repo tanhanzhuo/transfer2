@@ -208,7 +208,7 @@ def parse_args():
         help="If > 0: set total number of training steps to perform. Override num_train_epochs.",
     )
     parser.add_argument(
-        "--seed", default=42, type=int, help="random seed for initialization")
+        "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
     parser.add_argument(
         "--ratio", default='10', type=str, help="ratio for loss")
     parser.add_argument(
@@ -441,12 +441,12 @@ if __name__ == "__main__":
             for ratio in args.ratio.split(','):#range(10, 0, -2):
                 for ratio2 in args.ratio2.split(','):#range(10, -2, -2):
                     ave_metric = []
-                    for seed in [1, 10, 100, 1000, 10000]:
-                        set_seed(seed)
+                    for seed in args.seed.split(','):
+                        set_seed(int(seed))
                         args_tmp = copy.deepcopy(args)
                         args_tmp.input_dir = args.input_dir + task + '/emoji'
                         args_tmp.output_dir = args.output_dir + task + '/'
-                        args_tmp.seed = seed
+                        args_tmp.seed = int(seed)
                         args_tmp.model_name_or_path = model_name
                         args_tmp.ratio = ratio
                         args_tmp.ratio2 = ratio2
