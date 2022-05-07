@@ -3,6 +3,7 @@ import os
 import datasets
 import json
 from transformers import  AutoTokenizer
+import copy
 from accelerate import Accelerator
 
 parser = argparse.ArgumentParser()
@@ -84,5 +85,8 @@ def tokenization(args):
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    tokenized_datasets = tokenization(args)
-    tokenized_datasets.save_to_disk(args.dataset_path + args.task_name + '/token')
+    args_tmp = copy.deepcopy(args)
+    for task in args.task_name.split(','):
+        args_tmp.task_name = task
+        tokenized_datasets = tokenization(args_tmp)
+        tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/token')
