@@ -453,7 +453,7 @@ if __name__ == "__main__":
                         ave_metric.append(do_train(args_tmp))
                     ave_metric = np.array(ave_metric)
                     print("*************************************************************************************")
-                    print('Task: %s, model: %s, loss ration: %s, weight ratio: %s, seed: %d' % (task, model_name, ratio, ratio2, seed))
+                    print('Task: %s, model: %s, loss ration: %s, weight ratio: %s' % (task, model_name, ratio, ratio2))
                     print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
                                                                         sum(ave_metric[:, 1]) / 5,
                                                                         sum(ave_metric[:, 2]) / 5))
