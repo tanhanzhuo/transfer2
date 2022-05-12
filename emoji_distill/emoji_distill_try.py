@@ -465,6 +465,7 @@ def do_train(args):
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
     del model
+    torch.cuda.empty_cache()
     return cur_metric
 
 if __name__ == "__main__":
