@@ -355,10 +355,6 @@ def do_train(args):
     test_ds = data_all['test']
     test_ds = test_ds.map(trans_func)
 
-    config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=20)
-    model_teacher = RobertaForTeacher.from_pretrained(args.model_teacher, config=config)
-    model_teacher = accelerator.prepare(model_teacher)
-
     learning_rate = args.learning_rate.split(',')
     best_metric = [0, 0, 0]
     for lr in learning_rate:
@@ -368,6 +364,9 @@ def do_train(args):
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         model = RobertaForMulti.from_pretrained(
             args.model_name_or_path, config=config, config2=config2)
+        config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=20)
+        model_teacher = RobertaForTeacher.from_pretrained(args.model_teacher, config=config)
+        model_teacher = accelerator.prepare(model_teacher)
 
         batchify_fn = DataCollatorMulti(tokenizer=tokenizer, ignore_label=-100)
         train_data_loader = DataLoader(
@@ -450,7 +449,7 @@ def do_train(args):
                     best_metric = cur_metric
                     del unwrapped_model
                     torch.cuda.empty_cache()
-        del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
+        del model,model_teacher#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
         torch.cuda.empty_cache()
 
     model = RobertaForMulti.from_pretrained(
