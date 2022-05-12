@@ -17,16 +17,16 @@ parser.add_argument("--preprocessing_num_workers", default=10, type=int, help="m
 parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwrite the cached training and evaluation sets")
 
 def read_data(fileName):
-    with open(fileName, 'r') as f:
+    with open(fileName, 'r', encoding='utf-8') as f:
         data = []
         lines = f.readlines()
         for line in lines:
-            data.append({'label': line.split('\t')[0], 'text': line.split('\t')[1]})
+            data.append({'labels': line.split('\t')[0], 'text': line.split('\t')[1]})
     return data
 
 def write_json(fileName):
     data = read_data(fileName)
-    with open(fileName + '.json', 'w') as f:
+    with open(fileName + '.json', 'w', encoding='utf-8') as f:
         for one in data:
             json.dump(one, f)
             f.write('\n')
@@ -36,9 +36,9 @@ def tokenization(args):
     #     os.makedirs(args.output_dir+ args.task_name, exist_ok=True)
     # Get the datasets:
     # if args.dataset_path is not None:
-    if not os.path.isfile(args.dataset_path + args.task_name +'/train.json'):
-        for fileName in ['train', 'dev', 'test']:
-            write_json(args.dataset_path + args.task_name + '/' + fileName)
+    # if not os.path.isfile(args.dataset_path + args.task_name +'/train.json'):
+    for fileName in ['train', 'dev', 'test']:
+        write_json(args.dataset_path + args.task_name + '/' + fileName)
     data_files = {}
     data_files["train"] = args.dataset_path + args.task_name + '/train.json'
     data_files["dev"] = args.dataset_path + args.task_name + '/dev.json'
