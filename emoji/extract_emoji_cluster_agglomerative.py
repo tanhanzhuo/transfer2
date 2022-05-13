@@ -1,7 +1,7 @@
 import random
 import json
 random.seed(0)
-from tqdm import tqdm
+from tqdm import tqdm,trange
 # emoji_top = {'👀':0, '🙌':0, '😳':0, '💀':0, '😔':0, '😏':0, '😁':0, '❤':0, '🔥':0, '👌':0,
 #         '😒':0, '💯':0, '💕':0, '😘':0, '😊':0, '😩':0, '❤️':0, '😍':0, '😭':0, '😂':0}
 emoji_top = ['🤔', '🙄', '😳', '👌', '😁', '😏', '💯', '🔥', '💕', '😘', '😔', '❤', '♥', '😒', '😊', '😩', '❤️', '😍', '😭', '😂']
@@ -33,10 +33,10 @@ for data_one in tqdm(data_emoji):
 random.shuffle(data_emoji_top)
 SP = int(len(data_emoji_top)*0.9)
 with open('./cluster_train/train.json', 'w') as f:
-    for idx in range(SP):
+    for idx in trange(SP):
         json.dump(data_emoji_top[idx], f)
         f.write('\n')
 with open('./cluster_train/dev.json', 'w') as f:
-    for idx in range(SP,len(data_emoji_top)):
+    for idx in trange(SP,len(data_emoji_top)):
         json.dump(data_emoji_top[idx], f)
         f.write('\n')
