@@ -254,7 +254,7 @@ def do_train(args):
                     torch.cuda.empty_cache()
         accelerator.wait_for_everyone()
         unwrapped_model = accelerator.unwrap_model(model)
-        unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
+        unwrapped_model.save_pretrained(args.output_dir + str(epoch), save_function=accelerator.save)
         tokenizer.save_pretrained(args.output_dir + str(epoch))
         best_metric = cur_metric
         del unwrapped_model
