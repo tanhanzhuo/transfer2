@@ -14,7 +14,7 @@ with open('data_emoji.txt', 'r') as f:
     data_emoji = f.readlines()
 
 data_emoji_top = []
-for data_one in tqdm(data_emoji[:100000]):
+for data_one in tqdm(data_emoji):
     emoji_one = data_one.split('\t')[0]
     line = data_one.split('\t')[1].strip().replace('  ',' ')
     if emoji_one in emoji_top:
