@@ -155,6 +155,11 @@ def parse_args():
         help="method for training emoji prediction, e.g. cluster",
     )
     parser.add_argument(
+        "--num_classes",
+        default=20,
+        type=int,
+        help="number of emoji classes")
+    parser.add_argument(
         "--output_dir",
         default='./model/',
         type=str,
@@ -341,7 +346,7 @@ def do_train(args):
         accelerator = Accelerator()
         num_classes = len(label2idx.keys())
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
-        config2 = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=20)
+        config2 = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=args.num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         model = RobertaForMulti.from_pretrained(
             args.model_name_or_path, config=config, config2=config2)
