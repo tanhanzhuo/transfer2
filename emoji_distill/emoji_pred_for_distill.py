@@ -9,6 +9,7 @@ from accelerate import Accelerator
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
+parser.add_argument("--method", default='', type=str, required=False, help="method for training emoji prediction, e.g. cluster")
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-17,sem-18,wtwt', type=str, required=False, help="dataset name")
 parser.add_argument("--use_slow_tokenizer", action="store_true", help="If passed, will use a slow tokenizer (not backed by the 🤗 Tokenizers library).")
@@ -49,7 +50,7 @@ def pred_prob(args):
             train_dataset = train_dataset.add_column("emoji_distill", emoji_pred)
             train_dataset = train_dataset.add_column("labels", labels)
             tokenized_datasets[SPLIT] = train_dataset
-        tokenized_datasets.save_to_disk(args.output_dir + task + '/emoji_distill')
+        tokenized_datasets.save_to_disk(args.output_dir + task + '/emoji_distill' + args.method)
         print('task done! {}'.format(task))
 
 

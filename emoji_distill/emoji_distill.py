@@ -148,6 +148,13 @@ def parse_args():
         help="The output directory where the model predictions and checkpoints will be written.",
     )
     parser.add_argument(
+        "--method",
+        default='',
+        type=str,
+        required=False,
+        help="method for training emoji prediction, e.g. cluster",
+    )
+    parser.add_argument(
         "--output_dir",
         default='./model/',
         type=str,
@@ -449,7 +456,7 @@ if __name__ == "__main__":
                     for seed in args.seed.split(','):
                         set_seed(int(seed))
                         args_tmp = copy.deepcopy(args)
-                        args_tmp.input_dir = args.input_dir + task + '/emoji_distill'
+                        args_tmp.input_dir = args.input_dir + task + '/emoji_distill' + args.method
                         args_tmp.output_dir = args.output_dir + task + '/'
                         args_tmp.seed = int(seed)
                         args_tmp.model_name_or_path = model_name
