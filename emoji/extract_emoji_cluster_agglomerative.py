@@ -13,6 +13,7 @@ for idx in range(len(emoji_top)):
 with open('data_emoji.txt', 'r') as f:
     data_emoji = f.readlines()
 
+emoji_num = [0] * len(emoji_top_cluster)
 data_emoji_top = []
 for data_one in tqdm(data_emoji):
     emoji_one = data_one.split('\t')[0]
@@ -24,19 +25,20 @@ for data_one in tqdm(data_emoji):
             for idx_lab in range(len(emoji_top_cluster)):
                 if emoji_one in emoji_top_cluster[idx_lab]:
                     lab = idx_lab
+                    emoji_num[lab]+=1
             if lab == -1:
                 print('****************ERROR***************')
             data_emoji_top.append(
                 {'label': lab, 'text': txt}
             )
-
-random.shuffle(data_emoji_top)
-SP = int(len(data_emoji_top)*0.9)
-with open('./cluster_train/train.json', 'w') as f:
-    for idx in trange(SP):
-        json.dump(data_emoji_top[idx], f)
-        f.write('\n')
-with open('./cluster_train/dev.json', 'w') as f:
-    for idx in trange(SP,len(data_emoji_top)):
-        json.dump(data_emoji_top[idx], f)
-        f.write('\n')
+print(emoji_num)
+# random.shuffle(data_emoji_top)
+# SP = int(len(data_emoji_top)*0.9)
+# with open('./cluster_train/train.json', 'w') as f:
+#     for idx in trange(SP):
+#         json.dump(data_emoji_top[idx], f)
+#         f.write('\n')
+# with open('./cluster_train/dev.json', 'w') as f:
+#     for idx in trange(SP,len(data_emoji_top)):
+#         json.dump(data_emoji_top[idx], f)
+#         f.write('\n')
