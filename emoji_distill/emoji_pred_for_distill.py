@@ -10,6 +10,7 @@ from accelerate import Accelerator
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
 parser.add_argument("--method", default='', type=str, required=False, help="method for training emoji prediction, e.g. cluster")
+parser.add_argument("--num_classes", default=20, type=int, help="number of emoji classes")
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-17,sem-18,wtwt', type=str, required=False, help="dataset name")
 parser.add_argument("--use_slow_tokenizer", action="store_true", help="If passed, will use a slow tokenizer (not backed by the 🤗 Tokenizers library).")
@@ -25,7 +26,7 @@ parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwri
 def pred_prob(args):
     accelerator = Accelerator()
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
-    config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=20)
+    config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=args.num_classes)
     model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config)
     model = accelerator.prepare(model)
     model.eval()
