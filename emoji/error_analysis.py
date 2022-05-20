@@ -250,8 +250,8 @@ def evaluate(model, data_loader, output_name=None):
             data = []
             for idx in range(len(labels)):
                 txt = {'text':tokenizer.decode(input_ids[idx].cpu()),
-                        'pred':preds[idx],
-                        'label':labels[idx],
+                        'pred':str(preds[idx]),
+                        'label':str(labels[idx]),
                         'emoji_pred':emoji_top[preds_seq[idx]],
                         'emoji_lab': emoji_top[labels_seq[idx]]
                        }
@@ -284,8 +284,8 @@ def evaluate_17(model, data_loader, output_name=None):
             data = []
             for idx in range(len(labels)):
                 txt = {'text':tokenizer.decode(input_ids[idx].cpu()),
-                        'pred':preds[idx],
-                        'label':labels[idx],
+                        'pred':str(preds[idx]),
+                        'label':str(labels[idx]),
                         'emoji_pred':emoji_top[preds_seq[idx]],
                         'emoji_lab': emoji_top[labels_seq[idx]]
                        }
@@ -321,8 +321,8 @@ def evaluate_18(model, data_loader, output_name=None):
             data = []
             for idx in range(len(labels)):
                 txt = {'text':tokenizer.decode(input_ids[idx].cpu()),
-                        'pred':preds[idx],
-                        'label':labels[idx],
+                        'pred':str(preds[idx]),
+                        'label':str(labels[idx]),
                         'emoji_pred':emoji_top[preds_seq[idx]],
                         'emoji_lab': emoji_top[labels_seq[idx]]
                        }
