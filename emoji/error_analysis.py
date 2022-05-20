@@ -242,7 +242,7 @@ def evaluate(model, data_loader, output_name=None):
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.cpu().numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
-        if not output_name:
+        if output_name:
             preds_seq = logits_seq.argmax(axis=1).cpu().numpy()
             preds = preds.cpu().numpy()
             labels = labels.cpu().numpy()
@@ -276,7 +276,7 @@ def evaluate_17(model, data_loader, output_name=None):
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.cpu().numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
-        if not output_name:
+        if output_name:
             preds_seq = logits_seq.argmax(axis=1).cpu().numpy()
             preds = preds.cpu().numpy()
             labels = labels.cpu().numpy()
@@ -313,7 +313,7 @@ def evaluate_18(model, data_loader, output_name=None):
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.cpu().numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
-        if not output_name:
+        if output_name:
             preds_seq = logits_seq.argmax(axis=1).cpu().numpy()
             preds = preds.cpu().numpy()
             labels = labels.cpu().numpy()
