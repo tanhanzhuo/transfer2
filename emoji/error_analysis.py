@@ -474,15 +474,15 @@ def do_train(args):
         args.output_dir, config=config, config2=config2)
     model = accelerator.prepare(model)
     if 'sem-18' in args.input_dir:
-        cur_metric = evaluate_18(model, test_data_loader, output_name=args.output_dir.split('/')[-1]+
+        cur_metric = evaluate_18(model, test_data_loader, output_name=args.output_dir.split('/')[-2]+
                                                                     '_seed_'+str(args.seed)+
                                                                     '_ratio_'+args.ratio)
     elif 'sem-18' in args.input_dir:
-        cur_metric = evaluate_17(model, test_data_loader, output_name=args.output_dir.split('/')[-1]+
+        cur_metric = evaluate_17(model, test_data_loader, output_name=args.output_dir.split('/')[-2]+
                                                                     '_seed_'+str(args.seed)+
                                                                     '_ratio_'+args.ratio)
     else:
-        cur_metric = evaluate(model, test_data_loader, output_name=args.output_dir.split('/')[-1]+
+        cur_metric = evaluate(model, test_data_loader, output_name=args.output_dir.split('/')[-2]+
                                                                     '_seed_'+str(args.seed)+
                                                                     '_ratio_'+args.ratio)
     print('final')
