@@ -249,7 +249,7 @@ def evaluate(model, data_loader, output_name=None):
             labels_seq = labels_seq.cpu().numpy()
             data = []
             for idx in range(len(labels)):
-                txt = {'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
+                txt = {#'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
                         'pred':str(preds[idx]),
                         'label':str(labels[idx]),
                         'emoji_pred':emoji_top[preds_seq[idx]],
@@ -283,7 +283,7 @@ def evaluate_17(model, data_loader, output_name=None):
             labels_seq = labels_seq.cpu().numpy()
             data = []
             for idx in range(len(labels)):
-                txt = {'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
+                txt = {#'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
                         'pred':str(preds[idx]),
                         'label':str(labels[idx]),
                         'emoji_pred':emoji_top[preds_seq[idx]],
@@ -320,7 +320,7 @@ def evaluate_18(model, data_loader, output_name=None):
             labels_seq = labels_seq.cpu().numpy()
             data = []
             for idx in range(len(labels)):
-                txt = {'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
+                txt = {#'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
                         'pred':str(preds[idx]),
                         'label':str(labels[idx]),
                         'emoji_pred':emoji_top[preds_seq[idx]],
