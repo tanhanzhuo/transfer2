@@ -262,7 +262,7 @@ def evaluate(model, data_loader, output_name=None):############################
             preds_seq = logits_seq.argmax(axis=1).cpu().numpy()
             preds = preds.cpu().numpy()
             labels = labels.cpu().numpy()
-            labels_seq = labels_seq.cpu().numpy()
+            labels_seq = labels_seq.argmax(axis=1).cpu().numpy()
             data = []
             for idx in range(len(labels)):
                 txt = {#'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
@@ -296,7 +296,7 @@ def evaluate_17(model, data_loader, output_name=None):
             preds_seq = logits_seq.argmax(axis=1).cpu().numpy()
             preds = preds.cpu().numpy()
             labels = labels.cpu().numpy()
-            labels_seq = labels_seq.cpu().numpy()
+            labels_seq = labels_seq.argmax(axis=1).cpu().numpy()
             data = []
             for idx in range(len(labels)):
                 txt = {#'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
@@ -333,7 +333,7 @@ def evaluate_18(model, data_loader, output_name=None):
             preds_seq = logits_seq.argmax(axis=1).cpu().numpy()
             preds = preds.cpu().numpy()
             labels = labels.cpu().numpy()
-            labels_seq = labels_seq.cpu().numpy()
+            labels_seq = labels_seq.argmax(axis=1).cpu().numpy()
             data = []
             for idx in range(len(labels)):
                 txt = {#'text':tokenizer.decode(input_ids[idx].cpu()).replace(' <pad>',''),
