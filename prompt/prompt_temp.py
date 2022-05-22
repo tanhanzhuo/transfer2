@@ -126,12 +126,12 @@ def parse_args():
         "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
     parser.add_argument(
         "--learning_rate",
-        default=1e-5,
+        default=3e-5,
         type=float,
         help="The initial learning rate for Adam.")
     parser.add_argument(
         "--num_train_epochs",
-        default=30,
+        default=30,#10 for prompt
         type=int,
         help="Total number of training epochs to perform.", )
     parser.add_argument(
@@ -143,6 +143,11 @@ def parse_args():
         "--save_steps",
         type=int,
         default=1,
+        help="Save checkpoint every X updates steps.")
+    parser.add_argument(
+        "--shot",
+        type=int,
+        default=10,
         help="Save checkpoint every X updates steps.")
     args = parser.parse_args()
     return args
@@ -208,6 +213,11 @@ def do_train(args):
         for data in data_all:
             input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
             dataset[split].append(input_example)
+    ##################few shot
+    if args.shot:
+        from openprompt.data_utils.data_sampler import FewShotSampler
+        sampler = FewShotSampler(num_examples_per_label=args.shot)
+        dataset['train'] = sampler(dataset['train'])
     #####################models
     from openprompt.plms.mlm import MLMTokenizerWrapper
     config = AutoConfig.from_pretrained(args.model_name_or_path)
