@@ -278,6 +278,7 @@ def do_train(args):
         num_training_steps=max_train_steps,
     )
     global_step = 0
+    best_metric = [0, 0, 0]
     tic_train = time.time()
     for epoch in range(args.num_train_epochs):
         tot_loss = 0
