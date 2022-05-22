@@ -53,16 +53,7 @@ CONVERT = {
     'sem22-task6-sarcasm':{'0':0,'1':1}
 }
 
-TEMPLATE = {
-    'stance':'{"placeholder":"text_a"} I {"mask"} this.',
-    'hate':'{"placeholder":"text_a"} I {"mask"} this.',
-    'sem-18':'{"placeholder":"text_a"} I {"mask"} this.',
-    'sem-17':'{"placeholder":"text_a"} I {"mask"} this.',
-    'imp-hate':'{"placeholder":"text_a"} I {"mask"} this.',
-    'sem19-task5-hate':'{"placeholder":"text_a"} I {"mask"} this.',
-    'sem19-task6-offen':'{"placeholder":"text_a"} I {"mask"} this.',
-    'sem22-task6-sarcasm':'{"placeholder":"text_a"} I {"mask"} this.',
-}
+
 
 WORDS = {
     'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
@@ -115,6 +106,13 @@ def parse_args():
     parser.add_argument(
         "--results_name",
         default='results_all.txt',
+        type=str,
+        required=False,
+        help="The output directory where the model predictions and checkpoints will be written.",
+    )
+    parser.add_argument(
+        "--template",
+        default='I {"mask"} this.',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -189,6 +187,16 @@ def read_label(data):
 def do_train(args):
     # set_seed(args.seed)
     print(args)
+    TEMPLATE = {
+        'stance': '{"placeholder":"text_a"} '+args.template,
+        'hate': '{"placeholder":"text_a"} '+args.template,
+        'sem-18': '{"placeholder":"text_a"} '+args.template,
+        'sem-17': '{"placeholder":"text_a"} '+args.template,
+        'imp-hate': '{"placeholder":"text_a"} '+args.template,
+        'sem19-task5-hate': '{"placeholder":"text_a"} '+args.template,
+        'sem19-task6-offen': '{"placeholder":"text_a"} '+args.template,
+        'sem22-task6-sarcasm': '{"placeholder":"text_a"} '+args.template,
+    }
     accelerator = Accelerator()
     ####################dataset
     from openprompt.data_utils import InputExample
