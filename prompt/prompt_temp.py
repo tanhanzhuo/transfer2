@@ -134,7 +134,11 @@ def parse_args():
         type=int,
         default=1,
         help="Log every X updates steps.")
-
+    parser.add_argument(
+        "--save_steps",
+        type=int,
+        default=1,
+        help="Save checkpoint every X updates steps.")
     args = parser.parse_args()
     return args
 
