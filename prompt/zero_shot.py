@@ -20,6 +20,7 @@ import random
 import time
 import math
 import distutils.util
+import torch
 from functools import partial
 import copy
 import numpy as np
@@ -94,10 +95,9 @@ def evaluate(model, data_loader):
     label_all = []
     pred_all = []
     for batch in data_loader:
-        input_ids, segment_ids, labels, labels_seq = batch
-        logits, logits_seq = model(input_ids, segment_ids)
-
-        preds = logits.argmax(axis=1)
+        labels = batch.pop('labels')
+        outputs = model(**batch)
+        preds = outputs.logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.cpu().numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
 
@@ -119,7 +119,8 @@ def read_label(data):
 
 
 def convert_example(example, label2idx):
-    example.pop('attention_mask')
+    # example.pop('attention_mask')
+    example.pop('special_tokens_mask')
     example['labels'] = label2idx[example['labels']]
     return example  # ['input_ids'], example['token_type_ids'], label, prob
 
