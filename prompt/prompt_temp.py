@@ -147,7 +147,7 @@ def parse_args():
     parser.add_argument(
         "--shot",
         type=int,
-        default=10,
+        default=None,
         help="Save checkpoint every X updates steps.")
     args = parser.parse_args()
     return args
