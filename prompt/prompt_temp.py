@@ -126,7 +126,7 @@ def parse_args():
         help="The initial learning rate for Adam.")
     parser.add_argument(
         "--num_train_epochs",
-        default=2,
+        default=30,
         type=int,
         help="Total number of training epochs to perform.", )
     parser.add_argument(
@@ -148,7 +148,7 @@ def evaluate(model, data_loader):
     label_all = []
     pred_all = []
     for batch in data_loader:
-        inputs = inputs.cuda()
+        batch = batch.cuda()
         logits = model(batch)
         preds = logits.argmax(axis=1)
         label_all.extend(batch['label'].cpu().tolist())
