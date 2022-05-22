@@ -129,7 +129,7 @@ def parse_args():
     parser.add_argument(
         "--learning_rate",
         default=1e-5,
-        type=int,
+        type=float,
         help="The initial learning rate for Adam.")
     parser.add_argument(
         "--num_train_epochs",
