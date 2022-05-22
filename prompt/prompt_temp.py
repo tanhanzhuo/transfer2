@@ -128,8 +128,8 @@ def parse_args():
         "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
     parser.add_argument(
         "--learning_rate",
-        default='1e-5,2e-5,3e-5',
-        type=str,
+        default=1e-5,
+        type=int,
         help="The initial learning rate for Adam.")
     parser.add_argument(
         "--num_train_epochs",
@@ -261,10 +261,10 @@ def do_train(args):
          'weight_decay': 0.0}
     ]
     optimizer_grouped_parameters2 = [
-        {'params': prompt_model.verbalizer.group_parameters_1, "lr": 3e-5},
-        {'params': prompt_model.verbalizer.group_parameters_2, "lr": 3e-4},
+        {'params': prompt_model.verbalizer.group_parameters_1, "lr": args.learning_rate},
+        {'params': prompt_model.verbalizer.group_parameters_2, "lr": args.learning_rate*10},
     ]
-    optimizer1 = AdamW(optimizer_grouped_parameters1, lr=3e-5)
+    optimizer1 = AdamW(optimizer_grouped_parameters1, lr=args.learning_rate)
     optimizer2 = AdamW(optimizer_grouped_parameters2)
 
     # prompt_model, optimizer1,  optimizer2, train_dataloader, dev_dataloader, test_dataloader = accelerator.prepare(
