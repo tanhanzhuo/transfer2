@@ -112,7 +112,7 @@ def parse_args():
     )
     parser.add_argument(
         "--template",
-        default='I {"mask"} this.',
+        default="I {'mask'} this.",#This is M, This's M, It's M
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -131,7 +131,7 @@ def parse_args():
         help="The initial learning rate for Adam.")
     parser.add_argument(
         "--num_train_epochs",
-        default=30,#10 for prompt
+        default=30,#15 for prompt
         type=int,
         help="Total number of training epochs to perform.", )
     parser.add_argument(
