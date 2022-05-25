@@ -18,10 +18,10 @@ data = []
 for line in tqdm(lines):
     line_lower = line.lower()
 
-    results = re.findall(pattern,line_lower)
-    if len(results) > 0:
+    results = re.search(pattern,line_lower)
+    if results:
         data.append(line)
-        word_dic[results[0]]+=1
+        word_dic[results.group()]+=1
         break
     # for word in keywords:
     #     if word in line_lower:
