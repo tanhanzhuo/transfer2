@@ -22,7 +22,6 @@ for line in tqdm(lines):
     if results:
         data.append(line)
         word_dic[results.group()]+=1
-        break
     # for word in keywords:
     #     if word in line_lower:
     #         data.append(line)
