@@ -55,8 +55,8 @@ def pred_prob(args):
                 input = tokenizer(one['text'])['input_ids']
                 outputs = model(torch.tensor([input]).cuda())
                 preds = outputs.logits.argmax(dim=-1).cpu().numpy()
-                data_emoji[idx]['emoji'] = preds[0]
-        write_json(data_emoji,args.dataset_path + task + '/' + fileName + args.method)
+                data_emoji[idx]['emoji'] = int(preds[0])
+            write_json(data_emoji,args.dataset_path + task + '/' + fileName + args.method)
 
         print('task done! {}'.format(task))
 
