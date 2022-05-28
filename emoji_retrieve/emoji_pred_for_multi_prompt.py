@@ -40,7 +40,6 @@ def write_json(data, fileName):
 @torch.no_grad()
 def pred_prob(args):
     accelerator = Accelerator()
-    args.model_name_or_path = 'vinai/bertweet-base'
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
     config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=args.num_classes)
     model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config)
