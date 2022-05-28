@@ -3,7 +3,7 @@ import emoji
 import json
 import random
 from tqdm import tqdm
-TASK = 'sem19-task5-hate'
+TASK = 'sem19-task6-offen'
 emoji_dic = {}
 emoji_num = {}
 ################read the raw text
