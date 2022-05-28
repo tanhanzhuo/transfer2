@@ -7,7 +7,7 @@ import datasets
 import torch
 from accelerate import Accelerator
 import copy
-
+from tqdm import trange,tqdm
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
 parser.add_argument("--method", default='', type=str, required=False, help="method for training emoji prediction, e.g. cluster")
@@ -50,7 +50,7 @@ def pred_prob(args):
         for fileName in ['train', 'dev', 'test']:
             train_dataset = read_data(args.dataset_path + task + '/' + fileName)
             data_emoji = copy.deepcopy(train_dataset)
-            for idx in range(len(train_dataset)):
+            for idx in trange(len(train_dataset)):
                 one = train_dataset[idx]
                 input = tokenizer(one['text'])['input_ids']
                 outputs = model(torch.tensor([input]).cuda())
