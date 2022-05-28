@@ -56,7 +56,7 @@ def pred_prob(args):
                 outputs = model(torch.tensor([input]).cuda())
                 preds = outputs.logits.argmax(dim=-1).cpu().numpy()
                 data_emoji[idx]['emoji'] = preds[0]
-        write_json(data_emoji,args.dataset_path + task + '/' + fileName + '_emoji')
+        write_json(data_emoji,args.dataset_path + task + '/' + fileName + args.method)
 
         print('task done! {}'.format(task))
 
