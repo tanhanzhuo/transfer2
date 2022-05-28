@@ -171,7 +171,7 @@ def evaluate(model, data_loader):
         batch = batch.cuda()
         logits, logits_class = model(batch)
         preds = logits_class.argmax(axis=1)
-        label_all.extend(batch['guid'].cpu().tolist())
+        label_all.extend(batch['label'].cpu().tolist())
         pred_all.extend(preds.cpu().tolist())
 
     f1_ma = f1_score(label_all, pred_all,average='macro')
@@ -221,7 +221,7 @@ def do_train(args):
         dataset[split] = []
         data_all = read_data(args.input_dir+split+args.method+'.json')
         for data in data_all:
-            input_example = InputExample(text_a=data['text'].strip(), label=data['emoji'], guid=int(label2idx[data['labels']]))
+            input_example = InputExample(text_a=data['text'].strip(), label=int(label2idx[data['labels']]), guid=data['emoji'])
             dataset[split].append(input_example)
     ##################few shot
     if args.shot:
@@ -317,8 +317,8 @@ def do_train(args):
         for step, inputs in enumerate(train_dataloader):
             inputs = inputs.cuda()
             logits, logits_class = prompt_model(inputs)
-            labels = inputs['label']
-            labels_class = inputs['guid'].cuda()
+            labels = inputs['guid'].cuda()
+            labels_class = inputs['label']
             loss = loss_func(logits, labels)
             loss_class = loss_func2(logits_class, labels_class)
             loss_total = loss * (10 - int(args.ratio)) / 10.0 + loss_class * int(args.ratio) / 10.0
