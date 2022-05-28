@@ -139,7 +139,7 @@ def parse_args():
         help="The initial learning rate for Adam.")
     parser.add_argument(
         "--num_train_epochs",
-        default=2,#15 for prompt
+        default=15,#15 for prompt
         type=int,
         help="Total number of training epochs to perform.", )
     parser.add_argument(
