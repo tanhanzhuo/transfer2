@@ -389,7 +389,7 @@ if __name__ == "__main__":
                     f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / 5,
                                                                             sum(ave_metric[:, 1]) / 5,
                                                                             sum(ave_metric[:, 2]) / 5))
-                    for tmp in range(5):
+                    for tmp in range(len(ave_metric)):
                         f_res.write('%.5f, %.5f, %.5f \n' % (ave_metric[tmp, 0],ave_metric[tmp, 1],ave_metric[tmp, 2]))
 
                     f_res.close()
