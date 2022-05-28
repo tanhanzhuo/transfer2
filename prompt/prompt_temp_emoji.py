@@ -73,7 +73,7 @@ def parse_args():
     # Required parameters
     parser.add_argument(
         "--task_name",
-        default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
+        default='sem19-task5-hate',#'stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
@@ -113,7 +113,14 @@ def parse_args():
     )
     parser.add_argument(
         "--template",
-        default="I {'mask'} this.",#This is M, This's M, It's M
+        default="{'mask'}",#"I {'mask'} this.",#This is M, This's M, It's M
+        type=str,
+        required=False,
+        help="The output directory where the model predictions and checkpoints will be written.",
+    )
+    parser.add_argument(
+        "--method",
+        default="_emoji",  # This is M, This's M, It's M
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -132,7 +139,7 @@ def parse_args():
         help="The initial learning rate for Adam.")
     parser.add_argument(
         "--num_train_epochs",
-        default=30,#15 for prompt
+        default=2,#15 for prompt
         type=int,
         help="Total number of training epochs to perform.", )
     parser.add_argument(
@@ -150,6 +157,8 @@ def parse_args():
         type=int,
         default=None,
         help="Save checkpoint every X updates steps.")
+    parser.add_argument(
+        "--ratio", default='10', type=str, help="ratio for loss")
     args = parser.parse_args()
     return args
 
@@ -160,9 +169,9 @@ def evaluate(model, data_loader):
     pred_all = []
     for batch in data_loader:
         batch = batch.cuda()
-        logits = model(batch)
-        preds = logits.argmax(axis=1)
-        label_all.extend(batch['label'].cpu().tolist())
+        logits, logits_class = model(batch)
+        preds = logits_class.argmax(axis=1)
+        label_all.extend(batch['guid'].cpu().tolist())
         pred_all.extend(preds.cpu().tolist())
 
     f1_ma = f1_score(label_all, pred_all,average='macro')
@@ -205,15 +214,14 @@ def do_train(args):
     }
     accelerator = Accelerator()
     ####################dataset
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     from openprompt.data_utils import InputExample
     label2idx = CONVERT[args.task_name]
     dataset = {}
     for split in ['train', 'dev', 'test']:
         dataset[split] = []
-        data_all = read_data(args.input_dir+split+'.json')
+        data_all = read_data(args.input_dir+split+args.method+'.json')
         for data in data_all:
-            input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
+            input_example = InputExample(text_a=data['text'].strip(), label=data['emoji'], guid=int(label2idx[data['labels']]))
             dataset[split].append(input_example)
     ##################few shot
     if args.shot:
@@ -265,27 +273,27 @@ def do_train(args):
     #                                 label_words=WORDS[args.task_name])
 
     from openprompt.prompts import ManualVerbalizer
-    myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx), label_words=WORDS[args.task_name])
+    myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(WORDS[args.task_name]), label_words=WORDS[args.task_name])
 
     #######################train
-    from openprompt import PromptForClassification
-    prompt_model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
+    from pipeline_base import PromptForClassificationMulti
+    from transformers.models.roberta.modeling_roberta import RobertaClassificationHead
+    config2 = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=len(CONVERT[args.task_name]) )
+    classifier = RobertaClassificationHead(config2)
+    prompt_model = PromptForClassificationMulti(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False, classifier=classifier)
     prompt_model = prompt_model.cuda()
     from transformers import AdamW, get_linear_schedule_with_warmup
     loss_func = torch.nn.CrossEntropyLoss()
+    loss_func2 = torch.nn.CrossEntropyLoss()
     no_decay = ['bias', 'LayerNorm.weight']
     optimizer_grouped_parameters1 = [
-        {'params': [p for n, p in prompt_model.plm.named_parameters() if not any(nd in n for nd in no_decay)],
+        {'params': [p for n, p in prompt_model.named_parameters() if not any(nd in n for nd in no_decay)],
          'weight_decay': 0.01},
-        {'params': [p for n, p in prompt_model.plm.named_parameters() if any(nd in n for nd in no_decay)],
+        {'params': [p for n, p in prompt_model.named_parameters() if any(nd in n for nd in no_decay)],
          'weight_decay': 0.0}
     ]
-    optimizer_grouped_parameters2 = [
-        {'params': prompt_model.verbalizer.group_parameters_1, "lr": args.learning_rate},
-        {'params': prompt_model.verbalizer.group_parameters_2, "lr": args.learning_rate*10},
-    ]
+
     optimizer1 = AdamW(optimizer_grouped_parameters1, lr=args.learning_rate)
-    optimizer2 = AdamW(optimizer_grouped_parameters2)
 
     # prompt_model, optimizer1,  optimizer2, train_dataloader, dev_dataloader, test_dataloader = accelerator.prepare(
     #     prompt_model, optimizer1,  optimizer2, train_dataloader, dev_dataloader, test_dataloader
@@ -298,36 +306,33 @@ def do_train(args):
         num_warmup_steps=0,
         num_training_steps=max_train_steps,
     )
-    lr_scheduler2 = get_scheduler(
-        name='linear',
-        optimizer=optimizer2,
-        num_warmup_steps=0,
-        num_training_steps=max_train_steps,
-    )
+
     global_step = 0
     best_metric = [0, 0, 0]
     tic_train = time.time()
+    model_best = None
+    import copy
     for epoch in range(args.num_train_epochs):
         tot_loss = 0
         for step, inputs in enumerate(train_dataloader):
             inputs = inputs.cuda()
-            logits = prompt_model(inputs)
+            logits, logits_class = prompt_model(inputs)
             labels = inputs['label']
+            labels_class = inputs['guid'].cuda()
             loss = loss_func(logits, labels)
-            loss.backward()
-            tot_loss += loss.item()
+            loss_class = loss_func2(logits_class, labels_class)
+            loss_total = loss * (10 - int(args.ratio)) / 10.0 + loss_class * int(args.ratio) / 10.0
+            loss_total.backward()
+            tot_loss += loss_total.item()
             optimizer1.step()
             optimizer1.zero_grad()
-            optimizer2.step()
-            optimizer2.zero_grad()
             lr_scheduler1.step()
-            lr_scheduler2.step()
             global_step += 1
         if (epoch + 1) % args.logging_steps == 0:
             print(
-                "global step %d/%d, epoch: %d, loss: %f, speed: %.4f step/s, seed: %d,lr: %.5f,task: %s"
+                "global step %d/%d, epoch: %d, loss: %f, loss_class: %f, speed: %.4f step/s, seed: %d,lr: %.5f,task: %s"
                 % (global_step, max_train_steps, epoch,
-                   loss, args.logging_steps / (time.time() - tic_train),
+                   loss, loss_class, args.logging_steps / (time.time() - tic_train),
                    args.seed,float(0.0001),args.input_dir))
             tic_train = time.time()
         if (epoch + 1) % args.save_steps == 0:
@@ -335,20 +340,22 @@ def do_train(args):
             cur_metric = evaluate(prompt_model, dev_dataloader)
             print("eval done total : %s s" % (time.time() - tic_eval))
             if cur_metric[0] > best_metric[0]:
-                prompt_model.plm.save_pretrained(args.output_dir)
-                tokenizer.save_pretrained(args.output_dir)
+                # prompt_model.plm.save_pretrained(args.output_dir)
+                # tokenizer.save_pretrained(args.output_dir)
+                model_best = copy.deepcopy(prompt_model).cpu()
                 best_metric = cur_metric
     del plm,prompt_model  # , optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
     torch.cuda.empty_cache()
-    plm = AutoModelForMaskedLM.from_pretrained(args.output_dir, config=config)
-    prompt_model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
+    # plm = AutoModelForMaskedLM.from_pretrained(args.output_dir, config=config)
+    # prompt_model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
+    prompt_model = model_best
     prompt_model = prompt_model.cuda()
 
     cur_metric = evaluate(prompt_model, test_dataloader)
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
-    del plm,prompt_model
+    del prompt_model,model_best
     return cur_metric
 
 if __name__ == "__main__":

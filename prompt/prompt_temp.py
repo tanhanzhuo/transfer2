@@ -305,6 +305,7 @@ def do_train(args):
     global_step = 0
     best_metric = [0, 0, 0]
     tic_train = time.time()
+    import copy
     for epoch in range(args.num_train_epochs):
         tot_loss = 0
         for step, inputs in enumerate(train_dataloader):
@@ -333,20 +334,22 @@ def do_train(args):
             cur_metric = evaluate(prompt_model, dev_dataloader)
             print("eval done total : %s s" % (time.time() - tic_eval))
             if cur_metric[0] > best_metric[0]:
-                prompt_model.plm.save_pretrained(args.output_dir)
-                tokenizer.save_pretrained(args.output_dir)
+                # prompt_model.plm.save_pretrained(args.output_dir)
+                # tokenizer.save_pretrained(args.output_dir)
+                model_best = copy.deepcopy(prompt_model.cpu())
                 best_metric = cur_metric
     del plm,prompt_model  # , optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
     torch.cuda.empty_cache()
-    plm = AutoModelForMaskedLM.from_pretrained(args.output_dir, config=config)
-    prompt_model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
+    # plm = AutoModelForMaskedLM.from_pretrained(args.output_dir, config=config)
+    # prompt_model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
+    prompt_model = model_best
     prompt_model = prompt_model.cuda()
 
     cur_metric = evaluate(prompt_model, test_dataloader)
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
-    del plm,prompt_model
+    del prompt_model,model_best
     return cur_metric
 
 if __name__ == "__main__":
