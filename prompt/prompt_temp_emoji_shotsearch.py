@@ -289,7 +289,7 @@ def do_train(args):
     #                                 label_words=WORDS[args.task_name])
 
     from openprompt.prompts import ManualVerbalizer
-    myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(WORDS[args.task_name]), label_words=WORDS[args.task_name])
+    myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(WORDS[args.task_name][args.method]), label_words=WORDS[args.task_name][args.method])
 
     #######################train
     from pipeline_base import PromptForClassificationMulti
