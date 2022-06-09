@@ -4,7 +4,7 @@ import emoji
 import argparse
 from tqdm import tqdm,trange
 parser = argparse.ArgumentParser()
-parser.add_argument('task', type=str, default=None, required=True)
+parser.add_argument('--task', type=str, default=None, required=True)
 
 def write_json(fileName,data):
     with open(fileName, 'w', encoding='utf-8') as f:
