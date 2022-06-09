@@ -38,7 +38,7 @@ def find_emoji_hashtag(data, mode):
 
 ###extract
 def write_json(fileName,data):
-    with open(fileName + '.json', 'w', encoding='utf-8') as f:
+    with open(fileName, 'w', encoding='utf-8') as f:
         for one in data:
             json.dump(one, f)
             f.write('\n')

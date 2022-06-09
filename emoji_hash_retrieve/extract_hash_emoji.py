@@ -8,7 +8,7 @@ with open('/work/data/twitter_hash.txt','r') as f:
     lines = f.readlines()
 
 def write_json(fileName,data):
-    with open(fileName + '.json', 'w', encoding='utf-8') as f:
+    with open(fileName, 'w', encoding='utf-8') as f:
         for one in data:
             json.dump(one, f)
             f.write('\n')
