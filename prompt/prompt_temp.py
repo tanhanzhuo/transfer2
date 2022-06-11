@@ -216,6 +216,7 @@ def do_train(args):
     for split in ['train', 'dev', 'test']:
         dataset[split] = []
         data_all = read_data(args.input_dir+split+args.method+'.json')
+        random.shuffle(data_all)
         for data in data_all:
             input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
             dataset[split].append(input_example)
