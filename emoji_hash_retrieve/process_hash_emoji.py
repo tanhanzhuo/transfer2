@@ -52,7 +52,7 @@ def read_data(task,sp,KTH):
                             text = text.replace(hash_tmp + ' ', '')
                     # print(len(token(text)['input_ids']))
 
-                one['text'] = text + ' ' + token.eos_token + ' ' + one['text']
+                one['text'] = one['text'] + ' ' + token.eos_token + ' ' + text
             data.append(one)
     return data
 
