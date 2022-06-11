@@ -77,6 +77,12 @@ def parse_args():
         required=False,
         help="The name of the task to train selected in the list: ")
     parser.add_argument(
+        "--method",
+        default='',
+        type=str,
+        required=False,
+        help="The name of the task to train selected in the list: ")
+    parser.add_argument(
         "--model_name_or_path",
         default='vinai/bertweet-base',
         type=str,
@@ -209,7 +215,7 @@ def do_train(args):
     dataset = {}
     for split in ['train', 'dev', 'test']:
         dataset[split] = []
-        data_all = read_data(args.input_dir+split+'.json')
+        data_all = read_data(args.input_dir+split+args.method+'.json')
         for data in data_all:
             input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
             dataset[split].append(input_example)
