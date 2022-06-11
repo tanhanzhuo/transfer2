@@ -50,7 +50,7 @@ def read_data(task,sp,KTH):
                     for hash_tmp in hash_re:
                         if hash_tmp not in hash_same:
                             text = text.replace(hash_tmp + ' ', '')
-                    print(len(token(text)['input_ids']))
+                    # print(len(token(text)['input_ids']))
 
                 one['text'] = text + ' ' + token.eos_token + ' ' + one['text']
             data.append(one)
