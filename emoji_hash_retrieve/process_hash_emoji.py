@@ -8,7 +8,7 @@ def write_json(fileName,data):
         for one in data:
             json.dump(one, f)
             f.write('\n')
-token = AutoTokenizer.from_pretrained('vinai/bertweet-base')
+token = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
 KTH = 2
 HASH = re.compile(r"#\S+")
 for task in 'sem-18,sem19-task6-offen'.split(','):
@@ -32,8 +32,9 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
                 best = np.argpartition(np.array(similarity), -KTH)[-KTH:]
 
                 for idx in best:
-                    one['text'] = retrieve_all[idx].replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()\
-                                  + ' '+token.eos_token + ' '\
-                                  + one['text']
+                    text = retrieve_all[idx].replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
+                    if len(token()['input_ids']) > 30:
+                        print(text)
+                    one['text'] = text+ ' '+token.eos_token + ' '+ one['text']
                 data.append(one)
         write_json('../finetune/data/'+task+'/'+sp+'_emo_hash_process.json', data)
