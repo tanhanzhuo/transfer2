@@ -33,8 +33,18 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
 
                 for idx in best:
                     text = retrieve_all[idx].replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
-                    if len(token(text)['input_ids']) > 40:
-                        print(text)
+                    if len(token(text)['input_ids']) > 30:
+                        emoji_re = emoji.distinct_emoji_list(text)
+                        emoji_same = list(set(emoji_re) & set(emoji_one))
+                        text = emoji.replace_emoji(text) + ''.join(emoji_same)
+
+                        hash_re = HASH.findall(text)
+                        hash_same = list(set(hash_re) & set(hash_one))
+                        for hash_tmp in hash_re:
+                            if hash_tmp not in hash_same:
+                                text = text.replace(hash_tmp+' ', '')
+                        print(len(token(text)['input_ids']))
+                        
                     one['text'] = text+ ' '+token.eos_token + ' '+ one['text']
                 data.append(one)
         write_json('../finetune/data/'+task+'/'+sp+'_emo_hash_process.json', data)
