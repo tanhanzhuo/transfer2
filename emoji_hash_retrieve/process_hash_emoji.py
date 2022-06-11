@@ -33,7 +33,7 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
 
                 for idx in best:
                     text = retrieve_all[idx].replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
-                    if len(token()['input_ids']) > 30:
+                    if len(token(text)['input_ids']) > 30:
                         print(text)
                     one['text'] = text+ ' '+token.eos_token + ' '+ one['text']
                 data.append(one)
