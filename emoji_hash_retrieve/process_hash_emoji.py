@@ -13,6 +13,7 @@ KTH = 2
 HASH = re.compile(r"#\S+")
 for task in 'sem-18,sem19-task6-offen'.split(','):
     for sp in ['train','dev','test']:
+        data = []
         with open('../finetune/data/'+task+'/'+sp+'_emo_hash_retrieve.json') as f:
             for line in f:
                 one  = json.loads(line)
@@ -20,6 +21,8 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
                 emoji_one = one['emoji']
                 similarity = []
                 retrieve_all = one.pop('retrieve')
+                if len(retrieve_all) < KTH:
+                    continue
                 for retrieve in retrieve_all:
                     hash_re = HASH.findall(retrieve)
                     emoji_re = emoji.distinct_emoji_list(retrieve)
@@ -32,4 +35,5 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
                     one['text'] = retrieve_all[idx].replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()\
                                   + ' '+token.eos_token + ' '\
                                   + one['text']
-        write_json('../finetune/data/'+task+'/'+sp+'_emo_hash_process.json')
+                data.append(one)
+        write_json('../finetune/data/'+task+'/'+sp+'_emo_hash_process.json', data)
