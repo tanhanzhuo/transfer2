@@ -342,7 +342,7 @@ def do_train(args):
             if cur_metric[0] > best_metric[0]:
                 # prompt_model.plm.save_pretrained(args.output_dir)
                 # tokenizer.save_pretrained(args.output_dir)
-                model_best = copy.deepcopy(prompt_model.cpu())
+                model_best = copy.deepcopy(prompt_model).cpu()
                 best_metric = cur_metric
     del plm,prompt_model  # , optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
     torch.cuda.empty_cache()
