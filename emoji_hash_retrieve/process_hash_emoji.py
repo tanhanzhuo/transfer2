@@ -29,7 +29,7 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
                 best = np.argpartition(np.array(similarity), -KTH)[-KTH:]
 
                 for idx in best:
-                    one['text'] = retrieve_all[idx].replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
-                                + ' '+token.eos_token + ' '
-                                + one['text']
+                    one['text'] = retrieve_all[idx].replace('[RT]', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()\
+                                  + ' '+token.eos_token + ' '\
+                                  + one['text']
         write_json('../finetune/data/'+task+'/'+sp+'_emo_hash_process.json')
