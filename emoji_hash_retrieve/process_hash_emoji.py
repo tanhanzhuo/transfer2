@@ -65,8 +65,8 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
             idx_perm = list(range(len(data_train)))
             random.shuffle(idx_perm)
         NUM = int(len(data_train)*0.1)
-        write_json('../finetune/data/'+task+'/'+'train'+'_emo_hash_process'+str(KTH)+'.json', data_train[idx_perm[:NUM*9]])
-        write_json('../finetune/data/' + task + '/' + 'dev' + '_emo_hash_process'+str(KTH)+'.json', data_train[idx_perm[NUM * 9:]])
+        write_json('../finetune/data/'+task+'/'+'train'+'_emo_hash_process'+str(KTH)+'.json', [ data_train[i] for i in idx_perm[:NUM*9] ])
+        write_json('../finetune/data/' + task + '/' + 'dev' + '_emo_hash_process'+str(KTH)+'.json', [ data_train[i] for i in idx_perm[NUM*9:] ])
         data_test = read_data(task,'test')
         write_json('../finetune/data/' + task + '/' + 'test' + '_emo_hash_process'+str(KTH)+'.json', data_test)
 
