@@ -1,6 +1,6 @@
-for SEED in 0 1 2
+for SEED in 0 1 2 3 4
 do
-  for ORDER in refirst orifirst
+  for ORDER in refirst
   do
     for KTH in 0 1 2
     do
