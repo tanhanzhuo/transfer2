@@ -49,9 +49,9 @@ for task in 'sem-18,sem19-task6-offen'.split(','):
         data_train = []
         for sp in ['train','dev']:
             data_train.extend(read_data(task,sp,KTH))
-        if KTH == 0:
-            idx_perm = list(range(len(data_train)))
-            random.shuffle(idx_perm)
+
+        idx_perm = list(range(len(data_train)))
+        random.shuffle(idx_perm)
         NUM = int(len(data_train)*0.1)
         write_json('../finetune/data/'+task+'/'+'train'+'_emo_hash_process_semi'+str(KTH)+'.json', [ data_train[i] for i in idx_perm[:NUM*9] ])
         write_json('../finetune/data/' + task + '/' + 'dev' + '_emo_hash_process_semi'+str(KTH)+'.json', [ data_train[i] for i in idx_perm[NUM*9:] ])
