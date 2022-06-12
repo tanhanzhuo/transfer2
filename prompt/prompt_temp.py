@@ -163,7 +163,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-import json
+import emoji
 def write_json(fileName, data):
     with open(fileName + '.json', 'a', encoding='utf-8') as f:
         for one in data:
@@ -187,7 +187,7 @@ def evaluate(model, data_loader, output_name=None,tokenizer=None):
             labels = batch['label'].cpu().numpy()
             data = []
             for idx in range(len(labels)):
-                txt = {'text':tokenizer.decode(batch['input_ids'][idx].cpu()).replace(' <pad>',''),
+                txt = {'text':emoji.emojize(tokenizer.decode(batch['input_ids'][idx].cpu()).replace(' <pad>','')),
                         'pred':str(preds[idx]),
                         'label':str(labels[idx]),
                        }
@@ -377,7 +377,7 @@ def do_train(args):
     prompt_model = prompt_model.cuda()
 
     if args.error:
-        cur_metric = evaluate(prompt_model, test_dataloader, output_name=args.input_dir.split('/')[-2]+'_seed_'+str(args.seed),tokenizer=tokenizer)
+        cur_metric = evaluate(prompt_model, test_dataloader, output_name=args.input_dir.split('/')[-2]+args.method+'_seed_'+str(args.seed),tokenizer=tokenizer)
     else:
         cur_metric = evaluate(prompt_model, test_dataloader)
     print('final')
