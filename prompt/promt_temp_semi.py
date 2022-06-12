@@ -383,8 +383,60 @@ def do_train(args):
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
+    return_model = copy.deepcopy(prompt_model).cpu()
     del prompt_model,model_best
-    return cur_metric
+    return return_model
+
+def do_semi(args, return_model):
+    # set_seed(args.seed)
+    print(args)
+    TEMPLATE = {
+        'stance': '{"placeholder":"text_a"} '+args.template,
+        'hate': '{"placeholder":"text_a"} '+args.template,
+        'sem-18': '{"placeholder":"text_a"} '+args.template,
+        'sem-17': '{"placeholder":"text_a"} '+args.template,
+        'imp-hate': '{"placeholder":"text_a"} '+args.template,
+        'sem19-task5-hate': '{"placeholder":"text_a"} '+args.template,
+        'sem19-task6-offen': '{"placeholder":"text_a"} '+args.template,
+        'sem22-task6-sarcasm': '{"placeholder":"text_a"} '+args.template,
+    }
+    ####################dataset
+    from openprompt.data_utils import InputExample
+    label2idx = CONVERT[args.task]
+    dataset = {}
+    for split in ['train', 'dev']:
+        dataset[split] = []
+        data_all = read_data(args.input_dir+split+args.method+'.json')
+        random.shuffle(data_all)
+        for data in data_all:
+            input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
+            dataset[split].append(input_example)
+    #####################models
+    from openprompt.plms.mlm import MLMTokenizerWrapper
+    config = AutoConfig.from_pretrained(args.model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+    wrapped_t5tokenizer = MLMTokenizerWrapper(max_seq_length=128,tokenizer=tokenizer)
+
+    ######################template
+    from openprompt.prompts import ManualTemplate
+    template_text = TEMPLATE[args.task]
+    mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
+
+    ##################data loader
+    from openprompt import PromptDataLoader
+    train_dataloader = PromptDataLoader(dataset=dataset["train"], template=mytemplate, tokenizer=tokenizer,
+                                        tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                        batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
+                                        predict_eos_token=False, truncate_method="tail")
+    dev_dataloader = PromptDataLoader(dataset=dataset["dev"], template=mytemplate, tokenizer=tokenizer,
+                                      tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                      batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
+                                      predict_eos_token=False, truncate_method="tail")
+    #######################train
+    prompt_model = return_model.cuda()
+    cur_metric = evaluate(prompt_model, test_dataloader)
+
+    return return_model
 
 if __name__ == "__main__":
     args = parse_args()
@@ -398,7 +450,9 @@ if __name__ == "__main__":
                 args_tmp.input_dir = args.input_dir + task + '/'
                 args_tmp.seed = int(seed)
                 args_tmp.model_name_or_path = model_name
-                ave_metric.append(do_train(args_tmp))
+                return_model = do_train(args_tmp)
+
+
             ave_metric = np.array(ave_metric)
             print("*************************************************************************************")
             print('Task: %s, model: %s' % (task, model_name))

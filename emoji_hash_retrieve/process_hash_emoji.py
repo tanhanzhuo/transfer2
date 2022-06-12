@@ -3,7 +3,8 @@ import re
 import emoji
 import numpy as np
 import random
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer,set_seed
+set_seed(0)
 
 token = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
 HASH = re.compile(r"#\S+")
@@ -19,8 +20,8 @@ def read_data(task,sp,KTH):
     with open('../finetune/data/' + task + '/' + sp + '_emo_hash_retrieve.json') as f:
         for line in f:
             one = json.loads(line)
-            hash_one = one['hash']
-            emoji_one = one['emoji']
+            hash_one = one.pop('hash')
+            emoji_one = one.pop('emoji')
             similarity = []
             retrieve_all = one.pop('retrieve')
             if len(retrieve_all) < MIN:
