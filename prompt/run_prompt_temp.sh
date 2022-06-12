@@ -1,3 +1,8 @@
+for element in Hydrogen Helium Lithium Beryllium
+do
+  echo "Element: $element"
+done
+
 for SEED in 0,1,2
 do
   for ORDER in refirst,orifirst
