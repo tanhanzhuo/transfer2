@@ -301,7 +301,7 @@ def do_train(args):
     # set_seed(args.seed)
     print(args)
     data_all = tokenization(args)
-    label2idx = CONVERT[args.task]
+    label2idx = CONVERT[args.task_name]
     trans_func = partial(
         convert_example,
         label2idx=label2idx)
@@ -413,6 +413,7 @@ if __name__ == "__main__":
                     for seed in args.seed.split(','):
                         set_seed(int(seed))
                         args_tmp = copy.deepcopy(args)
+                        args_tmp.task_name = task
                         args_tmp.input_dir = args.input_dir + task + '/'
                         args_tmp.output_dir = args.output_dir + task + '/'
                         args_tmp.seed = int(seed)
