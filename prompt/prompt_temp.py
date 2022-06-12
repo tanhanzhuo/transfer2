@@ -364,7 +364,7 @@ def do_train(args):
             tic_eval = time.time()
             cur_metric = evaluate(prompt_model, dev_dataloader)
             print("eval done total : %s s" % (time.time() - tic_eval))
-            if cur_metric[0] > best_metric[0]:
+            if cur_metric[0] >= best_metric[0]:
                 # prompt_model.plm.save_pretrained(args.output_dir)
                 # tokenizer.save_pretrained(args.output_dir)
                 model_best = copy.deepcopy(prompt_model).cpu()
