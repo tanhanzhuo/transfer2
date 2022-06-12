@@ -4,18 +4,23 @@ import emoji
 import numpy as np
 import random
 from transformers import AutoTokenizer,set_seed
-set_seed(0)
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--seed', type=int, default=0)
+parser.add_argument('--name', type=str, default='_emo_hash_process_orifirst')
+parser.add_argument('--order', type=str, default='ori')
 token = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
 HASH = re.compile(r"#\S+")
 MIN = 2
+
 def write_json(fileName,data):
     with open(fileName, 'w', encoding='utf-8') as f:
         for one in data:
             json.dump(one, f)
             f.write('\n')
 
-def read_data(task,sp,KTH):
+def read_data(task,sp,KTH,order):
     data = []
     with open('../finetune/data/' + task + '/' + sp + '_emo_hash_retrieve.json') as f:
         for line in f:
@@ -52,23 +57,31 @@ def read_data(task,sp,KTH):
                         if hash_tmp not in hash_same:
                             text = text.replace(hash_tmp + ' ', '')
                     # print(len(token(text)['input_ids']))
-
-                # one['text'] = text + ' ' + token.eos_token + ' ' + one['text']
-                one['text'] = one['text'] + ' ' + token.eos_token + ' ' + text
+                if order == 'retrieve':
+                    one['text'] = text + ' ' + token.eos_token + ' ' + one['text']
+                elif order == 'ori':
+                    one['text'] = one['text'] + ' ' + token.eos_token + ' ' + text
+                else:
+                    print('error!!!!!!!!!!!')
             data.append(one)
     return data
 
-for task in 'sem-18,sem19-task6-offen'.split(','):
-    for KTH in [0,1,2]:
-        data_train = []
-        for sp in ['train','dev']:
-            data_train.extend(read_data(task,sp,KTH))
-        if KTH == 0:
-            idx_perm = list(range(len(data_train)))
-            random.shuffle(idx_perm)
-        NUM = int(len(data_train)*0.1)
-        write_json('../finetune/data/'+task+'/'+'train'+'_emo_hash_process_orifirst'+str(KTH)+'.json', [ data_train[i] for i in idx_perm[:NUM*9] ])
-        write_json('../finetune/data/' + task + '/' + 'dev' + '_emo_hash_process_orifirst'+str(KTH)+'.json', [ data_train[i] for i in idx_perm[NUM*9:] ])
-        data_test = read_data(task,'test',KTH)
-        write_json('../finetune/data/' + task + '/' + 'test' + '_emo_hash_process_orifirst'+str(KTH)+'.json', data_test)
+def main(args):
+    set_seed(args.seed)
+    for task in 'sem-18,sem19-task6-offen'.split(','):
+        for KTH in [0,1,2]:
+            data_train = []
+            for sp in ['train','dev']:
+                data_train.extend(read_data(task,sp,KTH,args.order))
+            if KTH == 0:
+                idx_perm = list(range(len(data_train)))
+                random.shuffle(idx_perm)
+            NUM = int(len(data_train)*0.1)
+            write_json('../finetune/data/'+task+'/'+'train'+args.name+str(KTH)+'.json', [ data_train[i] for i in idx_perm[:NUM*9] ])
+            write_json('../finetune/data/' + task + '/' + 'dev' + args.name+str(KTH)+'.json', [ data_train[i] for i in idx_perm[NUM*9:] ])
+            data_test = read_data(task,'test',KTH,args.order)
+            write_json('../finetune/data/' + task + '/' + 'test' + args.name+str(KTH)+'.json', data_test)
 
+if __name__ == '__main__':
+    args = parser.parse_args()
+    main(args)
