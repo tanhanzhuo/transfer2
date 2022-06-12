@@ -155,11 +155,23 @@ def parse_args():
         type=int,
         default=None,
         help="Save checkpoint every X updates steps.")
+    parser.add_argument(
+        "--error",
+        type=int,
+        default=0,
+        help="error analysis")
     args = parser.parse_args()
     return args
 
+import json
+def write_json(fileName, data):
+    with open(fileName + '.json', 'a', encoding='utf-8') as f:
+        for one in data:
+            json.dump(one, f)
+            f.write('\n')
+
 @torch.no_grad()
-def evaluate(model, data_loader):
+def evaluate(model, data_loader, output_name=None,tokenizer=None):
     model.eval()
     label_all = []
     pred_all = []
@@ -169,6 +181,18 @@ def evaluate(model, data_loader):
         preds = logits.argmax(axis=1)
         label_all.extend(batch['label'].cpu().tolist())
         pred_all.extend(preds.cpu().tolist())
+
+        if output_name:
+            preds = preds.cpu().numpy()
+            labels = batch['label'].cpu().numpy()
+            data = []
+            for idx in range(len(labels)):
+                txt = {'text':tokenizer.decode(batch['input_ids'][idx].cpu()).replace(' <pad>',''),
+                        'pred':str(preds[idx]),
+                        'label':str(labels[idx]),
+                       }
+                data.append(txt)
+            write_json(output_name, data)
 
     f1_ma = f1_score(label_all, pred_all,average='macro')
     f1_mi = f1_score(label_all, pred_all, average='micro')
@@ -352,7 +376,10 @@ def do_train(args):
     prompt_model = model_best
     prompt_model = prompt_model.cuda()
 
-    cur_metric = evaluate(prompt_model, test_dataloader)
+    if args.error:
+        cur_metric = evaluate(prompt_model, test_dataloader, output_name=args.input_dir.split('/')[-2]+'_seed_'+str(args.seed),tokenizer=tokenizer)
+    else:
+        cur_metric = evaluate(prompt_model, test_dataloader)
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
