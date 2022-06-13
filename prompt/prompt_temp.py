@@ -81,7 +81,13 @@ def parse_args():
         default='',
         type=str,
         required=False,
-        help="The name of the task to train selected in the list: ")
+        help="method used for this training")
+    parser.add_argument(
+        "--train_dev",
+        default=0,
+        type=int,
+        required=False,
+        help="train and dev together ")
     parser.add_argument(
         "--model_name_or_path",
         default='vinai/bertweet-base',
@@ -237,7 +243,11 @@ def do_train(args):
     from openprompt.data_utils import InputExample
     label2idx = CONVERT[args.task]
     dataset = {}
-    for split in ['train', 'dev', 'test']:
+    if args.train_dev:
+        SPLITS = ['train_dev', 'test']
+    else:
+        SPLITS = ['train', 'dev', 'test']
+    for split in SPLITS:
         dataset[split] = []
         data_all = read_data(args.input_dir+split+args.method+'.json')
         random.shuffle(data_all)
@@ -247,8 +257,12 @@ def do_train(args):
     ##################few shot
     if args.shot:
         from openprompt.data_utils.data_sampler import FewShotSampler
-        sampler = FewShotSampler(num_examples_per_label=args.shot)
-        dataset['train'] = sampler(dataset['train'])
+        if args.train_dev:
+            sampler = FewShotSampler(num_examples_per_label=args.shot, num_examples_per_label_dev=args.train_dev, also_sample_dev=True)
+            dataset['train'], dataset['dev'] = sampler(dataset['train'])
+        else:
+            sampler = FewShotSampler(num_examples_per_label=args.shot)
+            dataset['train'] = sampler(dataset['train'])
     #####################models
     from openprompt.plms.mlm import MLMTokenizerWrapper
     config = AutoConfig.from_pretrained(args.model_name_or_path)
