@@ -259,7 +259,7 @@ def do_train(args):
         from openprompt.data_utils.data_sampler import FewShotSampler
         if args.train_dev:
             sampler = FewShotSampler(num_examples_per_label=args.shot, num_examples_per_label_dev=args.train_dev, also_sample_dev=True)
-            dataset['train'], dataset['dev'] = sampler(dataset['train'])
+            dataset['train'], dataset['dev'] = sampler(dataset['train_dev'])
         else:
             sampler = FewShotSampler(num_examples_per_label=args.shot)
             dataset['train'] = sampler(dataset['train'])
