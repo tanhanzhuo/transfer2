@@ -267,7 +267,7 @@ def tokenization(args):
         batched=True,
         num_proc=1,
         remove_columns=[text_column_name],
-        load_from_cache_file=False,
+        load_from_cache_file=True,
         desc="Running tokenizer on dataset line_by_line",
     )
 
