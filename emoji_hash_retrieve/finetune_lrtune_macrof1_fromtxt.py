@@ -267,7 +267,7 @@ def tokenization(args):
         batched=True,
         num_proc=1,
         remove_columns=[text_column_name],
-        load_from_cache_file=True,
+        load_from_cache_file=False,
         desc="Running tokenizer on dataset line_by_line",
     )
 
@@ -385,11 +385,11 @@ def do_train(args):
                 tic_eval = time.time()
                 cur_metric = evaluate(model, dev_data_loader)
                 print("eval done total : %s s" % (time.time() - tic_eval))
-                # if cur_metric[0] >= best_metric[0]:
-                #     accelerator.wait_for_everyone()
-                #     model_best = copy.deepcopy(model).cpu()
-                #     best_metric = cur_metric
-                #     torch.cuda.empty_cache()
+                if cur_metric[0] >= best_metric[0]:
+                    accelerator.wait_for_everyone()
+                    model_best = copy.deepcopy(model).cpu()
+                    best_metric = cur_metric
+                    torch.cuda.empty_cache()
         del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
         torch.cuda.empty_cache()
 
