@@ -1,47 +1,103 @@
 import os
+import time
+from multiprocessing import Pool
 from tqdm import tqdm, trange
 import re
 import json
 import string
 HASH = re.compile(r"#\S+")
-hash_dic = {}
-filePath = '/work/data/twitter_hash.txt'
-with open(filePath, 'r') as f:
-    for line in tqdm(f):
-        line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
-        if not line:
+filePath = '/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
+
+def process(line):
+    line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
+    if len(line) < 10:
+        return []
+    hash_tmp = HASH.findall(line)
+    hash_tmp_clean = []
+    for hash_one in hash_tmp:
+        hash_one = hash_one.lower()
+        if len(hash_one) > 30:
             continue
-        hash_tmp = HASH.findall(line)
-        hash_tmp_clean = []
-        for hash_one in hash_tmp:
-            hash_one = hash_one.lower()
-            if len(hash_one) > 30:
+        if hash_one[1].isalpha():
+            if hash_one[-1] == '…':
                 continue
-            if hash_one[1].isalpha():
-                if hash_one[-1] == '…':
-                    continue
-                if len(hash_one) > 3 and hash_one[-3:] == '...':
-                    continue
-                if hash_one[-1] in string.punctuation:
-                    hash_one = hash_one[:-1]
-                hash_clean = re.findall('[a-z0-9]*', hash_one)
-                hash_clean = '#' + ''.join(hash_clean)
-                if hash_one == hash_clean:
-                    hash_tmp_clean.append(hash_one)
+            if len(hash_one) > 3 and hash_one[-3:] == '...':
+                continue
+            if hash_one[-1] in string.punctuation:
+                hash_one = hash_one[:-1]
+            hash_clean = re.findall('[a-z0-9]*', hash_one)
+            hash_clean = '#' + ''.join(hash_clean)
+            if hash_one == hash_clean:
+                hash_tmp_clean.append(hash_one)
 
-        for hash_one in hash_tmp_clean:
-            if hash_one in hash_dic.keys():
-                hash_dic[hash_one] += 1
-            else:
-                hash_dic[hash_one] = 1
-
-for hash_one in hash_dic.keys():
-    if hash_dic[hash_one] < 1000:
-        hash_dic.pop(hash_one)
+    return hash_tmp_clean
 
 def write_json(fileName,data):
     with open(fileName + '.json', 'w', encoding='utf-8') as f:
         for one in data:
             json.dump(one, f)
             f.write('\n')
-write_json('hash_his',hash_dic)
+
+if __name__ == "__main__":
+    time1 = time.time()
+    f_read = open(filePath, 'r', encoding='utf-8')
+    pool = Pool(20)
+    process_data = pool.imap(process, f_read, 1024)
+
+    hash_all = []
+    for data in tqdm(process_data):
+        hash_all.extend(data)
+
+    hash_dic = {}
+    for hash_one in hash_all:
+        if hash_one in hash_dic.keys():
+            hash_dic[hash_one] += 1
+        else:
+            hash_dic[hash_one] = 1
+
+    time2 = time.time()
+    print(time2 - time1)
+
+    for hash_one in list(hash_dic.keys()):
+        if hash_dic[hash_one] < 1000:
+            hash_dic.pop(hash_one)
+
+    write_json('hash_his', hash_dic)
+    #
+    # hash_dic = {}
+    # with open(filePath, 'r', encoding='utf-8') as f:
+    #     for line in tqdm(f):
+    #         line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
+    #         if len(line) < 10:
+    #             continue
+    #         hash_tmp = HASH.findall(line)
+    #         hash_tmp_clean = []
+    #         for hash_one in hash_tmp:
+    #             hash_one = hash_one.lower()
+    #             if len(hash_one) > 30:
+    #                 continue
+    #             if hash_one[1].isalpha():
+    #                 if hash_one[-1] == '…':
+    #                     continue
+    #                 if len(hash_one) > 3 and hash_one[-3:] == '...':
+    #                     continue
+    #                 if hash_one[-1] in string.punctuation:
+    #                     hash_one = hash_one[:-1]
+    #                 hash_clean = re.findall('[a-z0-9]*', hash_one)
+    #                 hash_clean = '#' + ''.join(hash_clean)
+    #                 if hash_one == hash_clean:
+    #                     hash_tmp_clean.append(hash_one)
+    #
+    #         for hash_one in hash_tmp_clean:
+    #             if hash_one in hash_dic.keys():
+    #                 hash_dic[hash_one] += 1
+    #             else:
+    #                 hash_dic[hash_one] = 1
+    # time3 = time.time()
+    # print(time3-time2)
+    #
+    # for hash_one in list(hash_dic.keys()):
+    #     if hash_dic[hash_one] < 1000:
+    #         hash_dic.pop(hash_one)
+    #
+    # write_json('hash_his2',hash_dic)
