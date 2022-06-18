@@ -8,6 +8,9 @@ import json
 f=open('./hash_his.json','r',encoding='utf-8')
 hash_dic = json.load(f)
 f.close()
+for hash_one in list(hash_dic.keys()):
+    if hash_dic[hash_one] < args.thre:
+        hash_dic.pop(hash_one)
 
 from tqdm import tqdm, trange
 import re
@@ -46,12 +49,13 @@ def write_json(fileName,data):
             json.dump(one, f)
             f.write('\n')
 
+hash_thre_list = list(hash_dic.keys())
 hash_data = {}
 with open(filePath, 'r', encoding='utf-8') as f:
     for line in tqdm(f):
         hash_tmp = process(line)
         for hash_one in hash_tmp:
-            if hash_dic[hash_one] >= args.thre:
+            if hash_one in hash_thre_list:
                 if hash_one in hash_data.keys():
                     hash_data[hash_one].append(line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip())
                 else:
