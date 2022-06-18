@@ -35,7 +35,13 @@ with open(filePath, 'r') as f:
             else:
                 hash_dic[hash_one] = 1
 
-with open('hash_his_one.txt', 'w') as f:
-    for hash_one in hash_dic.keys():
-        if hash_dic[hash_one] > 1000:
-            f.write(hash_one + '\t' + str(hash_dic[hash_one]) + '\n')
+for hash_one in hash_dic.keys():
+    if hash_dic[hash_one] < 1000:
+        hash_dic.pop(hash_one)
+
+def write_json(fileName,data):
+    with open(fileName + '.json', 'w', encoding='utf-8') as f:
+        for one in data:
+            json.dump(one, f)
+            f.write('\n')
+write_json('hash_his',hash_dic)
