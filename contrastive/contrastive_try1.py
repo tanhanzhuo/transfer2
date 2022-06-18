@@ -12,7 +12,7 @@ parser.add_argument('--num',default=1000,type=int)
 
 
 HASH = re.compile(r"#\S+")
-filePath =  'twitter_hash_sample.txt'#'/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
+filePath = '/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
 
 def process(line):
     line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
