@@ -106,7 +106,7 @@ if __name__ == "__main__":
     # print(time3-time2)
 
     for hash_one in list(hash_dic.keys()):
-        if hash_dic[hash_one] < 100:
+        if hash_dic[hash_one] < 10:
             hash_dic.pop(hash_one)
 
     with open('hash_his' + '.json', 'w', encoding='utf-8') as f:
