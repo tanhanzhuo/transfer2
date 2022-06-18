@@ -5,7 +5,7 @@ parser.add_argument('--num',default=1000,type=int)
 args = parser.parse_args()
 
 import json
-f=open('./contrastive/hash_his.json','r',encoding='utf-8')
+f=open('./hash_his.json','r',encoding='utf-8')
 hash_dic = json.load(f)
 f.close()
 
