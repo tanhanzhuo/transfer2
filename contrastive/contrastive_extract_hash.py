@@ -51,21 +51,22 @@ def write_json(fileName,data):
 
 hash_thre_list = list(hash_dic.keys())
 hash_data = {}
+for hash_one in hash_thre_list:
+    hash_data[hash_one] = []
 with open(filePath, 'r', encoding='utf-8') as f:
-    for line in tqdm(f):
+    lines = f.readlines()
+    for idx in trange(len(lines)):
+        line = lines[idx]
         hash_tmp = process(line)
         for hash_one in hash_tmp:
             if hash_one in hash_thre_list:
-                if hash_one in hash_data.keys():
-                    hash_data[hash_one].append(line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip())
-                else:
-                    hash_data[hash_one] = [line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()]
+                hash_data[hash_one].append(idx)
 
 NUM = args.num
 hash_pair = []
-for hash_one in hash_data.keys():
+for hash_one in tqdm(hash_thre_list):
     data = hash_data[hash_one]
     for tmp in range(NUM):
         data_tmp = random.sample(data, 2)
-        hash_pair.append(  {'text1':data_tmp[0], 'text2':data_tmp[1]}  )
+        hash_pair.append(  {'text1':lines[data_tmp[0]], 'text2':lines[data_tmp[1]]}  )
 write_json('hash_pair_thre'+str(args.thre)+'_num'+str(args.num), hash_pair)
