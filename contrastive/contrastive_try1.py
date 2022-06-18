@@ -106,7 +106,8 @@ if __name__ == "__main__":
     # print(time3-time2)
 
     for hash_one in list(hash_dic.keys()):
-        if hash_dic[hash_one] < 1000:
+        if hash_dic[hash_one] < 100:
             hash_dic.pop(hash_one)
 
-    write_json('hash_his',hash_dic)
+    with open('hash_his' + '.json', 'w', encoding='utf-8') as f:
+        json.dump(hash_dic, f)
