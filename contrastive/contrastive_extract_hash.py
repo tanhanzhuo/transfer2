@@ -58,9 +58,10 @@ with open(filePath, 'r', encoding='utf-8') as f:
     for idx in trange(len(lines)):
         line = lines[idx]
         hash_tmp_clean = process(line)
-        # for hash_one in hash_tmp_clean:
-        #     if hash_one in hash_thre_list:
-        #         hash_data[hash_one].append(idx)
+        for hash_one in hash_tmp_clean:
+            tmp = hash_data.get(hash_one)
+            if not tmp:
+                hash_data[hash_one].append(idx)
 
 NUM = args.num
 hash_pair = []
