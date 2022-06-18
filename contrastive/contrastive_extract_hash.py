@@ -57,8 +57,30 @@ with open(filePath, 'r', encoding='utf-8') as f:
     lines = f.readlines()
     for idx in trange(len(lines)):
         line = lines[idx]
-        hash_tmp = process(line)
+
+        line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
+        if len(line) < 10:
+            continue
+        hash_tmp = HASH.findall(line)
+        hash_tmp_clean = []
         for hash_one in hash_tmp:
+            hash_one = hash_one.lower()
+            if len(hash_one) > 30:
+                continue
+            if hash_one[1].isalpha():
+                if hash_one[-1] == '…':
+                    continue
+                if len(hash_one) > 3 and hash_one[-3:] == '...':
+                    continue
+                if hash_one[-1] in string.punctuation:
+                    hash_one = hash_one[:-1]
+                hash_clean = re.findall('[a-z0-9]*', hash_one)
+                hash_clean = '#' + ''.join(hash_clean)
+                if hash_one == hash_clean:
+                    hash_tmp_clean.append(hash_one)
+
+
+        for hash_one in hash_tmp_clean:
             if hash_one in hash_thre_list:
                 hash_data[hash_one].append(idx)
 
