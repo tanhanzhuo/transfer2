@@ -8,11 +8,11 @@ import string
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--pool',default=20,type=int)
-parser.add_argument('--num',default=1024,type=int)
+parser.add_argument('--num',default=1000,type=int)
 
 
 HASH = re.compile(r"#\S+")
-filePath =  '/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
+filePath =  'twitter_hash_sample.txt'#'/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
 
 def process(line):
     line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
@@ -46,15 +46,16 @@ def write_json(fileName,data):
 
 if __name__ == "__main__":
     args = parser.parse_args()
+
     time1 = time.time()
     f_read = open(filePath, 'r', encoding='utf-8')
     pool = Pool(args.pool)
-    process_data = pool.map(process, f_read, args.num)
+    process_data = pool.imap(process, f_read, args.num)
 
     hash_all = []
     for data in tqdm(process_data):
         hash_all.extend(data)
-
+    pool.close()
     hash_dic = {}
     for hash_one in hash_all:
         if hash_one in hash_dic.keys():
@@ -70,7 +71,8 @@ if __name__ == "__main__":
             hash_dic.pop(hash_one)
 
     write_json('hash_his', hash_dic)
-    #
+
+
     # hash_dic = {}
     # with open(filePath, 'r', encoding='utf-8') as f:
     #     for line in tqdm(f):
@@ -107,4 +109,4 @@ if __name__ == "__main__":
     #     if hash_dic[hash_one] < 1000:
     #         hash_dic.pop(hash_one)
     #
-    # write_json('hash_his2',hash_dic)
+    # write_json('hash_his4',hash_dic)
