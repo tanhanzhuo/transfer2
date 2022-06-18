@@ -59,7 +59,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
         line = lines[idx]
         hash_tmp_clean = process(line)
         for hash_one in hash_tmp_clean:
-            tmp = hash_data.get(hash_one)
+            tmp = hash_data.get(hash_one, default = None)
             if not tmp:
                 hash_data[hash_one].append(idx)
 
