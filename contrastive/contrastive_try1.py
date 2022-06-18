@@ -12,7 +12,7 @@ parser.add_argument('--num',default=1024,type=int)
 
 
 HASH = re.compile(r"#\S+")
-filePath = '/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
+filePath =  '/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
 
 def process(line):
     line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     time1 = time.time()
     f_read = open(filePath, 'r', encoding='utf-8')
     pool = Pool(args.pool)
-    process_data = pool.imap(process, f_read, args.num)
+    process_data = pool.map(process, f_read, args.num)
 
     hash_all = []
     for data in tqdm(process_data):
