@@ -60,7 +60,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
     for line in tqdm(f):
         hash_tmp_clean = process(line)
         for hash_one in hash_tmp_clean:
-            tmp = hash_data.get(hash_one, default = None)
+            tmp = hash_data.get(hash_one)
             if not tmp:
                 hash_data[hash_one].append(line)#idx)
 
