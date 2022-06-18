@@ -54,16 +54,16 @@ hash_data = {}
 for hash_one in hash_thre_list:
     hash_data[hash_one] = []
 with open(filePath, 'r', encoding='utf-8') as f:
-    # lines = f.readlines()
-    # for idx in trange(len(lines)):
-    #     line = lines[idx]
-    for line in tqdm(f):
+    lines = f.readlines()
+    for idx in trange(len(lines)):
+        line = lines[idx]
+    # for line in tqdm(f):
         hash_tmp_clean = process(line)
         for hash_one in hash_tmp_clean:
             tmp = hash_data.get(hash_one)
 
             if tmp is not None:
-                hash_data[hash_one].append(line)#idx)
+                hash_data[hash_one].append(idx)
 
 NUM = args.num
 hash_pair = []
