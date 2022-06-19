@@ -71,5 +71,6 @@ for hash_one in tqdm(hash_thre_list):
     data = hash_data[hash_one]
     for tmp in range(NUM):
         data_tmp = random.sample(data, 2)
-        hash_pair.append(  {'text1':lines[data_tmp[0]], 'text2':lines[data_tmp[1]]}  )
+        hash_pair.append(  {'text1':lines[data_tmp[0]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip(), \
+                            'text2':lines[data_tmp[1]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()}  )
 write_json('hash_pair_thre'+str(args.thre)+'_num'+str(args.num), hash_pair)
