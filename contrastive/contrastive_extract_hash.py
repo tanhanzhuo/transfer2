@@ -16,6 +16,7 @@ from tqdm import tqdm, trange
 import re
 import string
 import random
+random.seed(0)
 HASH = re.compile(r"#\S+")
 filePath = '/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
 
