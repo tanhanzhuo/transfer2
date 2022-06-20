@@ -56,6 +56,7 @@ for hash_one in hash_thre_list:
     hash_data[hash_one] = []
 
 data_save = []
+idx = 0
 with open(filePath, 'r', encoding='utf-8') as f:
     # lines = f.readlines()
     # for idx in trange(len(lines)):
@@ -67,6 +68,9 @@ with open(filePath, 'r', encoding='utf-8') as f:
             tmp = hash_data.get(hash_one)
             if tmp is not None:
                 data_save.append({'hash':hash_one, \
-                                  'text':line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()})
+                                  'text':line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip(), \
+                                  'num':idx
+                                  })
+                idx+=1
 
 write_json('hash_one_thre'+str(args.thre), data_save)

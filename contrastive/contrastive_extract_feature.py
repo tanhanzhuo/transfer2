@@ -26,17 +26,11 @@ args = parser.parse_args()
 #             data.append(tmp['text2'])
 #     else:
 #         print('error!!!!!!!!!!!!!!!')
-raw_datasets = datasets.load_dataset('text', data_files=args.file)
 
-
-from transformers import BertweetTokenizer, AutoConfig
-from models import RobertaForCL
-
+from transformers import AutoTokenizer, AutoConfig, AutoModel
 config = AutoConfig.from_pretrained(args.model)
-model = RobertaForCL.from_pretrained(
-    args.model,
-    config=config,
-    model_args=args
-)
+model = AutoModel.from_pretrained(args.model,config=config)
+tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
+raw_datasets = datasets.load_dataset('text', data_files=args.file)
 
 
