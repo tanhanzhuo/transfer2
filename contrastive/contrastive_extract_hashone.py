@@ -54,24 +54,19 @@ hash_thre_list = list(hash_dic.keys())
 hash_data = {}
 for hash_one in hash_thre_list:
     hash_data[hash_one] = []
+
+data_save = []
 with open(filePath, 'r', encoding='utf-8') as f:
-    lines = f.readlines()
-    for idx in trange(len(lines)):
-        line = lines[idx]
-    # for line in tqdm(f):
+    # lines = f.readlines()
+    # for idx in trange(len(lines)):
+    #     line = lines[idx]
+    for line in tqdm(f):
+
         hash_tmp_clean = process(line)
         for hash_one in hash_tmp_clean:
             tmp = hash_data.get(hash_one)
-
             if tmp is not None:
-                hash_data[hash_one].append(idx)
+                data_save.append({'hash':hash_one, \
+                                  'text':line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()})
 
-NUM = args.num
-hash_pair = []
-for hash_one in tqdm(hash_thre_list):
-    data = hash_data[hash_one]
-    for tmp in range(NUM):
-        data_tmp = random.sample(data, 2)
-        hash_pair.append(  {'text1':lines[data_tmp[0]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip(), \
-                            'text2':lines[data_tmp[1]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()}  )
-write_json('hash_pair_thre'+str(args.thre)+'_num'+str(args.num), hash_pair)
+write_json('hash_one_thre'+str(args.thre), data_save)
