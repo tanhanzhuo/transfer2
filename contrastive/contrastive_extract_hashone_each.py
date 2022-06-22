@@ -64,13 +64,25 @@ with open(filePath, 'r', encoding='utf-8') as f:
             tmp = hash_data.get(hash_one)
 
             if tmp is not None:
+                # hash_data[hash_one].append(
+                #     {'hash': hash_one, 'idx': len(hash_data[hash_one]),
+                #      'text': line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]','https').strip()
+                #      }
+                # )
                 hash_data[hash_one].append(
-                    {'hash': hash_one, 'idx': len(hash_data[hash_one]),
-                     'text': line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]','https').strip()
-                     }
+                    line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
                 )
 
+
+hash_dic = {}
 idx_save = 0
 for hash_one in tqdm(hash_thre_list):
-    write_json('./'+str(args.thre)+'/'+str(idx_save), hash_data[hash_one])
+    # write_json('./'+str(args.thre)+'/'+str(idx_save), hash_data[hash_one])
+    with open('./'+str(args.thre)+'/'+str(idx_save)+'.txt', 'w', encoding='utf-8') as f:
+        for data in tqdm(hash_data[hash_one]):
+            f.write(data+'\n')
     idx_save+=1
+    hash_dic[hash_one] = idx_save
+
+with open('./'+str(args.thre)+'/index_to_hashtag.json', 'w', encoding='utf-8') as f:
+    json.dump(hash_dic, f)
