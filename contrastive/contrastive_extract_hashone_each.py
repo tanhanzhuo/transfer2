@@ -70,6 +70,8 @@ idx_save = 0
 for hash_one in tqdm(hash_thre_list):
     data_hash = []
     for idx in hash_data[hash_one]:
-        data_hash.append(lines[idx].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip())
+        data_hash.append({'hash':hash_one,'idx':idx,
+                          'text':lines[idx].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
+                          })
     write_json('./'+str(args.thre)+'/'+str(idx_save), data_hash)
     idx_save+=1
