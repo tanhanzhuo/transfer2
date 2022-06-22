@@ -53,7 +53,7 @@ def write_json(fileName,data):
 hash_thre_list = list(hash_dic.keys())
 hash_data = {}
 for hash_one in hash_thre_list:
-    hash_data[hash_one] = []
+    hash_data[hash_one] = set()
 with open(filePath, 'r', encoding='utf-8') as f:
     # lines = f.readlines()
     # for idx in trange(len(lines)):
@@ -69,7 +69,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
                 #      'text': line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]','https').strip()
                 #      }
                 # )
-                hash_data[hash_one].append(
+                hash_data[hash_one].add(
                     line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
                 )
 
