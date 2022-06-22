@@ -55,23 +55,22 @@ hash_data = {}
 for hash_one in hash_thre_list:
     hash_data[hash_one] = []
 with open(filePath, 'r', encoding='utf-8') as f:
-    lines = f.readlines()
-    for idx in trange(len(lines)):
-        line = lines[idx]
-    # for line in tqdm(f):
+    # lines = f.readlines()
+    # for idx in trange(len(lines)):
+    #     line = lines[idx]
+    for line in tqdm(f):
         hash_tmp_clean = process(line)
         for hash_one in hash_tmp_clean:
             tmp = hash_data.get(hash_one)
 
             if tmp is not None:
-                hash_data[hash_one].append(idx)
+                hash_data[hash_one].append(
+                    {'hash': hash_one, 'idx': len(hash_data[hash_one]),
+                     'text': line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]','https').strip()
+                     }
+                )
 
 idx_save = 0
 for hash_one in tqdm(hash_thre_list):
-    data_hash = []
-    for idx in hash_data[hash_one]:
-        data_hash.append({'hash':hash_one,'idx':idx,
-                          'text':lines[idx].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
-                          })
-    write_json('./'+str(args.thre)+'/'+str(idx_save), data_hash)
+    write_json('./'+str(args.thre)+'/'+str(idx_save), hash_data[hash_one])
     idx_save+=1
