@@ -82,7 +82,7 @@ for hash_one in tqdm(hash_thre_list):
         for data in tqdm(hash_data[hash_one]):
             f.write(data+'\n')
     idx_save+=1
-    hash_dic[hash_one] = idx_save
+    hash_dic[idx_save] = hash_one
 
 with open('./'+str(args.thre)+'/index_to_hashtag.json', 'w', encoding='utf-8') as f:
     json.dump(hash_dic, f)
