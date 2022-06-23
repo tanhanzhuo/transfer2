@@ -66,13 +66,11 @@ with open(args.file+'/index_to_hashtag.json', 'r', encoding='utf-8') as f:
 
 center_samples = []
 center_embs = []
-if '1000' in args.file:
-    progress_bar = tqdm(range(int(37396)))
-else:
-    progress_bar = tqdm(range(int(248195)))
 
+progress_bar = tqdm(range(len(CONVERT.keys())))
 for index_one in CONVERT.keys():
     raw_datasets = datasets.load_dataset('text', data_files=args.file+'/'+str(int(index_one)-1)+'.txt')
+
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
@@ -86,37 +84,34 @@ for index_one in CONVERT.keys():
     train_data_loader = DataLoader(
         tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
     )
-
-    # embeddings = []
-    # for step, batch in enumerate(train_data_loader):
-    #     with torch.no_grad():
-    #         outputs = model(input_ids=batch['input_ids'].cuda(),
-    #                         attention_mask=batch['attention_mask'].cuda(),
-    #                         token_type_ids=batch['token_type_ids'].cuda(),
-    #                         output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
-    #         embeddings.extend(outputs.cpu().numpy())
-    # dis = squareform(pdist(embeddings))
-    # dis_sum  = -np.sum(dis, axis=1)
-    # best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-    # center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
-    # center_embs.extend([embeddings[idx] for idx in best])
-
-
-    embeddings = torch.tensor([[]]).view(-1,768).cuda()
-    for step, batch in enumerate(train_data_loader):
-        with torch.no_grad():
-            outputs = model(input_ids=batch['input_ids'].cuda(),
-                            attention_mask=batch['attention_mask'].cuda(),
-                            token_type_ids=batch['token_type_ids'].cuda(),
-                            output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
-        embeddings = torch.cat((embeddings,outputs),0)
-    # dis = squareform(pdist(embeddings))
-    # dis_sum  = -np.sum(dis, axis=1)
-    dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
-    dis_sum = -np.sum(dis, axis=1)
-    best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-    center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
-    center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
+    if len(raw_datasets['train']) > 500000:
+        embeddings = []
+        for step, batch in enumerate(train_data_loader):
+            with torch.no_grad():
+                outputs = model(input_ids=batch['input_ids'].cuda(),
+                                attention_mask=batch['attention_mask'].cuda(),
+                                token_type_ids=batch['token_type_ids'].cuda(),
+                                output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
+                embeddings.extend(outputs.cpu().numpy())
+        dis = squareform(pdist(embeddings))
+        dis_sum  = -np.sum(dis, axis=1)
+        best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
+        center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
+        center_embs.extend([embeddings[idx] for idx in best])
+    else:
+        embeddings = torch.tensor([[]]).view(-1,768).cuda()
+        for step, batch in enumerate(train_data_loader):
+            with torch.no_grad():
+                outputs = model(input_ids=batch['input_ids'].cuda(),
+                                attention_mask=batch['attention_mask'].cuda(),
+                                token_type_ids=batch['token_type_ids'].cuda(),
+                                output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
+            embeddings = torch.cat((embeddings,outputs),0)
+        dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
+        dis_sum = -np.sum(dis, axis=1)
+        best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
+        center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
+        center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
 
     progress_bar.update(1)
 np.savez(args.save,center_samples=center_samples,center_embs=center_embs)
