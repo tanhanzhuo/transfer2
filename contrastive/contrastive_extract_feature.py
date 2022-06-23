@@ -105,11 +105,11 @@ for index_one in list(CONVERT.keys())[IDX[args.CUR_SPLIT][0]:IDX[args.CUR_SPLIT]
                                 token_type_ids=batch['token_type_ids'].cuda(),
                                 output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
                 embeddings.extend(outputs.cpu().numpy())
-        # dis = squareform(pdist(embeddings))
-        # dis_sum  = -np.sum(dis, axis=1)
-        # best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-        # center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
-        # center_embs.extend([embeddings[idx] for idx in best])
+        dis = squareform(pdist(embeddings))
+        dis_sum  = -np.sum(dis, axis=1)
+        best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
+        center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
+        center_embs.extend([embeddings[idx] for idx in best])
     else:
         embeddings = torch.tensor([[]]).view(-1,768).cuda()
         for step, batch in enumerate(train_data_loader):
@@ -119,15 +119,15 @@ for index_one in list(CONVERT.keys())[IDX[args.CUR_SPLIT][0]:IDX[args.CUR_SPLIT]
                                 token_type_ids=batch['token_type_ids'].cuda(),
                                 output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
-        # dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
-        # dis_sum = -np.sum(dis, axis=1)
-        # best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-        # center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
-        # center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
-    # del embeddings,dis,dis_sum
+        dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
+        dis_sum = -np.sum(dis, axis=1)
+        best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
+        center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
+        center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
+    del embeddings,dis,dis_sum
     torch.cuda.empty_cache()
     progress_bar.update(1)
-np.savez(args.save,center_samples=center_samples,center_embs=center_embs)
+np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=center_samples,center_embs=center_embs)
 
 '''
 texts = [
