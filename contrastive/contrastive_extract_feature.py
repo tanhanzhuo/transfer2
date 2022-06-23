@@ -66,7 +66,7 @@ with open(args.file+'/index_to_hashtag.json', 'r', encoding='utf-8') as f:
 
 center_samples = []
 center_embs = []
-if 1000 in args.file:
+if '1000' in args.file:
     progress_bar = tqdm(range(int(37396/args.batch_size)))
 else:
     progress_bar = tqdm(range(int(248195/args.batch_size)))
