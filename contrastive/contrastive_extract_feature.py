@@ -97,7 +97,7 @@ for index_one in CONVERT.keys():
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
         # embeddings = torch.cat((embeddings,outputs),0)
             embeddings.extend(outputs.cpu().numpy())
-    dis = squareform(pdist(embeddings))
+    dis = squareform(pdist(embeddings,'minkowski', p=1))
     dis_sum  = -np.sum(dis, axis=1)
     # dis = torch.nn.functional.pdist(embeddings, p=2)
     # dis_sum = -torch.sum(dis,dim=1).cpu().numpy()
