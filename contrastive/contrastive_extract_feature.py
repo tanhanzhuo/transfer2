@@ -102,7 +102,7 @@ for index_one in CONVERT.keys():
     best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
     center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
     center_embs.extend([embeddings[idx] for idx in best])
-np.savez(str(int(index_one)-1),center_samples=center_samples,center_embs=center_embs)
+np.savez(args.save,center_samples=center_samples,center_embs=center_embs)
 
 '''
 texts = [
