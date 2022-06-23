@@ -25,8 +25,8 @@ parser.add_argument('--mlm_weight',default=0.1,type=float)
 parser.add_argument('--mlp_only_train',default=False,type=bool)
 
 #####splits
-parser.add_argument("--split", default=4, type=int)
-parser.add_argument("--current", default=0, type=int)
+parser.add_argument("--NUM_SPLIT", default=4, type=int)
+parser.add_argument("--CUR_SPLIT", default=0, type=int)
 
 args = parser.parse_args()
 
@@ -68,11 +68,19 @@ def tokenize_function(examples):
 with open(args.file+'/index_to_hashtag.json', 'r', encoding='utf-8') as f:
     CONVERT = json.load(f)
 
+SPLIT = args.NUM_SPLIT
+TOTAL = len(CONVERT.keys())
+BATCH = int(TOTAL /SPLIT)
+IDX = []
+for idx in range(SPLIT-1):
+    IDX.append([BATCH*idx, BATCH*(idx+1)])
+IDX.append([BATCH*(idx+1), TOTAL])
+
 center_samples = []
 center_embs = []
 
-progress_bar = tqdm(range(len(CONVERT.keys())))
-for index_one in CONVERT.keys():
+progress_bar = tqdm(range(BATCH))
+for index_one in list(CONVERT.keys())[IDX[args.CUR_SPLIT][0]:IDX[args.CUR_SPLIT][1]]:
     raw_datasets = datasets.load_dataset('text', data_files=args.file+'/'+str(int(index_one)-1)+'.txt')
 
     tokenized_datasets = raw_datasets.map(
