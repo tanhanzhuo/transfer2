@@ -67,9 +67,9 @@ with open(args.file+'/index_to_hashtag.json', 'r', encoding='utf-8') as f:
 center_samples = []
 center_embs = []
 if '1000' in args.file:
-    progress_bar = tqdm(range(int(37396/args.batch_size)))
+    progress_bar = tqdm(range(int(37396)))
 else:
-    progress_bar = tqdm(range(int(248195/args.batch_size)))
+    progress_bar = tqdm(range(int(248195)))
 
 for index_one in CONVERT.keys():
     raw_datasets = datasets.load_dataset('text', data_files=args.file+'/'+str(int(index_one)-1)+'.txt')
@@ -96,12 +96,12 @@ for index_one in CONVERT.keys():
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings.extend(outputs.cpu().numpy())
-        progress_bar.update(1)
     dis = distance_matrix(embeddings,embeddings,p=2)
     dis_sum  = -np.sum(dis, axis=1)
     best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
     center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
     center_embs.extend([embeddings[idx] for idx in best])
+    progress_bar.update(1)
 np.savez(args.save,center_samples=center_samples,center_embs=center_embs)
 
 '''
