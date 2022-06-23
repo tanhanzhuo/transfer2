@@ -103,7 +103,7 @@ for index_one in CONVERT.keys():
     # dis_sum = -torch.sum(dis,dim=1).cpu().numpy()
     best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
     center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
-    center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
+    center_embs.extend([embeddings[idx] for idx in best])
     progress_bar.update(1)
 np.savez(args.save,center_samples=center_samples,center_embs=center_embs)
 
