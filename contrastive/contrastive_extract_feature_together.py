@@ -120,6 +120,7 @@ for step, batch in enumerate(train_data_loader):
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
+            print(step)
 
 
 
