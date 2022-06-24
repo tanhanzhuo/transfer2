@@ -100,14 +100,20 @@ for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
         if labels.sum() != labels[0]*labels.shape[0]:#goes to another hashtag
+            print('start calculate')
             dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
+            print('end calculate')
             dis_sum = -np.sum(dis, axis=1)
             best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
+            print('end rank')
             center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
             center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
+            print('end save')
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = torch.tensor([[]]).view(-1, 768).cuda()
+            print('end restart')
+            progress_bar.update(1)
         else:
             outputs = model(input_ids=batch['input_ids'].cuda(),
                             attention_mask=batch['attention_mask'].cuda(),
@@ -115,7 +121,7 @@ for step, batch in enumerate(train_data_loader):
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
 
-    progress_bar.update(1)
+
 
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=center_samples,center_embs=center_embs)
 
