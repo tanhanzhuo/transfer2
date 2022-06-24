@@ -85,7 +85,7 @@ for index_one in list(CONVERT.keys())[IDX[args.CUR_SPLIT][0]:IDX[args.CUR_SPLIT]
     if len(raw_datasets['train']) < args.num_sample*50:
         continue
     raw_datasets["train"] = raw_datasets["train"].shuffle()
-    raw_datasets["train"] = raw_datasets["train"][:min(args.num_sample*30,len( raw_datasets["train"]))]
+    raw_datasets["train"] = raw_datasets["train"].select(range(min(args.num_sample*30,len( raw_datasets["train"]))))
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
