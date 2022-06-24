@@ -121,6 +121,10 @@ for step, batch in enumerate(train_data_loader):
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
             print(step)
+        print(labels.sum())
+        print(labels[0])
+        print(labels.shape[0])
+
 
 
 
