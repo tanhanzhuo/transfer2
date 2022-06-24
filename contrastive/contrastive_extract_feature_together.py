@@ -92,6 +92,7 @@ for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
         if labels.sum() != labels[0]*labels.shape[0]:#goes to another hashtag
+            print(embeddings.shape)
             print('start calculate')
             curr_time = time.time()
             dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
