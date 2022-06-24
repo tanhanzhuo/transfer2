@@ -88,10 +88,12 @@ embeddings = torch.tensor([[]]).view(-1,768).cuda()
 tmp_samples = []
 center_samples = []
 center_embs = []
+previous_label = tokenized_datasets['train'][0]['labels']
+print(previous_label)
 for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
-        if labels.sum() != labels[0]*labels.shape[0]:#goes to another hashtag
+        if labels[0] != labels[-1] or labels[0] != previous_label:#goes to another hashtag
             print(embeddings.shape)
             print('start calculate')
             curr_time = time.time()
@@ -124,6 +126,7 @@ for step, batch in enumerate(train_data_loader):
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
+            previous_label = labels[0]
 
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=center_samples,center_embs=center_embs)
 
