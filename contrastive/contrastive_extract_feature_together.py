@@ -13,7 +13,7 @@ parser.add_argument('--model',default='checkpoint-1100000',type=str)
 parser.add_argument("--num_sample", default=100, type=int)
 parser.add_argument('--save',default=None,type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
-parser.add_argument("--preprocessing_num_workers", default=1, type=int)
+parser.add_argument("--preprocessing_num_workers", default=20, type=int)
 parser.add_argument("--batch_size", default=32, type=int)
 
 #simcse
@@ -25,7 +25,7 @@ parser.add_argument('--mlm_weight',default=0.1,type=float)
 parser.add_argument('--mlp_only_train',default=False,type=bool)
 
 #####splits
-parser.add_argument("--NUM_SPLIT", default=4, type=int)
+parser.add_argument("--NUM_SPLIT", default=2, type=int)
 parser.add_argument("--CUR_SPLIT", default=0, type=int)
 
 args = parser.parse_args()
@@ -65,7 +65,7 @@ def tokenize_function(examples):
         # return_special_tokens_mask=True,
     )
 
-with open(args.file+'/index_to_hashtag.json', 'r', encoding='utf-8') as f:
+with open(args.file+'_index.json', 'r', encoding='utf-8') as f:
     CONVERT = json.load(f)
 
 SPLIT = args.NUM_SPLIT
@@ -76,61 +76,47 @@ for idx in range(SPLIT-1):
     IDX.append([BATCH*idx, BATCH*(idx+1)])
 IDX.append([BATCH*(idx+1), TOTAL])
 
-center_samples = []
-center_embs = []
+raw_datasets = datasets.load_dataset('json', data_files=args.file+'.json')
+tokenized_datasets = raw_datasets.map(
+    tokenize_function,
+    batched=True,
+    num_proc=args.preprocessing_num_workers,
+    remove_columns=[text_column_name],
+    load_from_cache_file=True,
+    desc="Running tokenizer on dataset line_by_line",
+)
+# tokenized_datasets['train'] = tokenized_datasets['train'].add_column('labels', list(range(len(tokenized_datasets['train']))))
+batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
+train_data_loader = DataLoader(
+    tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
+)
 
 progress_bar = tqdm(range(BATCH))
-for index_one in list(CONVERT.keys())[IDX[args.CUR_SPLIT][0]:IDX[args.CUR_SPLIT][1]]:
-    raw_datasets = datasets.load_dataset('text', data_files=args.file+'/'+str(int(index_one)-1)+'.txt')
-    if len(raw_datasets['train']) < args.num_sample*50:
-        continue
-    raw_datasets["train"] = raw_datasets["train"].shuffle()
-    raw_datasets["train"] = raw_datasets["train"].select(range(min(args.num_sample*30,len( raw_datasets["train"]))))
-    tokenized_datasets = raw_datasets.map(
-        tokenize_function,
-        batched=True,
-        num_proc=args.preprocessing_num_workers,
-        remove_columns=[text_column_name],
-        load_from_cache_file=True,
-        desc="Running tokenizer on dataset line_by_line",
-    )
-    # tokenized_datasets['train'] = tokenized_datasets['train'].add_column('labels', list(range(len(tokenized_datasets['train']))))
-    batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
-    train_data_loader = DataLoader(
-        tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
-    )
 
-    if len(raw_datasets['train']) > 50000:
-        embeddings = []
-        for step, batch in enumerate(train_data_loader):
-            with torch.no_grad():
-                outputs = model(input_ids=batch['input_ids'].cuda(),
-                                attention_mask=batch['attention_mask'].cuda(),
-                                token_type_ids=batch['token_type_ids'].cuda(),
-                                output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
-                embeddings.extend(outputs.cpu().numpy())
-        dis = squareform(pdist(embeddings))
-        dis_sum  = -np.sum(dis, axis=1)
-        best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-        center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
-        center_embs.extend([embeddings[idx] for idx in best])
-    else:
-        embeddings = torch.tensor([[]]).view(-1,768).cuda()
-        for step, batch in enumerate(train_data_loader):
-            with torch.no_grad():
-                outputs = model(input_ids=batch['input_ids'].cuda(),
-                                attention_mask=batch['attention_mask'].cuda(),
-                                token_type_ids=batch['token_type_ids'].cuda(),
-                                output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
+embeddings = torch.tensor([[]]).view(-1,768).cuda()
+center_samples = []
+center_embs = []
+for step, batch in enumerate(train_data_loader):
+    with torch.no_grad():
+        labels= batch['labels']
+        if labels.sum() != labels[0]*labels.shape[0]:#goes to another hashtag
+            dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
+            dis_sum = -np.sum(dis, axis=1)
+            best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
+            center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
+            center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
+            del embeddings, dis, dis_sum
+            torch.cuda.empty_cache()
+            embeddings = torch.tensor([[]]).view(-1, 768).cuda()
+        else:
+            outputs = model(input_ids=batch['input_ids'].cuda(),
+                            attention_mask=batch['attention_mask'].cuda(),
+                            token_type_ids=batch['token_type_ids'].cuda(),
+                            output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
-        dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
-        dis_sum = -np.sum(dis, axis=1)
-        best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-        center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
-        center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
-    del embeddings,dis,dis_sum
-    torch.cuda.empty_cache()
+
     progress_bar.update(1)
+
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=center_samples,center_embs=center_embs)
 
 '''

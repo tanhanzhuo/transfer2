@@ -64,7 +64,7 @@ hash_save = []
 idx = 0
 hash_convert = {}
 for hash_one in tqdm(hash_thre_list):
-    if len(hash_data[hash_one]) < args.num:
+    if len(hash_data[hash_one]) < args.thre:
         continue
 
     if args.num > len(hash_data[hash_one]):
