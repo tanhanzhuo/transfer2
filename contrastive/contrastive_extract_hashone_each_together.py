@@ -65,11 +65,21 @@ for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) < args.num:
         continue
     idx = 0
-    for one in random.sample(hash_data[hash_one], args.num):
-        hash_save.append({'text': one,'num': idx})
-        idx+=1
+    if args.num > len(hash_data[hash_one]):
+        for one in hash_data[hash_one]:
+            hash_save.append({'text': one,'num': idx})
+            idx+=1
+    else:
+        for one in random.sample(hash_data[hash_one], args.num):
+            hash_save.append({'text': one,'num': idx})
+            idx+=1
+
+# with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '.json', 'w', encoding='utf-8') as f:
+#     for one in tqdm(hash_save):
+#         json.dump(one, f)
+#         f.write('\n')
 
 with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '.json', 'w', encoding='utf-8') as f:
     for one in tqdm(hash_save):
-        json.dump(one, f)
-        f.write('\n')
+        tmp = json.dumps(one, ensure_ascii=False)
+        f.write(tmp+'\n')
