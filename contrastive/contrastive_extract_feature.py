@@ -96,6 +96,8 @@ for index_one in list(CONVERT.keys())[IDX[args.CUR_SPLIT][0]:IDX[args.CUR_SPLIT]
     train_data_loader = DataLoader(
         tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
     )
+    if len(raw_datasets['train']) < args.num_sample:
+        continue
     if len(raw_datasets['train']) > 50000:
         embeddings = []
         for step, batch in enumerate(train_data_loader):
