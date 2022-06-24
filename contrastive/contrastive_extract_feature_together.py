@@ -89,7 +89,7 @@ tmp_samples = []
 center_samples = []
 center_embs = []
 previous_label = tokenized_datasets['train'][0]['labels']
-print(previous_label)
+# print(previous_label)
 for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
@@ -126,7 +126,7 @@ for step, batch in enumerate(train_data_loader):
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
-            previous_label = labels[0]
+        previous_label = labels[0]
 
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=center_samples,center_embs=center_embs)
 
