@@ -26,22 +26,10 @@ parser.add_argument('--mlm_weight',default=0.1,type=float)
 parser.add_argument('--mlp_only_train',default=False,type=bool)
 
 #####splits
-parser.add_argument("--NUM_SPLIT", default=2, type=int)
+parser.add_argument("--NUM_SPLIT", default=4, type=int)
 parser.add_argument("--CUR_SPLIT", default=0, type=int)
 
 args = parser.parse_args()
-
-# data = []
-# with open(args.file, 'r', encoding='utf-8') as f:
-#     if args.file.split('.')[-1] == 'txt':
-#         data = f.readlines()
-#     elif args.file.split('.')[-1] == 'json':
-#         for line in f:
-#             tmp = json.loads(line)
-#             data.append(tmp['text1'])
-#             data.append(tmp['text2'])
-#     else:
-#         print('error!!!!!!!!!!!!!!!')
 
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
 from models import RobertaForCL
@@ -77,7 +65,7 @@ for idx in range(SPLIT-1):
     IDX.append([BATCH*idx, BATCH*(idx+1)])
 IDX.append([BATCH*(idx+1), TOTAL])
 
-raw_datasets = datasets.load_dataset('json', data_files=args.file+'.json')
+raw_datasets = datasets.load_dataset('json', data_files=args.file+'_'+str(args.CUR_SPLIT)+'.json')
 tokenized_datasets = raw_datasets.map(
     tokenize_function,
     batched=True,
@@ -94,7 +82,7 @@ train_data_loader = DataLoader(
     tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
 )
 
-progress_bar = tqdm(range(BATCH*2))
+progress_bar = tqdm(range(BATCH))
 
 embeddings = torch.tensor([[]]).view(-1,768).cuda()
 tmp_samples = []
@@ -104,29 +92,29 @@ for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
         if labels.sum() != labels[0]*labels.shape[0]:#goes to another hashtag
-            print('start calculate')
-            curr_time = time.time()
+            # print('start calculate')
+            # curr_time = time.time()
             dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
-            print('end calculate')
-            print(time.time()-curr_time)
-            curr_time = time.time()
+            # print('end calculate')
+            # print(time.time()-curr_time)
+            # curr_time = time.time()
             dis_sum = -np.sum(dis, axis=1)
             best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-            print('end rank')
-            print(time.time() - curr_time)
-            curr_time = time.time()
+            # print('end rank')
+            # print(time.time() - curr_time)
+            # curr_time = time.time()
             center_samples.extend([tmp_samples[idx] for idx in best])
             center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
-            print('end save')
-            print(time.time() - curr_time)
-            curr_time = time.time()
+            # print('end save')
+            # print(time.time() - curr_time)
+            # curr_time = time.time()
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = torch.tensor([[]]).view(-1, 768).cuda()
             tmp_samples = []
-            print('end restart')
-            print(time.time() - curr_time)
-            curr_time = time.time()
+            # print('end restart')
+            # print(time.time() - curr_time)
+            # curr_time = time.time()
             progress_bar.update(1)
         else:
             tmp_samples.extend(batch['input_ids'])
