@@ -2,6 +2,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--thre',default=100,type=int)
 parser.add_argument('--num',default=1000,type=int)
+parser.add_argument('--splits',default=4,type=int)
 args = parser.parse_args()
 
 import json
@@ -81,10 +82,28 @@ for hash_one in tqdm(hash_thre_list):
 #         json.dump(one, f)
 #         f.write('\n')
 
-with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '.json', 'w', encoding='utf-8') as f:
-    for one in tqdm(hash_save):
-        tmp = json.dumps(one, ensure_ascii=False)
-        f.write(tmp+'\n')
+files = []
+for tmp in range(args.splits):
+    files.append(open('./selected_thre'+str(args.thre)+'_num'+str(args.num)+'_'+str(tmp)+'.json', 'w', encoding='utf-8'))
+
+file_idx = 0
+accumulate = 0
+batch = int(len(hash_save)/args.splits)+1
+
+for idx in trange(len(hash_save)):
+    tmp = json.dumps(hash_save[idx], ensure_ascii=False)
+    files[file_idx].write(tmp+'\n')
+    accumulate+=1
+    if accumulate>batch and hash_save[idx]['labels'] != hash_save[idx+1]['labels']:
+        files[file_idx].close()
+        file_idx+=1
+        accumulate = 0
+files[file_idx].close()
+
+# with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '.json', 'w', encoding='utf-8') as f:
+#     for one in tqdm(hash_save):
+#         tmp = json.dumps(one, ensure_ascii=False)
+#         f.write(tmp+'\n')
 
 with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '_index.json', 'w', encoding='utf-8') as f:
     json.dump(hash_convert, f)
