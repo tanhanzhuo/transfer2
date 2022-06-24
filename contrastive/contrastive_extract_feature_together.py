@@ -94,6 +94,7 @@ train_data_loader = DataLoader(
 progress_bar = tqdm(range(BATCH))
 
 embeddings = torch.tensor([[]]).view(-1,768).cuda()
+tmp_samples = []
 center_samples = []
 center_embs = []
 for step, batch in enumerate(train_data_loader):
@@ -106,27 +107,22 @@ for step, batch in enumerate(train_data_loader):
             dis_sum = -np.sum(dis, axis=1)
             best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
             print('end rank')
-            center_samples.extend([tokenized_datasets['train']['input_ids'][idx] for idx in best])
+            center_samples.extend([tmp_samples[idx] for idx in best])
             center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
             print('end save')
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = torch.tensor([[]]).view(-1, 768).cuda()
+            tmp_samples = []
             print('end restart')
             progress_bar.update(1)
         else:
+            tmp_samples.extend(batch['input_ids'])
             outputs = model(input_ids=batch['input_ids'].cuda(),
                             attention_mask=batch['attention_mask'].cuda(),
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs),0)
-            print(step)
-        print(labels.sum())
-        print(labels[0])
-        print(labels.shape[0])
-
-
-
 
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=center_samples,center_embs=center_embs)
 
