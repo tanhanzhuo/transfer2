@@ -5,6 +5,7 @@ import torch
 import numpy as np
 from tqdm import tqdm,trange
 from scipy.spatial.distance import pdist, squareform
+import time
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
@@ -103,20 +104,29 @@ for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
         if labels.sum() != labels[0]*labels.shape[0]:#goes to another hashtag
-            # print('start calculate')
+            print('start calculate')
+            curr_time = time.time()
             dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
             print('end calculate')
+            print(time.time()-curr_time)
+            curr_time = time.time()
             dis_sum = -np.sum(dis, axis=1)
             best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
             print('end rank')
+            print(time.time() - curr_time)
+            curr_time = time.time()
             center_samples.extend([tmp_samples[idx] for idx in best])
             center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
             print('end save')
+            print(time.time() - curr_time)
+            curr_time = time.time()
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = torch.tensor([[]]).view(-1, 768).cuda()
             tmp_samples = []
             print('end restart')
+            print(time.time() - curr_time)
+            curr_time = time.time()
             progress_bar.update(1)
         else:
             tmp_samples.extend(batch['input_ids'])
