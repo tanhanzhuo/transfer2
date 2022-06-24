@@ -85,6 +85,8 @@ tokenized_datasets = raw_datasets.map(
     load_from_cache_file=True,
     desc="Running tokenizer on dataset line_by_line",
 )
+print('total tokenized samples')
+print(len(tokenized_datasets['train']))
 # tokenized_datasets['train'] = tokenized_datasets['train'].add_column('labels', list(range(len(tokenized_datasets['train']))))
 batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
 train_data_loader = DataLoader(
@@ -103,18 +105,18 @@ for step, batch in enumerate(train_data_loader):
         if labels.sum() != labels[0]*labels.shape[0]:#goes to another hashtag
             # print('start calculate')
             dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
-            # print('end calculate')
+            print('end calculate')
             dis_sum = -np.sum(dis, axis=1)
             best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
-            # print('end rank')
+            print('end rank')
             center_samples.extend([tmp_samples[idx] for idx in best])
             center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
-            # print('end save')
+            print('end save')
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = torch.tensor([[]]).view(-1, 768).cuda()
             tmp_samples = []
-            # print('end restart')
+            print('end restart')
             progress_bar.update(1)
         else:
             tmp_samples.extend(batch['input_ids'])
