@@ -61,18 +61,20 @@ with open(filePath, 'r', encoding='utf-8') as f:
 
 import random
 hash_save = []
+idx = 0
+hash_convert = {}
 for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) < args.num:
         continue
-    idx = 0
+
     if args.num > len(hash_data[hash_one]):
         for one in hash_data[hash_one]:
-            hash_save.append({'text': one,'num': idx})
-            idx+=1
+            hash_save.append({'text': one,'labels': idx})
     else:
         for one in random.sample(hash_data[hash_one], args.num):
-            hash_save.append({'text': one,'num': idx})
-            idx+=1
+            hash_save.append({'text': one,'labels': idx})
+    hash_convert[idx] = hash_one
+    idx+=1
 
 # with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '.json', 'w', encoding='utf-8') as f:
 #     for one in tqdm(hash_save):
@@ -83,3 +85,6 @@ with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '.json', 'w', 
     for one in tqdm(hash_save):
         tmp = json.dumps(one, ensure_ascii=False)
         f.write(tmp+'\n')
+
+with open('./selected_thre'+str(args.thre)+'_num'+str(args.num) + '_index.json', 'w', encoding='utf-8') as f:
+    json.dump(hash_convert, f)
