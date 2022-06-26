@@ -77,7 +77,7 @@ for task in args.task_name.split(','):
             data_hash_all.append(copy.deepcopy(train_dataset))
         for idx in trange(len(train_dataset)):
             one = train_dataset[idx]
-            input = tokenizer(one['text'])
+            input = tokenizer(one['text'],truncation=True)
             with torch.no_grad():
                 outputs = model(input_ids=torch.tensor([input['input_ids']]).cuda(),
                                 attention_mask=torch.tensor([input['attention_mask']]).cuda(),

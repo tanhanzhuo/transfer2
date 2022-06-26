@@ -83,7 +83,7 @@ train_data_loader = DataLoader(
 )
 
 progress_bar = tqdm(range(BATCH))
-
+total_num = 0
 embeddings = torch.tensor([[]]).view(-1,768).cuda()
 tmp_samples = []
 center_samples = []
@@ -94,7 +94,8 @@ for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
         if labels[0] != labels[-1] or labels[0] != previous_label:#goes to another hashtag
-            print(embeddings.shape)
+            total_num+=1
+            # print(embeddings.shape)
             # print('start calculate')
             # curr_time = time.time()
             dis = squareform(torch.nn.functional.pdist(embeddings, p=2).cpu())
@@ -118,6 +119,8 @@ for step, batch in enumerate(train_data_loader):
             # print('end restart')
             # print(time.time() - curr_time)
             # curr_time = time.time()
+            print('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'.\
+                  format(labels[0],total_num,embeddings.shape[0], len(center_samples)))
             progress_bar.update(1)
         else:
             tmp_samples.extend(batch['input_ids'])
