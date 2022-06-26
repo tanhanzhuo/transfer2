@@ -65,7 +65,7 @@ for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.extend(tmp['center_samples'])
     # hash_embs.extend(tmp['center_embs'])
-    hash_embs.append(torch.tensor(tmp['center_embs']))
+    hash_embs.append(torch.tensor(tmp['center_embs']).cuda(idx))
     tmp.close()
 # hash_embs= torch.tensor(np.array(hash_embs))
 
@@ -86,7 +86,7 @@ for task in args.task_name.split(','):
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
                 dis = []
                 for sp in range(args.split):
-                    dis.extend(-torch.linalg.vector_norm(outputs - hash_embs[sp].cuda(), dim=1).cpu())
+                    dis.extend(-torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu())
                 # dis = -torch.linalg.vector_norm(outputs.cpu() - hash_embs, dim=1)
                 for tmp_idx in range(args.best):
                     best_idx = np.argpartition(np.array(dis), -(tmp_idx+1))[-(tmp_idx+1):]
