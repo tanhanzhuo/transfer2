@@ -82,7 +82,7 @@ for task in args.task_name.split(','):
                                 token_type_ids=torch.tensor([input['token_type_ids']]).cuda(),
                                 output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
-                dis = -torch.linalg.vector_norm(outputs - hash_embs.cuda(), dim=1).cpu()
+                dis = -torch.linalg.vector_norm(outputs.cpu() - hash_embs, dim=1)
                 for tmp_idx in range(args.best):
                     best_idx = np.argpartition(np.array(dis), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
