@@ -112,6 +112,8 @@ for step, batch in enumerate(train_data_loader):
             # print('end save')
             # print(time.time() - curr_time)
             # curr_time = time.time()
+            print('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
+                  format(labels[0], total_num, embeddings.shape[0], len(center_samples)))
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = torch.tensor([[]]).view(-1, 768).cuda()
@@ -119,8 +121,6 @@ for step, batch in enumerate(train_data_loader):
             # print('end restart')
             # print(time.time() - curr_time)
             # curr_time = time.time()
-            print('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'.\
-                  format(labels[0],total_num,embeddings.shape[0], len(center_samples)))
             progress_bar.update(1)
         else:
             tmp_samples.extend(batch['input_ids'])
