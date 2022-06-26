@@ -12,15 +12,15 @@ import copy
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash_file',default='feature_model10001000_num1000100_together',type=str)
-parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
-# parser.add_argument('--model',default='checkpoint-1000000',type=str)
+# parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
+parser.add_argument('--model',default='checkpoint-1000000',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
 
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=2, type=int)
 parser.add_argument('--method',default='model10001000_num1000100',type=str)
-parser.add_argument("--split", default=4, type=int)#for gpu memory
+parser.add_argument("--split", default=1, type=int)#for gpu memory
 #simcse
 parser.add_argument('--temp',default=0.05,type=float)
 parser.add_argument('--pooler_type',default='cls',type=str)
@@ -63,7 +63,7 @@ hash_samples = []
 hash_embs = []
 for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
-    hash_samples.extend(tmp['center_samples'])
+    hash_samples.append(tmp['center_samples'])
     # hash_embs.extend(tmp['center_embs'])
     hash_embs.append(torch.tensor(tmp['center_embs']).cuda(idx))
     tmp.close()
@@ -84,15 +84,21 @@ for task in args.task_name.split(','):
                                 token_type_ids=torch.tensor([input['token_type_ids']]).cuda(),
                                 output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
-                dis = []
+                best_distance = []
+                best_text = []
                 for sp in range(args.split):
-                    # dis.extend(-torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu())
-                    dis=-torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
-                # dis = -torch.linalg.vector_norm(outputs.cpu() - hash_embs, dim=1)
+                    dis = -torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
+                    # dis=-torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
+                    # dis = -torch.linalg.vector_norm(outputs.cpu() - hash_embs, dim=1)
+                    best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
+                    for tmp_idx in best_idx:
+                        best_distance.append(dis[tmp_idx])
+                        best_text.append(hash_samples[sp][tmp_idx])
+
                 for tmp_idx in range(args.best):
-                    best_idx = np.argpartition(np.array(dis), -(tmp_idx+1))[-(tmp_idx+1):]
+                    best_idx = np.argpartition(np.array(best_distance), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
-                        data_hash_all[tmp_idx][idx]['text'] = emoji.emojize(tokenizer.decode(hash_samples[cur_idx][1:]).replace(tokenizer.pad_token,'').strip()) \
+                        data_hash_all[tmp_idx][idx]['text'] = emoji.emojize(tokenizer.decode(best_text[cur_idx][1:]).replace(tokenizer.pad_token,'').strip()) \
                                                  + ' ' + data_hash_all[tmp_idx][idx]['text']
         for tmp_idx in range(args.best):
             write_json(data_hash_all[tmp_idx], args.dataset_path + task + '/' + fileName + args.method+'_'+str(tmp_idx))
