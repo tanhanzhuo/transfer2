@@ -55,3 +55,14 @@ finetune/data/stance/emoji/train/state.json
 hashtag/hash_his.txt
 hashtag/hash_his_one.txt
 contrastive/hash_his.json
+contrastive/checkpoint-1000000/added_tokens.json
+contrastive/checkpoint-1000000/bpe.codes
+contrastive/checkpoint-1000000/config.json
+contrastive/checkpoint-1000000/pytorch_model.bin
+contrastive/checkpoint-1000000/scheduler.pt
+contrastive/checkpoint-1000000/special_tokens_map.json
+contrastive/checkpoint-1000000/tokenizer_config.json
+contrastive/checkpoint-1000000/trainer_state.json
+contrastive/checkpoint-1000000/training_args.bin
+contrastive/checkpoint-1000000/vocab.txt
+contrastive/feature_model10001000_num1000100_together_0.npz
