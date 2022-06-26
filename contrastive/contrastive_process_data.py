@@ -95,5 +95,6 @@ for task in args.task_name.split(','):
                                                  + ' ' + data_hash_all[tmp_idx][idx]['text']
         for tmp_idx in range(args.best):
             write_json(data_hash_all[tmp_idx], args.dataset_path + task + '/' + fileName + args.method+'_'+str(tmp_idx))
-
+        del dis
+        torch.cuda.empty_cache()
     print('task done! {}'.format(task))
