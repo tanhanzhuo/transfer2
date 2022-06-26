@@ -12,8 +12,8 @@ import copy
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash_file',default='feature_model10001000_num1000100_together',type=str)
-parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
-# parser.add_argument('--model',default='checkpoint-1000000',type=str)
+# parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
+parser.add_argument('--model',default='checkpoint-1000000',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
 
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
@@ -65,7 +65,7 @@ for idx in range(4):
     hash_samples.extend(tmp['center_samples'])
     hash_embs.extend(tmp['center_embs'])
     tmp.close()
-hash_embs = torch.tensor(hash_embs).cuda()
+hash_embs= torch.tensor(np.array(hash_embs))
 
 for task in args.task_name.split(','):
     for fileName in ['train', 'dev', 'test']:
@@ -81,7 +81,8 @@ for task in args.task_name.split(','):
                                 attention_mask=torch.tensor([input['attention_mask']]).cuda(),
                                 token_type_ids=torch.tensor([input['token_type_ids']]).cuda(),
                                 output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
-                dis = -torch.linalg.vector_norm(outputs-hash_embs,dim=1).cpu()
+                # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
+                dis = -torch.linalg.vector_norm(outputs - hash_embs.cuda(), dim=1).cpu()
                 for tmp_idx in range(args.best):
                     best_idx = np.argpartition(np.array(dis), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
