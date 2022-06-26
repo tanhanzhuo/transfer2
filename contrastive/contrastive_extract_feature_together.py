@@ -106,7 +106,7 @@ for step, batch in enumerate(train_data_loader):
             # print('end rank')
             # print(time.time() - curr_time)
             # curr_time = time.time()
-            center_samples.extend([tmp_samples[idx] for idx in best])
+            center_samples.extend([tmp_samples[idx].numpy() for idx in best])
             center_embs.extend([embeddings[idx].cpu().numpy() for idx in best])
             # print('end save')
             # print(time.time() - curr_time)
