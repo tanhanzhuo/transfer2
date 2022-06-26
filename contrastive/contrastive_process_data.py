@@ -60,7 +60,7 @@ def write_json(data, fileName):
 
 hash_samples = []
 hash_embs = []
-for idx in range(1):
+for idx in range(4):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.extend(tmp['center_samples'])
     hash_embs.extend(tmp['center_embs'])
@@ -70,7 +70,9 @@ hash_embs = torch.tensor(hash_embs).cuda()
 for task in args.task_name.split(','):
     for fileName in ['train', 'dev', 'test']:
         train_dataset = read_data(args.dataset_path + task + '/' + fileName)
-        data_hash = copy.deepcopy(train_dataset)
+        data_hash_all = []
+        for tmp_idx in range(args.best):
+            data_hash_all.append(copy.deepcopy(train_dataset))
         for idx in trange(len(train_dataset)):
             one = train_dataset[idx]
             input = tokenizer(one['text'])
@@ -80,11 +82,12 @@ for task in args.task_name.split(','):
                                 token_type_ids=torch.tensor([input['token_type_ids']]).cuda(),
                                 output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
                 dis = -torch.linalg.vector_norm(outputs-hash_embs,dim=1).cpu()
-                best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
-                for cur_idx in best_idx:
-                    data_hash[idx]['text'] = emoji.emojize(tokenizer.decode(hash_samples[cur_idx][1:]).replace(tokenizer.pad_token,'').strip()) \
-                                             + ' ' + data_hash[idx]['text']
-
-        write_json(data_hash, args.dataset_path + task + '/' + fileName + args.method)
+                for tmp_idx in range(args.best):
+                    best_idx = np.argpartition(np.array(dis), -(tmp_idx+1))[-(tmp_idx+1):]
+                    for cur_idx in best_idx:
+                        data_hash_all[tmp_idx][idx]['text'] = emoji.emojize(tokenizer.decode(hash_samples[cur_idx][1:]).replace(tokenizer.pad_token,'').strip()) \
+                                                 + ' ' + data_hash_all[tmp_idx][idx]['text']
+        for tmp_idx in range(args.best):
+            write_json(data_hash_all[tmp_idx], args.dataset_path + task + '/' + fileName + args.method+'_'+str(tmp_idx))
 
     print('task done! {}'.format(task))
