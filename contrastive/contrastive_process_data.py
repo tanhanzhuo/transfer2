@@ -20,6 +20,7 @@ parser.add_argument("--dataset_path", default='../finetune/data/', type=str, req
 parser.add_argument("--task_name", default='hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=2, type=int)
 parser.add_argument('--method',default='model10001000_num1000100',type=str)
+parser.add_argument("--split", default=4, type=int)#for gpu memory
 #simcse
 parser.add_argument('--temp',default=0.05,type=float)
 parser.add_argument('--pooler_type',default='cls',type=str)
@@ -66,7 +67,7 @@ for idx in range(4):
     hash_embs.extend(tmp['center_embs'])
     tmp.close()
 hash_embs= torch.tensor(np.array(hash_embs))
-
+BATCH = int(len(hash_embs)/args.split)
 for task in args.task_name.split(','):
     for fileName in ['train', 'dev', 'test']:
         train_dataset = read_data(args.dataset_path + task + '/' + fileName)
@@ -82,7 +83,11 @@ for task in args.task_name.split(','):
                                 token_type_ids=torch.tensor([input['token_type_ids']]).cuda(),
                                 output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
-                dis = -torch.linalg.vector_norm(outputs.cpu() - hash_embs, dim=1)
+                dis = []
+
+                for sp in range(args.split):
+                    dis.extend(-torch.linalg.vector_norm(outputs - hash_embs[sp*BATCH:(sp+1)*BATCH].cuda(), dim=1).cpu())
+                # dis = -torch.linalg.vector_norm(outputs.cpu() - hash_embs, dim=1)
                 for tmp_idx in range(args.best):
                     best_idx = np.argpartition(np.array(dis), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
