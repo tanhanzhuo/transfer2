@@ -84,7 +84,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
                         else:
                             line = line.replace(hash_two, hash_two[1:])
                             print(hash_two)
-                hash_data[hash_one].add(line)
+                hash_data[hash_one.lower()].add(line)
 
 NUM = args.num
 hash_pair = []
