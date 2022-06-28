@@ -47,8 +47,8 @@ def process(line):
 def write_json(fileName,data):
     with open(fileName + '.json', 'w', encoding='utf-8') as f:
         for one in tqdm(data):
-            json.dump(one, f)
-            f.write('\n')
+            tmp = json.dumps(one, ensure_ascii=False)
+            f.write(tmp+'\n')
 
 hash_thre_list = list(hash_dic.keys())
 hash_data = {}
