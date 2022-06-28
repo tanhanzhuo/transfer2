@@ -73,8 +73,13 @@ with open(filePath, 'r', encoding='utf-8') as f:
             if tmp is not None:
                 # hash_data[hash_one].add(idx)
                 ######split and remove #
-
-                hash_data[hash_one].add(line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip())
+                line = line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
+                for hash_two in hash_tmp_clean:
+                    if hash_two != hash_one:
+                        line = line.replace(hash_two+' ','')
+                    else:
+                        line = line.replace(hash_two, hash_seg[hash_two])
+                hash_data[hash_one].add(line)
 
 NUM = args.num
 hash_pair = []
@@ -87,4 +92,4 @@ for hash_one in tqdm(hash_thre_list):
         # hash_pair.append(  {'text1':lines[data_tmp[0]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip(), \
         #                     'text2':lines[data_tmp[1]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()}  )
         hash_pair.append({'text1': data_tmp[0],'text2': data_tmp[1]})
-write_json('hash_pair_thre'+str(args.thre)+'_num'+str(args.num), hash_pair)
+write_json('hash_pairseg_thre'+str(args.thre)+'_num'+str(args.num), hash_pair)
