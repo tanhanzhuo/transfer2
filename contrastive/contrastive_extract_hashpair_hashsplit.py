@@ -78,7 +78,12 @@ with open(filePath, 'r', encoding='utf-8') as f:
                     if hash_two != hash_one:
                         line = line.replace(hash_two+' ','')
                     else:
-                        line = line.replace(hash_two, hash_seg[hash_two])
+                        tmp2 = hash_seg.get(hash_one)
+                        if tmp2 is not None:
+                            line = line.replace(hash_two, tmp2)
+                        else:
+                            line = line.replace(hash_two, hash_two[1:])
+                            print(hash_two)
                 hash_data[hash_one].add(line)
 
 NUM = args.num
