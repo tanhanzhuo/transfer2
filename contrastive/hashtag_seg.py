@@ -21,4 +21,4 @@ with torch.no_grad():
     with open('hash_seg.txt', 'a') as f:
         for hash_one in tqdm(hash_dic.keys()):
             segmentations = ws.segment([hash_one])
-            f.write(hash_one + '\t' + segmentations[0] + '\t' + hash_dic[hash_one] + '\n')
+            f.write(hash_one + '\t' + segmentations[0] + '\t' + str(hash_dic[hash_one]) + '\n')
