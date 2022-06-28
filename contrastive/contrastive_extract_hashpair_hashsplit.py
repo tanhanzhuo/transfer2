@@ -61,6 +61,7 @@ hash_thre_list = list(hash_dic.keys())
 hash_data = {}
 for hash_one in hash_thre_list:
     hash_data[hash_one] = set()
+hash_bad=set()
 with open(filePath, 'r', encoding='utf-8') as f:
     # lines = f.readlines()
     # for idx in trange(len(lines)):
@@ -83,7 +84,8 @@ with open(filePath, 'r', encoding='utf-8') as f:
                             line = line.replace(hash_two, tmp2)
                         else:
                             line = line.replace(hash_two, hash_two[1:])
-                            print(hash_two)
+                            hash_bad.add(hash_two.lower())
+                            print(hash_bad)
                 hash_data[hash_one.lower()].add(line)
 
 NUM = args.num
