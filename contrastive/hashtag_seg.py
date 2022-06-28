@@ -6,7 +6,7 @@ import json
 import re
 data =[]
 num = []
-f=open('./contrastive/hash_his.json','r',encoding='utf-8')
+f=open('./hash_his.json','r',encoding='utf-8')
 hash_dic = json.load(f)
 f.close()
 for hash_one in list(hash_dic.keys()):
