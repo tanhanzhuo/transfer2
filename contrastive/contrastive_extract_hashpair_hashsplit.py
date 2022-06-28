@@ -34,7 +34,7 @@ def process(line):
     hash_tmp = HASH.findall(line)
     hash_tmp_clean = []
     for hash_one in hash_tmp:
-        hash_one = hash_one.lower()
+        # hash_one = hash_one.lower()
         if len(hash_one) > 30:
             continue
         if hash_one[1].isalpha():
@@ -44,7 +44,7 @@ def process(line):
                 continue
             if hash_one[-1] in string.punctuation:
                 hash_one = hash_one[:-1]
-            hash_clean = re.findall('[a-z0-9]*', hash_one)
+            hash_clean = re.findall('[a-zA-Z0-9]*', hash_one)
             hash_clean = '#' + ''.join(hash_clean)
             if hash_one == hash_clean:
                 hash_tmp_clean.append(hash_one)
@@ -68,7 +68,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
     for line in tqdm(f):
         hash_tmp_clean = process(line)
         for hash_one in hash_tmp_clean:
-            tmp = hash_data.get(hash_one)
+            tmp = hash_data.get(hash_one.lower())
 
             if tmp is not None:
                 # hash_data[hash_one].add(idx)
@@ -78,7 +78,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
                     if hash_two != hash_one:
                         line = line.replace(hash_two+' ','')
                     else:
-                        tmp2 = hash_seg.get(hash_one)
+                        tmp2 = hash_seg.get(hash_one.lower())
                         if tmp2 is not None:
                             line = line.replace(hash_two, tmp2)
                         else:
