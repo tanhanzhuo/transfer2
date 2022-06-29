@@ -13,7 +13,7 @@ for hash_one in list(hash_dic.keys()):
         hash_dic.pop(hash_one)
 
 
-with open('../hashtag/hash_seg.txt', 'r', encoding='utf-8') as f:
+with open('./hash_seg.txt', 'r', encoding='utf-8') as f:
     lines = f.readlines()
 hash_seg = {}
 for line in lines:
