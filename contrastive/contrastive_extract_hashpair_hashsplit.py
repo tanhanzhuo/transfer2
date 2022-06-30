@@ -75,17 +75,18 @@ with open(filePath, 'r', encoding='utf-8') as f:
                 # hash_data[hash_one].add(idx)
                 ######split and remove #
                 line = line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
-                for hash_two in hash_tmp_clean:
-                    if hash_two != hash_one:
-                        line = line.replace(hash_two+' ','')
-                    else:
-                        tmp2 = hash_seg.get(hash_one.lower())
-                        if tmp2 is not None:
-                            line = line.replace(hash_two, tmp2)
-                        else:
-                            line = line.replace(hash_two, hash_two[1:])
-                            hash_bad.add(hash_two.lower())
-                            print(hash_bad)
+
+                tmp2 = hash_seg.get(hash_one.lower())
+                if tmp2 is not None:
+                    line = line.replace(hash_one, tmp2)
+                else:
+                    line = line.replace(hash_one, hash_one[1:])
+                    hash_bad.add(hash_one.lower())
+                    print(hash_bad)
+                hash_tmp = HASH.findall(line)
+                for hash_two in hash_tmp:
+                    line.replace(hash_two,hash_two[1:])
+
                 hash_data[hash_one.lower()].add(line)
 
 NUM = args.num
