@@ -92,12 +92,14 @@ with open(filePath, 'r', encoding='utf-8') as f:
 NUM = args.num
 hash_pair = []
 for hash_one in tqdm(hash_thre_list):
-    data = hash_data[hash_one]
+    data = list(hash_data[hash_one])
     if len(data) < args.thre:
         continue
+
     for tmp in range(NUM):
         data_tmp = random.sample(data, 2)
         # hash_pair.append(  {'text1':lines[data_tmp[0]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip(), \
         #                     'text2':lines[data_tmp[1]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()}  )
         hash_pair.append({'text1': data_tmp[0],'text2': data_tmp[1]})
+
 write_json('hash_pairseg_thre'+str(args.thre)+'_num'+str(args.num), hash_pair)
