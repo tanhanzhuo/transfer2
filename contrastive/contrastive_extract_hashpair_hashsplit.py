@@ -85,7 +85,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
                     print(hash_bad)
                 hash_tmp = HASH.findall(line)
                 for hash_two in hash_tmp:
-                    line = line.replace(hash_two,hash_two[1:])
+                    line = line.replace(hash_two,hash_two[1:].lower())
 
                 hash_data[hash_one.lower()].add(line)
 
