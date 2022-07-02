@@ -82,10 +82,10 @@ batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
 train_data_loader = DataLoader(
     tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
 )
-
+cos_sim = torch.nn.CosineSimilarity(dim=-1)
 progress_bar = tqdm(range(BATCH))
 total_num = 0
-embeddings = []
+embeddings = torch.tensor([[]]).view(-1,768).cuda()#[]
 tmp_samples = []
 center_samples = []
 center_embs = []
@@ -99,16 +99,17 @@ for step, batch in enumerate(train_data_loader):
             # print(embeddings.shape)
             # print('start calculate')
             # curr_time = time.time()
-            dis = squareform(pdist(embeddings, 'cosine'))
+            dis = cos_sim(embeddings.unsqueeze(1),embeddings.unsqueeze(0))#squareform(pdist(embeddings, 'cosine'))
             # print('end calculate')
             # print(time.time()-curr_time)
             # curr_time = time.time()
-            dis_sum = np.sum(dis, axis=1)
-            best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
+            dis_sum = dis.sum(dim=-1)#np.sum(dis, axis=1)
+            val, best = dis_sum.topk(args.num_sample)
+            #best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
             # print('end rank')
             # print(time.time() - curr_time)
             # curr_time = time.time()
-            for idx in best:
+            for idx in best.cpu().numpy():
                 center_embs.append(embeddings[idx])
                 center_samples.append(tmp_samples[idx])
             # print('end save')
@@ -133,7 +134,7 @@ for step, batch in enumerate(train_data_loader):
                             attention_mask=batch['attention_mask'].cuda(),
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
-            embeddings.extend(outputs.cpu().numpy())
+            embeddings = torch.cat((embeddings,outputs),0)#.extend(outputs.cpu().numpy())
         previous_label = labels[-1]
 
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=np.array(center_samples),center_embs=np.array(center_embs))
