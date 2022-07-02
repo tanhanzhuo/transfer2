@@ -1,3 +1,4 @@
+#  CUDA_VISIBLE_DEVICES=0 python contrastive_extract_feature_together_cosine.py --file selected_thre100_num10000 --model /work/SimCSE-main/result/thre100_num100/ --num_sample 10 --save feature_modelT100N100_fileT100_num10 --CUR_SPLIT 0
 import json
 import datasets
 import argparse
@@ -114,10 +115,10 @@ for step, batch in enumerate(train_data_loader):
             # print(time.time() - curr_time)
             # curr_time = time.time()
             print('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
-                  format(labels[0], total_num, embeddings.shape[0], len(center_samples)))
+                  format(labels[0], total_num, len(embeddings), len(center_samples)))
             with open(args.save, 'a', encoding='utf-8') as f:
                 f.write('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
-                  format(labels[0], total_num, embeddings.shape[0], len(center_samples)))
+                  format(labels[0], total_num, len(embeddings), len(center_samples)))
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = []
