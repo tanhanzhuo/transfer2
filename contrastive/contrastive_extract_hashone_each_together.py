@@ -72,8 +72,11 @@ for hash_one in tqdm(hash_thre_list):
         for one in hash_data[hash_one]:
             hash_save.append({'text': one,'labels': idx})
     else:
-        for one in random.sample(hash_data[hash_one], args.num):
-            hash_save.append({'text': one,'labels': idx})
+        data_tmp = list(hash_data[hash_one])
+        idx_tmp = list(range(len(data_tmp)))
+        random.shuffle(idx_tmp)
+        for tmp in idx_tmp[:args.num]:
+            hash_save.append({'text': data_tmp[tmp],'labels': idx})
     hash_convert[idx] = hash_one
     idx+=1
 
