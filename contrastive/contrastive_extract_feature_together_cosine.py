@@ -85,7 +85,7 @@ train_data_loader = DataLoader(
 cos_sim = torch.nn.CosineSimilarity(dim=-1)
 progress_bar = tqdm(range(BATCH))
 total_num = 0
-embeddings = torch.tensor([[]]).view(-1,768).cuda()#[]
+embeddings = torch.tensor([[]]).view(-1,768)#.cuda()#[]
 tmp_samples = []
 center_samples = []
 center_embs = []
@@ -134,7 +134,7 @@ for step, batch in enumerate(train_data_loader):
                             attention_mask=batch['attention_mask'].cuda(),
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
-            embeddings = torch.cat((embeddings,outputs),0)#.extend(outputs.cpu().numpy())
+            embeddings = torch.cat((embeddings,outputs.cpu()),0)#.extend(outputs.cpu().numpy())
         previous_label = labels[-1]
 
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=np.array(center_samples),center_embs=np.array(center_embs))
