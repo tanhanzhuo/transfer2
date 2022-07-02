@@ -77,8 +77,12 @@ for hash_one in tqdm(hash_thre_list):
 
             hash_save.append({'text': one,'labels': idx})
     else:
-        for one in random.sample(hash_data[hash_one], args.num):
-
+        # for one in random.sample(hash_data[hash_one], args.num):
+        data_tmp = list(hash_data[hash_one])
+        idx_tmp = list(range(len(data_tmp)))
+        random.shuffle(idx_tmp)
+        for tmp in idx_tmp[:args.num]:
+            one = data_tmp[tmp]
             hash_tmp = HASH.findall(one)
             for hash_two in hash_tmp:
                 one = one.replace(hash_two, hash_two[1:].lower())
