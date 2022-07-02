@@ -9,13 +9,13 @@ import time
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='1000',type=str)
-parser.add_argument('--model',default='checkpoint-1100000',type=str)
-parser.add_argument("--num_sample", default=100, type=int)
-parser.add_argument('--save',default=None,type=str)
+parser.add_argument('--file',default='selected_thre100_num10000',type=str)
+parser.add_argument('--model',default='./thre100_num100/99999/',type=str)
+parser.add_argument("--num_sample", default=10, type=int)
+parser.add_argument('--save',default='feature_modelT100N100_fileT100_num10',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
-parser.add_argument("--preprocessing_num_workers", default=20, type=int)
-parser.add_argument("--batch_size", default=32, type=int)
+parser.add_argument("--preprocessing_num_workers", default=10, type=int)
+parser.add_argument("--batch_size", default=7, type=int)
 
 #simcse
 parser.add_argument('--temp',default=0.05,type=float)
@@ -114,6 +114,9 @@ for step, batch in enumerate(train_data_loader):
             # print(time.time() - curr_time)
             # curr_time = time.time()
             print('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
+                  format(labels[0], total_num, embeddings.shape[0], len(center_samples)))
+            with open(args.save, 'a', encoding='utf-8') as f:
+                f.write('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
                   format(labels[0], total_num, embeddings.shape[0], len(center_samples)))
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
