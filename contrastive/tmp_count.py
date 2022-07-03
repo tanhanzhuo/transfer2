@@ -27,8 +27,8 @@ sem-17
 imp-hate
 sem19-task5-hate,sem19-task6-offen
 
-CUDA_VISIBLE_DEVICES=0 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100_fileT100_num10 --model /work/SimCSE-main/result/thre100_num100/599999/ --task_name stance,hate,sem-18,sem22-task6-sarcasm
-CUDA_VISIBLE_DEVICES=1 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100_fileT100_num10 --model /work/SimCSE-main/result/thre100_num100/599999/ --task_name sem-17
-CUDA_VISIBLE_DEVICES=2 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100_fileT100_num10 --model /work/SimCSE-main/result/thre100_num100/599999/ --task_name imp-hate
-CUDA_VISIBLE_DEVICES=3 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100_fileT100_num10 --model /work/SimCSE-main/result/thre100_num100/599999/ --task_name sem19-task5-hate,sem19-task6-offen
+CUDA_VISIBLE_DEVICES=0 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100S_fileT100S_num10 --model /work/SimCSE-main/result/thre100_num100_seg/599999/ --task_name stance,hate,sem-18,sem22-task6-sarcasm --method _modelT100N100S_fileT100S
+CUDA_VISIBLE_DEVICES=1 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100S_fileT100S_num10 --model /work/SimCSE-main/result/thre100_num100_seg/599999/ --task_name sem-17 --method _modelT100N100S_fileT100S
+CUDA_VISIBLE_DEVICES=2 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100S_fileT100S_num10 --model /work/SimCSE-main/result/thre100_num100_seg/599999/ --task_name imp-hate --method _modelT100N100S_fileT100S
+CUDA_VISIBLE_DEVICES=3 python contrastive_process_data_cosine_singleGPU.py --hash_file feature_modelT100N100S_fileT100S_num10 --model /work/SimCSE-main/result/thre100_num100_seg/599999/ --task_name sem19-task5-hate,sem19-task6-offen --method _modelT100N100S_fileT100S
 
