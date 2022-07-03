@@ -116,7 +116,7 @@ for step, batch in enumerate(train_data_loader):
             # curr_time = time.time()
             print('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
                   format(labels[0], total_num, len(embeddings), len(center_samples)))
-            with open(args.save, 'a', encoding='utf-8') as f:
+            with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
                 f.write('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
                   format(labels[0], total_num, len(embeddings), len(center_samples)))
             del embeddings, dis, dis_sum
