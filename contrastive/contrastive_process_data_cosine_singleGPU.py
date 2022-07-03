@@ -17,7 +17,7 @@ parser.add_argument('--model',default='checkpoint-1000000',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
 
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
-parser.add_argument("--task_name", default='hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
+parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=2, type=int)
 parser.add_argument('--method',default='model10001000_num1000100',type=str)
 parser.add_argument("--split", default=1, type=int)#for gpu memory
