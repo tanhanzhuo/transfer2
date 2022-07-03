@@ -90,8 +90,8 @@ for task in args.task_name.split(','):
                     # dis = torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
                     dis = cos_sim(outputs,hash_embs[sp].cuda())
                     # best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
-                    val,best_idx = dis.topk(args.best).cpu().numpy()
-                    for tmp_idx in best_idx:
+                    val,best_idx = dis.topk(args.best)
+                    for tmp_idx in best_idx.cpu().numpy():
                         best_distance.append(dis[tmp_idx])
                         best_text.append(hash_samples[sp][tmp_idx])
 
