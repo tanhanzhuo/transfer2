@@ -41,7 +41,7 @@ from transformers import (
 )
 from accelerate import Accelerator
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, classification_report
-
+from tqdm import tqdm,trange
 CONVERT = {
     'stance':{'NONE':0,'FAVOR':1,'AGAINST':2},
     'hate': {'normal':0,'hatespeech':1,'offensive':2},
@@ -351,7 +351,7 @@ def do_train(args):
     best_metric = [0, 0, 0]
     tic_train = time.time()
     import copy
-    for epoch in range(args.num_train_epochs):
+    for epoch in trange(args.num_train_epochs):
         tot_loss = 0
         for step, inputs in enumerate(train_dataloader):
             inputs = inputs.cuda()
