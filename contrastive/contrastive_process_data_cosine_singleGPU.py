@@ -92,7 +92,7 @@ for task in args.task_name.split(','):
                     # best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
                     val,best_idx = dis.topk(args.best)
                     for tmp_idx in best_idx.cpu().numpy():
-                        best_distance.append(dis[tmp_idx])
+                        best_distance.append(dis[tmp_idx].cpu().numpy())
                         best_text.append(hash_samples[sp][tmp_idx])
 
                 for tmp_idx in range(args.best):
