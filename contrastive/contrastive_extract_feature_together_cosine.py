@@ -103,7 +103,7 @@ for step, batch in enumerate(train_data_loader):
             # print('end calculate')
             # print(time.time()-curr_time)
             # curr_time = time.time()
-            dis_sum = np.sum(-dis, axis=1)
+            dis_sum = np.sum(-dis, axis=1)#######pdist cosine vs nn.cos : 1-cos
             best = np.argpartition(np.array(dis_sum), -args.num_sample)[-args.num_sample:]
             # print('end rank')
             # print(time.time() - curr_time)
