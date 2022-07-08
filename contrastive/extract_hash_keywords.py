@@ -54,7 +54,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
 
             if tmp is not None:
                 hash_data[hash_one].add(
-                    line.replace('[RT] ', '').replace('[USER]', '').replace('[HTTP]', '').strip()
+                    line.replace('[RT] ', '').replace('[USER]', '').replace('[HTTP]', '').replace('&amp','').strip()
                 )
 
 import random
