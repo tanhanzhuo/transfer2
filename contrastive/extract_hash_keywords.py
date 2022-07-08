@@ -1,6 +1,6 @@
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--model',default='nltk',type=int)
+parser.add_argument('--model',default='nltk',type=str)
 args = parser.parse_args()
 
 import json
