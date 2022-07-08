@@ -96,6 +96,8 @@ for hash_one in tqdm(hash_thre_list):
             word_clean = re.findall('[a-z0-9]*', word)
             word_clean = ''.join(word_clean)
             if word == word_clean and word not in stop_words:
+                if word == 'rt':
+                    continue
                 tmp = tokens.get(word)
                 if tmp is not None:
                     tokens[word]+=1
