@@ -1,7 +1,7 @@
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--thre',default=100,type=int)
-parser.add_argument('--num',default=500,type=int)
+parser.add_argument('--num',default=3000,type=int)
 parser.add_argument('--model',default='nltk',type=str)
 args = parser.parse_args()
 
@@ -79,11 +79,18 @@ if args.model != 'nltk':
         stop_words.add(one)
     stop_words = list(stop_words)
 hash_word = {}
-idx = 0
+
 for hash_one in tqdm(hash_thre_list):
     tokens = {}
-    for one in hash_data[hash_one]:
-        one = one.lower()
+
+    data_tmp = list(hash_data[hash_one])
+    idx_tmp = list(range(len(data_tmp)))
+    if args.num < len(hash_data[hash_one]):
+        random.shuffle(idx_tmp)
+        idx_tmp = idx_tmp[:args.num]
+
+    for idx_one in idx_tmp:
+        one = data_tmp[idx_one].lower()
         tokens_one = word_tokenize(one)
         for word in tokens_one:
             word_clean = re.findall('[a-z0-9]*', word)
@@ -95,7 +102,7 @@ for hash_one in tqdm(hash_thre_list):
                 else:
                     tokens[word] = 1
     for one in list(tokens.keys()):
-        if tokens[one]<=3:
+        if tokens[one]<=5:
             tokens.pop(one)
     tokens_sort = dict(sorted(tokens.items(), key=lambda x: x[1],reverse=True))
     print(list(tokens_sort.keys())[:10])
