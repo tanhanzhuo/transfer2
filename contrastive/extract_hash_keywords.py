@@ -82,7 +82,7 @@ hash_word = {}
 idx = 0
 for hash_one in tqdm(hash_thre_list):
     tokens = {}
-    for one in tqdm(hash_data[hash_one]):
+    for one in hash_data[hash_one]:
         one = one.lower()
         tokens_one = word_tokenize(one)
         for word in tokens_one:
@@ -94,7 +94,7 @@ for hash_one in tqdm(hash_thre_list):
                     tokens[word]+=1
                 else:
                     tokens[word] = 1
-    for one in tokens.keys():
+    for one in list(tokens.keys()):
         if tokens[one]<=3:
             tokens.pop(one)
     tokens_sort = dict(sorted(tokens.items(), key=lambda x: x[1],reverse=True))
