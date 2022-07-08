@@ -1,5 +1,7 @@
 import argparse
 parser = argparse.ArgumentParser()
+parser.add_argument('--thre',default=100,type=int)
+parser.add_argument('--num',default=500,type=int)
 parser.add_argument('--model',default='nltk',type=str)
 args = parser.parse_args()
 
@@ -14,7 +16,7 @@ import string
 import random
 random.seed(0)
 HASH = re.compile(r"#\S+")
-filePath = '/work/data/twitter_hash.txt'#'twitter_hash_sample.txt'
+filePath = '/work/data/twitter_hash.txt'#'twitter_hash_test.txt'#
 
 def process(line):
     line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
@@ -40,7 +42,7 @@ def process(line):
 
     return hash_tmp_clean
 
-hash_thre_list = list(hash_dic.keys())
+hash_thre_list = list(hash_dic.values())
 hash_data = {}
 for hash_one in hash_thre_list:
     hash_data[hash_one] = set()
@@ -92,6 +94,9 @@ for hash_one in tqdm(hash_thre_list):
                     tokens[word]+=1
                 else:
                     tokens[word] = 1
+    for one in tokens.keys():
+        if tokens[one]<=3:
+            tokens.pop(one)
     tokens_sort = dict(sorted(tokens.items(), key=lambda x: x[1],reverse=True))
     print(list(tokens_sort.keys())[:10])
     print(list(tokens_sort.values())[:10])
