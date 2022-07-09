@@ -85,7 +85,6 @@ hash_samples = []
 hash_embs = []
 hash_tags = []
 for idx in trange(args.split):
-    hash_idx.append(len(hash_samples))
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.append(tmp['center_samples'])
     # hash_embs.extend(tmp['center_embs'])
