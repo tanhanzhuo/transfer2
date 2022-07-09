@@ -267,7 +267,7 @@ def do_train(args):
     from openprompt.plms.mlm import MLMTokenizerWrapper
     config = AutoConfig.from_pretrained(args.model_name_or_path)
     plm = AutoModelForMaskedLM.from_pretrained(args.model_name_or_path, config=config)
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+    tokenizer = AutoTokenizer.from_pretrained(args.token_name_or_path, normalization=True)
     wrapped_t5tokenizer = MLMTokenizerWrapper(max_seq_length=128,tokenizer=tokenizer)
 
     ######################template
