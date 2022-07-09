@@ -37,5 +37,5 @@ for idx in trange(args.split):
     tmp.close()
     hash_tags = read_data(args.hash_file+'_'+str(idx)+'.txt')
     print('samples:{},hashtags:{}'.format(len(center_samples),len(hash_tags)))
-    # np.savez(args.hash_file + '_' + str(idx), center_samples=np.array(center_samples),
-    #          center_embs=np.array(center_embs),hash_tags=np.array(hash_tags))
+    np.savez(args.hash_file + '_' + str(idx), center_samples=np.array(center_samples),
+             center_embs=np.array(center_embs),hash_tags=np.array(hash_tags))
