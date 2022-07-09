@@ -82,7 +82,7 @@ batchify_fn = DataCollatorWithPadding(tokenizer=tokenizer)
 train_data_loader = DataLoader(
     tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
 )
-
+MAX_LEN=len(train_data_loader)
 progress_bar = tqdm(range(BATCH))
 total_num = 0
 embeddings = []
@@ -94,7 +94,7 @@ previous_label = tokenized_datasets['train'][0]['labels']
 for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
-        if labels[0] != labels[-1] or labels[0] != previous_label:#goes to another hashtag
+        if labels[0] != labels[-1] or labels[0] != previous_label or step == MAX_LEN:#goes to another hashtag
             total_num+=1
             # print(embeddings.shape)
             # print('start calculate')
