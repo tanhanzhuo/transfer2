@@ -83,15 +83,16 @@ def write_json(data, fileName):
 
 hash_samples = []
 hash_embs = []
-hash_idx = []
+hash_tags = []
 for idx in trange(args.split):
     hash_idx.append(len(hash_samples))
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.append(tmp['center_samples'])
     # hash_embs.extend(tmp['center_embs'])
     hash_embs.append(torch.tensor(tmp['center_embs']))
+    hash_tags.append(tmp['hash_tags'])
     tmp.close()
-print(hash_idx)
+
 # hash_embs= torch.tensor(np.array(hash_embs))
 cos_sim = torch.nn.CosineSimilarity(dim=1)
 for task in args.task_name.split(','):
@@ -99,7 +100,8 @@ for task in args.task_name.split(','):
         train_dataset = read_data(args.dataset_path + task + '/' + fileName)
         data_hash_all = []
         for tmp_idx in range(args.best):
-            data_hash_all.append(copy.deepcopy(train_dataset))
+            data_hash_all.append([copy.deepcopy(train_dataset),copy.deepcopy(train_dataset),\
+                                  copy.deepcopy(train_dataset),copy.deepcopy(train_dataset)])
         train_dataset = read_data_nohash(args.dataset_path + task + '/' + fileName) ###remove hash to retrieve
         for idx in trange(len(train_dataset)):
             one = train_dataset[idx]
@@ -111,7 +113,8 @@ for task in args.task_name.split(','):
                                 output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
                 best_distance = []
-                best_text = []
+                best_hash = []
+                best_word = []
                 for sp in range(args.split):
                     # dis = torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
                     dis = cos_sim(outputs,hash_embs[sp].cuda())
@@ -121,15 +124,29 @@ for task in args.task_name.split(','):
                     for tmp_idx in best_idx.cpu().numpy():
                         best_distance.append(dis[tmp_idx].cpu().numpy())
                         # best_text.append(hash_samples[sp][tmp_idx])
-                        best_text.append(hash_dic[hash_idx[sp]+tmp_idx])
+                        best_hash.append(hash_tags[sp][tmp_idx])
+                        best_word.append(hash_word[hash_tags[sp][tmp_idx]])#list of keywords
                     del dis
                     torch.cuda.empty_cache()
                 for tmp_idx in range(args.best):
                     best_idx = np.argpartition(np.array(best_distance), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
-                        data_hash_all[tmp_idx][idx]['text'] = emoji.emojize(tokenizer.decode(best_text[cur_idx][1:]).replace(tokenizer.pad_token,'').strip()) \
+                        data_hash_all[tmp_idx][0][idx]['text'] = best_hash[cur_idx] \
                                                  + ' ' + data_hash_all[tmp_idx][idx]['text']
+                        data_hash_all[tmp_idx][1][idx]['text'] = ' '.join(best_word[cur_idx][:10]) \
+                                                                 + ' ' + data_hash_all[tmp_idx][idx]['text']
+                        data_hash_all[tmp_idx][2][idx]['text'] = data_hash_all[tmp_idx][idx]['text']\
+                                                                 + ' ' + best_hash[cur_idx]
+                        data_hash_all[tmp_idx][3][idx]['text'] = data_hash_all[tmp_idx][idx]['text'] \
+                                                                 + ' ' + ' '.join(best_word[cur_idx][:10])
         for tmp_idx in range(args.best):
-            write_json(data_hash_all[tmp_idx], args.dataset_path + task + '/' + fileName + args.method+'_'+str(tmp_idx))
+            write_json(data_hash_all[tmp_idx][0], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
+                       +' '+'hashfirst')
+            write_json(data_hash_all[tmp_idx][1], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
+                       +' '+'wordfirst')
+            write_json(data_hash_all[tmp_idx][2], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
+                       +' '+'hashlast')
+            write_json(data_hash_all[tmp_idx][3], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
+                       +' '+'wordlast')
 
     print('task done! {}'.format(task))
