@@ -140,12 +140,12 @@ for task in args.task_name.split(','):
                                                                  + ' ' + ' '.join(best_word[cur_idx][:10])
         for tmp_idx in range(args.best):
             write_json(data_hash_all[tmp_idx][0], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
-                       +' '+'hashfirst')
+                       +'_'+'hashfirst')
             write_json(data_hash_all[tmp_idx][1], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
-                       +' '+'wordfirst')
+                       +'_'+'wordfirst')
             write_json(data_hash_all[tmp_idx][2], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
-                       +' '+'hashlast')
+                       +'_'+'hashlast')
             write_json(data_hash_all[tmp_idx][3], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
-                       +' '+'wordlast')
+                       +'_'+'wordlast')
 
     print('task done! {}'.format(task))
