@@ -112,15 +112,15 @@ for step, batch in enumerate(train_data_loader):
             for idx in best:
                 center_embs.append(embeddings[idx])
                 center_samples.append(tmp_samples[idx])
-            center_hash.append(CONVERT[str(previous_label)])
+            center_hash.append(CONVERT[str(previous_label.item())])
             # print('end save')
             # print(time.time() - curr_time)
             # curr_time = time.time()
             print('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
-                  format(previous_label,CONVERT[str(previous_label)], total_num, len(embeddings), len(center_samples)))
+                  format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
             with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
                 f.write('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
-                  format(previous_label,CONVERT[str(previous_label)], total_num, len(embeddings), len(center_samples)))
+                  format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = []
