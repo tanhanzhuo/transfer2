@@ -89,6 +89,7 @@ embeddings = []
 tmp_samples = []
 center_samples = []
 center_embs = []
+center_hash = []
 previous_label = tokenized_datasets['train'][0]['labels']
 # print(previous_label)
 for step, batch in enumerate(train_data_loader):
@@ -111,14 +112,15 @@ for step, batch in enumerate(train_data_loader):
             for idx in best:
                 center_embs.append(embeddings[idx])
                 center_samples.append(tmp_samples[idx])
+            center_hash.append(CONVERT[str(previous_label)])
             # print('end save')
             # print(time.time() - curr_time)
             # curr_time = time.time()
-            print('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
-                  format(labels[0], total_num, len(embeddings), len(center_samples)))
+            print('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
+                  format(previous_label,CONVERT[str(previous_label)], total_num, len(embeddings), len(center_samples)))
             with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
-                f.write('current hashtag:{}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
-                  format(labels[0], total_num, len(embeddings), len(center_samples)))
+                f.write('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
+                  format(previous_label,CONVERT[str(previous_label)], total_num, len(embeddings), len(center_samples)))
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
             embeddings = []
@@ -136,7 +138,8 @@ for step, batch in enumerate(train_data_loader):
             embeddings.extend(outputs.cpu().numpy())
         previous_label = labels[-1]
 
-np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=np.array(center_samples),center_embs=np.array(center_embs))
+np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=np.array(center_samples),\
+         center_embs=np.array(center_embs),center_hash=np.array(center_hash))
 
 '''
 texts = [
