@@ -19,6 +19,7 @@ parser.add_argument("--max_seq_length", default=128, type=int)
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=2, type=int)
+parser.add_argument("--num_samples", default=10, type=int)
 parser.add_argument('--method',default='model10001000_num1000100',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 #simcse
@@ -117,7 +118,7 @@ for task in args.task_name.split(','):
                 for sp in range(args.split):
                     # dis = torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
                     dis = cos_sim(outputs,hash_embs[sp].cuda())
-                    dis = dis.view(-1,10).sum(dim=-1)##################################hash each
+                    dis = dis.view(-1,args.num_samples).sum(dim=-1)##################################hash each
                     # best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
                     val,best_idx = dis.topk(args.best)
                     for tmp_idx in best_idx.cpu().numpy():
