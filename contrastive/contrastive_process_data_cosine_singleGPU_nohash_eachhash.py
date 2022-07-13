@@ -91,7 +91,7 @@ for idx in trange(args.split):
     hash_samples.append(tmp['center_samples'])
     # hash_embs.extend(tmp['center_embs'])
     hash_embs.append(torch.tensor(tmp['center_embs']))
-    hash_tags.append(tmp['hash_tags'])
+    hash_tags.append(tmp['center_hash'])
     tmp.close()
 
 # hash_embs= torch.tensor(np.array(hash_embs))
