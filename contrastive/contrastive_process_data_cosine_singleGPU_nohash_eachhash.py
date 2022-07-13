@@ -20,6 +20,7 @@ parser.add_argument("--dataset_path", default='../finetune/data/', type=str, req
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=2, type=int)
 parser.add_argument("--num_samples", default=10, type=int)
+parser.add_argument("--word", default=False, type=bool)
 parser.add_argument('--method',default='model10001000_num1000100',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 #simcse
@@ -133,20 +134,23 @@ for task in args.task_name.split(','):
                     for cur_idx in best_idx:
                         data_hash_all[tmp_idx][0][idx]['text'] = best_hash[cur_idx] \
                                                  + ' ' + data_hash_all[tmp_idx][0][idx]['text']
-                        data_hash_all[tmp_idx][1][idx]['text'] = ' '.join(best_word[cur_idx][:10]) \
-                                                                 + ' ' + data_hash_all[tmp_idx][1][idx]['text']
                         data_hash_all[tmp_idx][2][idx]['text'] = data_hash_all[tmp_idx][2][idx]['text']\
                                                                  + ' ' + best_hash[cur_idx]
-                        data_hash_all[tmp_idx][3][idx]['text'] = data_hash_all[tmp_idx][3][idx]['text']\
+                        if args.word:
+                            data_hash_all[tmp_idx][1][idx]['text'] = ' '.join(best_word[cur_idx][:10]) \
+                                                                     + ' ' + data_hash_all[tmp_idx][1][idx]['text']
+                            data_hash_all[tmp_idx][3][idx]['text'] = data_hash_all[tmp_idx][3][idx]['text']\
                                                                  + ' ' + ' '.join(best_word[cur_idx][:10])
         for tmp_idx in range(args.best):
             write_json(data_hash_all[tmp_idx][0], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
                        +'_'+'hashfirst')
-            write_json(data_hash_all[tmp_idx][1], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
-                       +'_'+'wordfirst')
-            write_json(data_hash_all[tmp_idx][2], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
-                       +'_'+'hashlast')
-            write_json(data_hash_all[tmp_idx][3], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
-                       +'_'+'wordlast')
+            write_json(data_hash_all[tmp_idx][2],
+                       args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx) \
+                       + '_' + 'hashlast')
+            if args.word:
+                write_json(data_hash_all[tmp_idx][1], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
+                           +'_'+'wordfirst')
+                write_json(data_hash_all[tmp_idx][3], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
+                           +'_'+'wordlast')
 
     print('task done! {}'.format(task))
