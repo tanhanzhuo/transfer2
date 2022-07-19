@@ -80,6 +80,10 @@ if __name__ == "__main__":
                     hash_clean = '#' + ''.join(hash_clean)
                     if hash_one == hash_clean:
                         tmp = hash_dic.get(hash_one)
+
+                        if hash_up[-1] in string.punctuation:
+                            hash_up = hash_up[:-1]
+
                         if tmp is not None:
                             if hash_up in hash_dic[hash_one].keys():
                                 hash_dic[hash_one][hash_up] += 1
