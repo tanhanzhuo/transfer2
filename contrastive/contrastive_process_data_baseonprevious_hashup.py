@@ -49,4 +49,4 @@ for task in tqdm(args.task_name.split(',')):
                 text = ' '.join(text_sp[:-1]) + ' ' + hash_convert[hash]
                 dataset_up[idx_one]['text'] = text
             write_json(dataset_up, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(top) \
-                           + '_' + 'hashlast_up.json')
+                           + '_' + 'hashlast_up')
