@@ -57,6 +57,17 @@ import torch.nn as nn
 # import paddle.nn.functional as F
 from transformers.models.roberta.modeling_roberta import RobertaModel, RobertaPreTrainedModel
 
+CONVERT = {
+    'stance':{'NONE':0,'FAVOR':1,'AGAINST':2},
+    'hate': {'normal':0,'hatespeech':1,'offensive':2},
+    'sem-18':{'0':0,'1':1},
+    'sem-17':{'neutral':0,'positive':1,'negative':2},
+    'imp-hate':{'not_hate':0,'implicit_hate':1,'negative':2},
+    'sem19-task5-hate':{'0':0,'1':1},
+    'sem19-task6-offen':{'NOT':0,'OFF':1},
+    'sem22-task6-sarcasm':{'0':0,'1':1}
+}
+
 class RobertaClassificationHead(nn.Module):
     """Head for sentence-level classification tasks."""
 
@@ -69,9 +80,8 @@ class RobertaClassificationHead(nn.Module):
         self.dropout = nn.Dropout(classifier_dropout)
         self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
 
-    def forward(self, features, embeds,**kwargs):
+    def forward(self, features, **kwargs):
         x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
-        x = x + embeds #########################adding hash embedding
         x = self.dropout(x)
         x = self.dense(x)
         x = torch.tanh(x)
@@ -90,7 +100,6 @@ class RobertaForMulti(RobertaPreTrainedModel):
 
     def forward(self,
                 input_ids,
-                embeds,
                 token_type_ids=None,
                 position_ids=None,
                 attention_mask=None):
@@ -104,8 +113,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
         )
 
         sequence_output = outputs[0]
-        logits = self.classifier(sequence_output, embeds)
-
+        logits = self.classifier(sequence_output)
         return logits
 
 
@@ -118,7 +126,6 @@ class DataCollatorMulti():
                 'input_ids': Pad(axis=0, pad_val=tokenizer.pad_token_id, dtype='int64'),  # input
                 'token_type_ids': Pad(axis=0, pad_val=tokenizer.pad_token_type_id, dtype='int64'),  # segment
                 'labels': Stack(dtype="int64"),  # label
-                'emoji': Stack(dtype="int64")  # label
             }): fn(samples)
         else:
             self.batch_pad = batch_pad
@@ -164,14 +171,7 @@ def parse_args():
     )
     parser.add_argument(
         "--method",
-        default='emoji',
-        type=str,
-        required=False,
-        help="The output directory where the model predictions and checkpoints will be written.",
-    )
-    parser.add_argument(
-        "--output_dir",
-        default='./model/',
+        default='token',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -237,15 +237,6 @@ def parse_args():
     )
     parser.add_argument(
         "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
-    parser.add_argument(
-        "--ratio", default='10', type=str, help="ratio for loss")
-    parser.add_argument(
-        "--ratio2", default='5', type=str, help="ratio for loss")
-    parser.add_argument(
-        "--device",
-        default="0",
-        type=str,
-        help="The device to select to train the model, is must be cpu/gpu/xpu.")
 
     args = parser.parse_args()
     return args
@@ -256,11 +247,11 @@ def evaluate(model, data_loader):
     label_all = []
     pred_all = []
     for batch in data_loader:
-        input_ids, segment_ids, labels, labels_seq = batch
-        logits, logits_seq = model(input_ids, segment_ids)
+        input_ids, segment_ids, labels = batch
+        logits = model(input_ids.cuda(), segment_ids.cuda())
 
         preds = logits.argmax(axis=1)
-        label_all += [tmp for tmp in labels.cpu().numpy()]
+        label_all += [tmp for tmp in labels.numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
 
     f1_ma = f1_score(label_all, pred_all,average='macro')
@@ -269,19 +260,7 @@ def evaluate(model, data_loader):
     print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (f1_ma, f1_mi, f1_we))
     return f1_ma, f1_mi, f1_we
 
-def read_label(data):
-    label_name = set()
-    for one in data:
-        label_name.add(one['labels'])
-    label2idx = {}
-    label_name = sorted(list(label_name))
-    for idx in range(0, len(label_name)):
-        label2idx[label_name[idx]] = idx
-    return label2idx
-
-
 def convert_example(example, label2idx):
-    example.pop('attention_mask')
     example['labels'] = label2idx[example['labels']]
     return example  # ['input_ids'], example['token_type_ids'], label, prob
 
@@ -290,7 +269,7 @@ def do_train(args):
     # set_seed(args.seed)
     print(args)
     data_all = datasets.load_from_disk(args.input_dir)
-    label2idx = read_label(data_all['train'])
+    label2idx = CONVERT[args.task]
     trans_func = partial(
         convert_example,
         label2idx=label2idx)
@@ -304,14 +283,12 @@ def do_train(args):
     learning_rate = args.learning_rate.split(',')
     best_metric = [0, 0, 0]
     for lr in learning_rate:
-        accelerator = Accelerator()
+
         num_classes = len(label2idx.keys())
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
-        config2 = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=20)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         model = RobertaForMulti.from_pretrained(
-            args.model_name_or_path, config=config, config2=config2)
-
+            args.model_name_or_path, config=config).cuda()
         batchify_fn = DataCollatorMulti(tokenizer=tokenizer, ignore_label=-100)
         train_data_loader = DataLoader(
             train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
@@ -344,12 +321,7 @@ def do_train(args):
             num_training_steps=args.max_train_steps,
         )
 
-        model, optimizer, train_data_loader, dev_data_loader, test_data_loader = accelerator.prepare(
-            model, optimizer, train_data_loader, dev_data_loader, test_data_loader
-        )
-
         loss_fct = nn.CrossEntropyLoss().cuda()
-        loss_fct_emoji = nn.CrossEntropyLoss().cuda()
 
         print('start Training!!!')
         global_step = 0
@@ -359,13 +331,11 @@ def do_train(args):
             model.train()
             for step, batch in enumerate(train_data_loader):
                 global_step += 1
-                input_ids, segment_ids, labels, labels_emoji = batch
-                logits, logits_emoji = model(input_ids, segment_ids)
-                loss = loss_fct(logits, labels.view(-1))
-                loss_emoji = loss_fct_emoji(logits_emoji, labels_emoji.view(-1))
-                loss_all = loss * int(args.ratio) / 10.0 + loss_emoji * (10 - int(args.ratio)) / 10.0
+                input_ids, segment_ids, labels = batch
+                logits = model(input_ids.cuda(), segment_ids.cuda())
+                loss = loss_fct(logits, labels.cuda().view(-1))
                 # print(step)
-                accelerator.backward(loss_all)
+                loss.backward()
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
@@ -373,7 +343,7 @@ def do_train(args):
                 print(
                     "global step %d/%d, epoch: %d, loss: %f, speed: %.4f step/s, seed: %d,lr: %.5f,task: %s"
                     % (global_step, args.max_train_steps, epoch,
-                       loss_all, args.logging_steps / (time.time() - tic_train),
+                       loss, args.logging_steps / (time.time() - tic_train),
                        args.seed,float(lr),args.input_dir))
                 tic_train = time.time()
             if (epoch + 1) % args.save_steps == 0:
@@ -381,19 +351,12 @@ def do_train(args):
                 cur_metric = evaluate(model, dev_data_loader)
                 print("eval done total : %s s" % (time.time() - tic_eval))
                 if cur_metric[0] > best_metric[0]:
-                    accelerator.wait_for_everyone()
-                    unwrapped_model = accelerator.unwrap_model(model)
-                    unwrapped_model.save_pretrained(args.output_dir, save_function=accelerator.save)
-                    tokenizer.save_pretrained(args.output_dir)
+                    model_best = copy.deepcopy(model).cpu()
                     best_metric = cur_metric
-                    del unwrapped_model
-                    torch.cuda.empty_cache()
-        del model#, optimizer, logits, logits_seq, loss, loss_seq, loss_all, accelerator
+        del model
         torch.cuda.empty_cache()
 
-    model = RobertaForMulti.from_pretrained(
-        args.output_dir, config=config, config2=config2)
-    model = accelerator.prepare(model)
+    model = model_best.cuda()
     cur_metric = evaluate(model, test_data_loader)
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
@@ -407,32 +370,28 @@ if __name__ == "__main__":
     # r_dir = '/work/test/finetune/continue/'
     for task in args.task_name.split(','):
         for model_name in args.model_name_or_path.split(','):  # [r_dir+'bertweet/']:
-            for ratio in args.ratio.split(','):#range(10, 0, -2):
-                for ratio2 in args.ratio2.split(','):#range(10, -2, -2):
-                    ave_metric = []
-                    for seed in args.seed.split(','):
-                        set_seed(int(seed))
-                        args_tmp = copy.deepcopy(args)
-                        args_tmp.input_dir = args.input_dir + task + '/' + args.method
-                        args_tmp.output_dir = args.output_dir + task + '/'
-                        args_tmp.seed = int(seed)
-                        args_tmp.model_name_or_path = model_name
-                        args_tmp.ratio = ratio
-                        args_tmp.ratio2 = ratio2
-                        ave_metric.append(do_train(args_tmp))
-                    ave_metric = np.array(ave_metric)
-                    print("*************************************************************************************")
-                    print('Task: %s, model: %s, loss ration: %s, weight ratio: %s' % (task, model_name, ratio, ratio2))
-                    print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
+            ave_metric = []
+            for seed in args.seed.split(','):
+                set_seed(int(seed))
+                args_tmp = copy.deepcopy(args)
+                args_tmp.task = task
+                args_tmp.input_dir = args.input_dir + task + '/' + args.method
+                args_tmp.seed = int(seed)
+                args_tmp.model_name_or_path = model_name
+                ave_metric.append(do_train(args_tmp))
+            ave_metric = np.array(ave_metric)
+            print("*************************************************************************************")
+            print('Task: %s, model: %s' % (task, model_name))
+            print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
+                                                                sum(ave_metric[:, 1]) / 5,
+                                                                sum(ave_metric[:, 2]) / 5))
+            with open(args.results_name, 'a') as f_res:
+
+                f_res.write('Task: %s, model: %s\n' % (task, model_name ) )
+                f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / 5,
                                                                         sum(ave_metric[:, 1]) / 5,
                                                                         sum(ave_metric[:, 2]) / 5))
-                    with open(args.results_name, 'a') as f_res:
+                for tmp in range(5):
+                    f_res.write('%.5f, %.5f, %.5f \n' % (ave_metric[tmp, 0],ave_metric[tmp, 1],ave_metric[tmp, 2]))
 
-                        f_res.write('Task: %s, model: %s, loss ration: %s, weight ratio: %s\n' % (task, model_name, ratio, ratio2 ) )
-                        f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / 5,
-                                                                                sum(ave_metric[:, 1]) / 5,
-                                                                                sum(ave_metric[:, 2]) / 5))
-                        for tmp in range(5):
-                            f_res.write('%.5f, %.5f, %.5f \n' % (ave_metric[tmp, 0],ave_metric[tmp, 1],ave_metric[tmp, 2]))
-
-                        f_res.close()
+                f_res.close()
