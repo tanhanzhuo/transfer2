@@ -4,66 +4,46 @@ import datasets
 import json
 from transformers import  AutoTokenizer
 import copy
+from accelerate import Accelerator
 import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='/work/transfer2/finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
 parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
-parser.add_argument('--method',default='modelT100N100S_fileT100S_num10_cluster_top0_hashlast',type=str)
+parser.add_argument('--method',default='modelT100N100S_fileT100S_num1_cluster_top0_hashlast',type=str)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
 parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwrite the cached training and evaluation sets")
-parser.add_argument('--hash_file',default='feature_modelT100N100S_fileT100S_num10_cluster',type=str)
+parser.add_argument('--hash_file',default='../contrastive/feature_modelT100N100S_fileT100S_num1_cluster',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 
-hash_samples = []
-hash_embs = []
-hash_tags = []
-for idx in range(args.split):
-    tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
-    # hash_embs.extend(tmp['center_embs'])
-    hash_embs.extend(tmp['center_embs'])
-    hash_tags.extend(tmp['center_hash'])
-    tmp.close()
-
-
-def read_data(fileName):
-    with open(fileName, 'r', encoding='utf-8') as f:
-        data = []
-        lines = f.readlines()
-        for line in lines:
-            data.append({'labels': line.split('\t')[0], 'text': line.split('\t')[1]})
-    return data
-
-def write_json(fileName):
-    data = read_data(fileName)
-    with open(fileName + '.json', 'w', encoding='utf-8') as f:
-        for one in data:
-            tmp = json.dumps(one, ensure_ascii=False)
-            f.write(tmp + '\n')
-
-def tokenization(args):
-    # if args.output_dir + args.task_name is not None:
-    #     os.makedirs(args.output_dir+ args.task_name, exist_ok=True)
-    # Get the datasets:
-    # if args.dataset_path is not None:
-    # if not os.path.isfile(args.dataset_path + args.task_name +'/train.json'):
-    for fileName in ['train', 'dev', 'test']:
-        write_json(args.dataset_path + args.task_name + '/' + fileName)
+def tokenization(args, hash_dic):
     data_files = {}
-    data_files["train"] = args.dataset_path + args.task_name + '/train.json'
-    data_files["dev"] = args.dataset_path + args.task_name + '/dev.json'
-    data_files["test"] = args.dataset_path + args.task_name + '/test.json'
+    data_files["train"] = args.dataset_path + args.task_name + '/train_'  + args.method + '.json'
+    data_files["dev"] = args.dataset_path + args.task_name + '/dev_'  + args.method + '.json'
+    data_files["test"] = args.dataset_path + args.task_name + '/test_'  + args.method + '.json'
     raw_datasets = datasets.load_dataset('json', data_files=data_files)
-    raw_datasets["train"] = raw_datasets["train"].shuffle()
-    raw_datasets["dev"] = raw_datasets["dev"].shuffle()
-    raw_datasets["test"] = raw_datasets["test"].shuffle()
+
+    for sp in ['train', 'dev', 'test']:
+        train_dataset = raw_datasets[sp]
+        text = train_dataset['text']
+        train_dataset = train_dataset.remove_columns(['text'])
+        embs = []
+        text_new = []
+        for one in text:
+            one_sp = one.strip().split(' ')
+            hash = one_sp[-1]
+            text_new.append(' '.join(one_sp[:-1]))
+            embs.append(hash_dic[hash])
+        train_dataset = train_dataset.add_column("text", text_new)
+        train_dataset = train_dataset.add_column("embs", embs)
+        raw_datasets[sp] = train_dataset.shuffle()
+
     # Load pretrained tokenizer
     if args.tokenizer_name:
-        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, use_fast=not args.use_slow_tokenizer,
-                                                  normalization=True)
+        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name,normalization=True)
 
     # First we tokenize all the texts.
 
@@ -81,7 +61,7 @@ def tokenization(args):
             padding=padding,
             truncation=True,
             max_length=args.max_seq_length,
-            return_special_tokens_mask=True,
+            return_special_tokens_mask=False,
         )
 
     tokenized_datasets = raw_datasets.map(
@@ -98,8 +78,19 @@ def tokenization(args):
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    args_tmp = copy.deepcopy(args)
+
+    hash_embs = []
+    hash_tags = []
+    for idx in range(args.split):
+        tmp = np.load(args.hash_file + '_' + str(idx) + '.npz', allow_pickle=True)
+        hash_embs.extend(tmp['center_embs'])
+        hash_tags.extend(tmp['center_hash'])
+        tmp.close()
+    hash_dic = dict(zip(hash_tags, hash_embs))
     for task in args.task_name.split(','):
-        args_tmp.task_name = task
-        tokenized_datasets = tokenization(args_tmp)
-        tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/token')
+        for method in args.method.split(','):
+            args_tmp = copy.deepcopy(args)
+            args_tmp.task_name = task
+            args_tmp.method = method
+            tokenized_datasets = tokenization(args_tmp, hash_dic)
+            tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/' + args_tmp.hash_file)

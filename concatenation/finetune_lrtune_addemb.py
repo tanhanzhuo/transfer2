@@ -44,7 +44,7 @@ from transformers import (
     set_seed,
 )
 from accelerate import Accelerator
-
+from tqdm import trange,tqdm
 # from paddle.metric import Metric, Accuracy, Precision, Recall
 # from paddlenlp.data import Stack, Tuple, Pad, Dict
 # from paddlenlp.data.sampler import SamplerHelper
@@ -327,7 +327,7 @@ def do_train(args):
         global_step = 0
         tic_train = time.time()
 
-        for epoch in range(args.num_train_epochs):
+        for epoch in trange(args.num_train_epochs):
             model.train()
             for step, batch in enumerate(train_data_loader):
                 global_step += 1
