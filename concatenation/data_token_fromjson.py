@@ -13,7 +13,7 @@ parser.add_argument("--task_name", default='hate', type=str, required=False, hel
 parser.add_argument('--method',default='modelT100N100S_fileT100S_num10_cluster_top0_hashlast_up',type=str)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
-parser.add_argument("--preprocessing_num_workers", default=10, type=int, help="multi-processing number.")
+parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
 parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwrite the cached training and evaluation sets")
 
 def read_data(fileName):
