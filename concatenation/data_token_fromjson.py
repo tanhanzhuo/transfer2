@@ -10,7 +10,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='/work/transfer2/finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
 parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
-parser.add_argument('--method',default='modelT100N100S_fileT100S_num10_cluster_top0_hashlast_up',type=str)
+parser.add_argument('--method',
+                    default='modelT100N100S_fileT100S_num10_cluster_top0_hashlast_up,'+
+                            'modelT100N100S_fileT100S_num10_cluster_top0_hashfirst_up,'+
+                            'modelT100N100S_fileT100S_num1_cluster_top0_hashlast_up,'+
+                            'modelT100N100S_fileT100S_num1_cluster_top0_hashfirst_up,'+
+                            'modelT100N100S_fileT100S_num10_top0_hashlast_up,'+
+                            'modelT100N100S_fileT100S_num10_top0_hashfirst_up,'+
+                            'modelT100N100S_fileT100S_num1_top0_hashlast_up,'+
+                            'modelT100N100S_fileT100S_num1_top0_hashfirst_up',
+                    type=str)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
