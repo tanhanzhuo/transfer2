@@ -73,7 +73,7 @@ class RobertaClassificationHead(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+        self.dense = nn.Linear(config.hidden_size*2, config.hidden_size)
         classifier_dropout = (
             config.classifier_dropout if config.classifier_dropout is not None else config.hidden_dropout_prob
         )
@@ -82,7 +82,7 @@ class RobertaClassificationHead(nn.Module):
 
     def forward(self, features, embs, **kwargs):
         x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
-        x = x + embs ################################ simply add the hash embs
+        x = torch.cat((x, embs),-1) ################################ simply add the hash embs
         x = self.dropout(x)
         x = self.dense(x)
         x = torch.tanh(x)
