@@ -47,8 +47,7 @@ def tokenization(args):
     raw_datasets["test"] = raw_datasets["test"].shuffle()
     # Load pretrained tokenizer
     if args.tokenizer_name:
-        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, use_fast=not args.use_slow_tokenizer,
-                                                  normalization=True)
+        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name,normalization=True)
 
     # First we tokenize all the texts.
 
