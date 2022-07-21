@@ -50,3 +50,15 @@ for task in tqdm(args.task_name.split(',')):
                 dataset_up[idx_one]['text'] = text
             write_json(dataset_up, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(top) \
                            + '_' + 'hashlast_up')
+
+            dataset = read_data(args.dataset_path + task + '/' + fileName + args.method + '_top' + str(top) \
+                                + '_' + 'hashfirst.json')
+            dataset_up = copy.deepcopy(dataset)
+            for idx_one in range(len(dataset)):
+                data_one = dataset[idx_one]
+                text_sp = data_one['text'].strip().split(' ')
+                hash = text_sp[0]
+                text = hash_convert[hash]+ ' '+' '.join(text_sp[1:])
+                dataset_up[idx_one]['text'] = text
+            write_json(dataset_up, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(top) \
+                       + '_' + 'hashfirst_up')
