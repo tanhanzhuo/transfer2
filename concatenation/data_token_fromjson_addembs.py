@@ -8,15 +8,15 @@ from accelerate import Accelerator
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--output_dir", default='/work/transfer2/finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
-parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/', type=str, required=False, help="dataset name")
+parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
+parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
-parser.add_argument('--method',default='modelT100N100S_fileT100S_num10_cluster_top0_hashlast',type=str)
+parser.add_argument('--method',default='modelT100N100S_fileT100S_num10_top0_hashlast',type=str)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
 parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwrite the cached training and evaluation sets")
-parser.add_argument('--hash_file',default='../contrastive/feature_modelT100N100S_fileT100S_num10_cluster',type=str)
+parser.add_argument('--hash_file',default='../contrastive/feature_modelT100N100S_fileT100S_num10',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 parser.add_argument("--num", default=10, type=int)#for gpu memory
 
@@ -37,7 +37,7 @@ def tokenization(args, hash_dic):
             one_sp = one.strip().split(' ')
             hash = one_sp[-1]
             text_new.append(' '.join(one_sp[:-1]))
-            embs.append(hash_dic[hash])
+            embs.append(list(hash_dic[hash]))
         train_dataset = train_dataset.add_column("text", text_new)
         train_dataset = train_dataset.add_column("embs", embs)
         raw_datasets[sp] = train_dataset.shuffle()
