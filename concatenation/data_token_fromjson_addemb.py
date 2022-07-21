@@ -93,4 +93,4 @@ if __name__ == "__main__":
             args_tmp.task_name = task
             args_tmp.method = method
             tokenized_datasets = tokenization(args_tmp, hash_dic)
-            tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/' + args_tmp.hash_file)
+            tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/' + args_tmp.hash_file.split('/')[-1])
