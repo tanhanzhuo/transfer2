@@ -206,7 +206,7 @@ def parse_args():
         # choices=["linear", "cosine", "cosine_with_restarts", "polynomial", "constant", "constant_with_warmup"],
     )
     parser.add_argument(
-        "--num_warmup_steps", type=int, default=0, help="Number of steps for the warmup in the lr scheduler."
+        "--num_warmup_steps", type=float, default=0.1, help="Number of steps for the warmup in the lr scheduler."
     )
     parser.add_argument(
         "--max_train_steps",
@@ -298,7 +298,7 @@ def do_train(args):
         lr_scheduler = get_scheduler(
             name=args.lr_scheduler_type,
             optimizer=optimizer,
-            num_warmup_steps=args.num_warmup_steps,
+            num_warmup_steps=int(args.num_warmup_steps*args.max_train_steps),
             num_training_steps=args.max_train_steps,
         )
 
