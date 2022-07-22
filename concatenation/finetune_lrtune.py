@@ -240,6 +240,8 @@ def evaluate(model, data_loader):
     return f1_ma, f1_mi, f1_we
 
 def convert_example(example, label2idx):
+    if example.get('special_tokens_mask') is not None:
+        example.pop('special_tokens_mask')
     example['labels'] = label2idx[example['labels']]
     return example  # ['input_ids'], example['token_type_ids'], label, prob
 
