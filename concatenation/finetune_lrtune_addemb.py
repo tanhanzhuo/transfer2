@@ -219,7 +219,7 @@ def parse_args():
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
         "--weight_decay",
-        default=0.0,
+        default=0.01,
         type=float,
         help="Weight decay if we apply some.")
     parser.add_argument(
