@@ -40,6 +40,7 @@ for emoji_one in emoji_thre_list:
 
 with open(filePath, 'r', encoding='utf-8') as f:
     for line in tqdm(f):
+        line = line.split('\t')[-1]
         emoji_tmp_clean = process(line)
         if len(emoji_tmp_clean) < 1:
             continue
