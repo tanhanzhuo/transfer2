@@ -23,10 +23,10 @@ import random
 filePath = '/work/data/twitter_emoji.txt'#'twitter_emoji_sample.txt'
 
 def process(line):
-    emoji_hash = []
+    emoji_hash = ''
     line = line.replace('[RT] ', '').replace('[USER] ', '').replace(' [HTTP]', '').strip()
     if len(line.replace(' ', '')) < 10:
-        return []
+        return ''
     emoji_list = emoji.distinct_emoji_list(line)
     if len(emoji_list) > 0:
         emoji_hash = ''.join(emoji_list)
@@ -41,6 +41,8 @@ for emoji_one in emoji_thre_list:
 with open(filePath, 'r', encoding='utf-8') as f:
     for line in tqdm(f):
         emoji_tmp_clean = process(line)
+        if len(emoji_tmp_clean) < 1:
+            continue
         tmp = emoji_data.get(emoji_tmp_clean)
         if tmp is not None:
             line = emoji.replace_emoji( line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip() )
