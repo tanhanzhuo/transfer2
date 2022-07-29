@@ -1,6 +1,6 @@
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--thre',default=1000000,type=int)
+parser.add_argument('--thre',default=100000,type=int)
 parser.add_argument('--num',default=1000,type=int)
 args = parser.parse_args()
 
@@ -55,6 +55,8 @@ with open(filePath, 'r', encoding='utf-8') as f:
 
 NUM = args.num
 emoji_pair = []
+emoji_convert = {}
+emoji_idx = 0
 for emoji_one in tqdm(emoji_thre_list):
     data = list(emoji_data[emoji_one])
     if len(data) < args.thre:
@@ -64,6 +66,8 @@ for emoji_one in tqdm(emoji_thre_list):
         data_tmp = random.sample(data, 2)
         # emoji_pair.append(  {'text1':lines[data_tmp[0]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip(), \
         #                     'text2':lines[data_tmp[1]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()}  )
-        emoji_pair.append({'text1': data_tmp[0],'text2': data_tmp[1]})
+        emoji_pair.append({'text1': data_tmp[0],'text2': data_tmp[1], 'idx':emoji_idx})
+    emoji_convert[emoji_one] = emoji_idx
+    emoji_idx+=1
 
 write_json('emoji_pair_thre'+str(args.thre)+'_num'+str(args.num), emoji_pair)
