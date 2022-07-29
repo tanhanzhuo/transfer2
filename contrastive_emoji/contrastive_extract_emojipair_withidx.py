@@ -66,7 +66,7 @@ for emoji_one in tqdm(emoji_thre_list):
         data_tmp = random.sample(data, 2)
         # emoji_pair.append(  {'text1':lines[data_tmp[0]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip(), \
         #                     'text2':lines[data_tmp[1]].replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()}  )
-        emoji_pair.append({'text1': data_tmp[0],'text2': data_tmp[1], 'labels':emoji_idx})
+        emoji_pair.append({'text1': data_tmp[0],'text2': data_tmp[1], 'label':emoji_idx})
     emoji_convert[emoji_one] = emoji_idx
     emoji_idx+=1
 
