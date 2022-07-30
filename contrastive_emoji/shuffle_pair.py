@@ -7,7 +7,7 @@ args = parser.parse_args()
 import json
 from tqdm import tqdm
 data = []
-with open('emoji_pair_thre'+str(args.thre)+'_num'+str(args.num), 'r', encoding='utf-8') as f:
+with open('emoji_pair_thre'+str(args.thre)+'_num'+str(args.num)+'.json', 'r', encoding='utf-8') as f:
     for line in tqdm(f):
         one = json.loads(line)
         data.append(one)
