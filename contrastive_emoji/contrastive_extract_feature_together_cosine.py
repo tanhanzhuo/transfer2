@@ -61,10 +61,10 @@ with open(args.file+'_index.json', 'r', encoding='utf-8') as f:
 SPLIT = args.NUM_SPLIT
 TOTAL = len(CONVERT.keys())
 BATCH = int(TOTAL /SPLIT)
-IDX = []
-for idx in range(SPLIT-1):
-    IDX.append([BATCH*idx, BATCH*(idx+1)])
-IDX.append([BATCH*(idx+1), TOTAL])
+# IDX = []
+# for idx in range(SPLIT-1):
+#     IDX.append([BATCH*idx, BATCH*(idx+1)])
+# IDX.append([BATCH*(idx+1), TOTAL])
 
 raw_datasets = datasets.load_dataset('json', data_files=args.file+'_'+str(args.CUR_SPLIT)+'.json')
 tokenized_datasets = raw_datasets.map(
