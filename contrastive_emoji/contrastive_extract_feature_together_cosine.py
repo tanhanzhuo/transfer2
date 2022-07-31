@@ -89,13 +89,13 @@ embeddings = []
 tmp_samples = []
 center_samples = []
 center_embs = []
-center_hash = []
+center_emoji = []
 previous_label = tokenized_datasets['train'][0]['labels']
 # print(previous_label)
 for step, batch in enumerate(train_data_loader):
     with torch.no_grad():
         labels= batch['labels']
-        if labels[0] != labels[-1] or labels[0] != previous_label or step == MAX_LEN:#goes to another hashtag
+        if labels[0] != labels[-1] or labels[0] != previous_label or step == MAX_LEN:#goes to another emojitag
             total_num+=1
             # print(embeddings.shape)
             # print('start calculate')
@@ -112,14 +112,14 @@ for step, batch in enumerate(train_data_loader):
             for idx in best:
                 center_embs.append(embeddings[idx])
                 center_samples.append(tmp_samples[idx])
-            center_hash.append(CONVERT[str(previous_label.item())])
+            center_emoji.append(CONVERT[str(previous_label.item())])
             # print('end save')
             # print(time.time() - curr_time)
             # curr_time = time.time()
-            print('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{}'. \
+            print('current emojitag:{}, {}, number emojitag:{}, cur emoji sample:{}, total emoji samples:{}'. \
                   format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
             with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
-                f.write('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
+                f.write('current emojitag:{}, {}, number emojitag:{}, cur emoji sample:{}, total emoji samples:{} \n'. \
                   format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
@@ -139,7 +139,7 @@ for step, batch in enumerate(train_data_loader):
         previous_label = labels[-1]
 
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=np.array(center_samples),\
-         center_embs=np.array(center_embs),center_hash=np.array(center_hash))
+         center_embs=np.array(center_embs),center_emoji=np.array(center_emoji))
 
 '''
 texts = [
