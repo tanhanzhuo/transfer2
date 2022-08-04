@@ -35,12 +35,13 @@ args = parser.parse_args()
 import torch
 cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 def cal_sim(emb):
-    dis = []
+    # dis = []
+    dis = torch.tensor([]).cuda() #############################
     length = len(emb)
     for idx in trange(length):
-        # cur_emb = emb[idx]
-        dis.extend(cos_sim(emb[idx],emb[idx+1:]).cpu().numpy())
-    return dis
+        # dis.extend(cos_sim(emb[idx],emb[idx+1:]).cpu().numpy())
+        dis = torch.cat((dis, cos_sim(emb[idx],emb[idx+1:])),0)
+    return dis.cpu().numpy()
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
 from models import RobertaForCL
 from torch.utils.data import DataLoader
