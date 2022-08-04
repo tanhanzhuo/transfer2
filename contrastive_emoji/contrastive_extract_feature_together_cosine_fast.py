@@ -36,12 +36,12 @@ import torch
 cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 def cal_sim(emb):
     # dis = []
-    dis = torch.tensor([]).cuda() #############################
+    dis = torch.tensor([]) #############################
     length = len(emb)
     for idx in trange(length):
         # dis.extend(cos_sim(emb[idx],emb[idx+1:]).cpu().numpy())
-        dis = torch.cat((dis, cos_sim(emb[idx],emb[idx+1:])),0)
-    return dis.cpu().numpy()
+        dis = torch.cat((dis, cos_sim(emb[idx],emb[idx+1:]).cpu()),0)
+    return dis.numpy()
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
 from models import RobertaForCL
 from torch.utils.data import DataLoader
@@ -110,7 +110,7 @@ for step, batch in enumerate(train_data_loader):
             # print(embeddings.shape)
             # print('start calculate')
             # curr_time = time.time()
-            dis = squareform(cal_sim(embeddings).cpu())################################
+            dis = squareform(cal_sim(embeddings))################################
             # print('end calculate')
             # print(time.time()-curr_time)
             # curr_time = time.time()
