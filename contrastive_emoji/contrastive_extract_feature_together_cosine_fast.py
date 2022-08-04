@@ -92,7 +92,7 @@ train_data_loader = DataLoader(
     tokenized_datasets['train'], shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
 )
 MAX_LEN=len(train_data_loader)
-progress_bar = tqdm(range(BATCH))
+progress_bar = tqdm(range(MAX_LEN))
 total_num = 0
 embeddings = torch.tensor([[]]).view(-1,768)############################################
 tmp_samples = []
@@ -138,7 +138,7 @@ for step, batch in enumerate(train_data_loader):
             # print('end restart')
             # print(time.time() - curr_time)
             # curr_time = time.time()
-            progress_bar.update(1)
+
         else:
             tmp_samples.extend(batch['input_ids'])
             outputs = model(input_ids=batch['input_ids'].cuda(),
@@ -147,7 +147,7 @@ for step, batch in enumerate(train_data_loader):
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
             embeddings = torch.cat((embeddings,outputs.cpu()),0)##########################################
         previous_label = labels[-1]
-
+    progress_bar.update(1)
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=np.array(center_samples),\
          center_embs=np.array(center_embs),center_emoji=np.array(center_emoji))
 
