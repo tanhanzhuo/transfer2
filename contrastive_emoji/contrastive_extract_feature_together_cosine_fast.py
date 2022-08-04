@@ -33,13 +33,13 @@ parser.add_argument("--CUR_SPLIT", default=0, type=int)
 args = parser.parse_args()
 
 import torch
-cos_sim = torch.nn.CosineSimilarity(dim=1)
+cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 def cal_sim(emb):
     dis = []
     length = len(emb)
     for idx in trange(length):
         # cur_emb = emb[idx]
-        dis.extend(cos_sim(emb[idx],emb[idx+1:]).numpy())
+        dis.extend(cos_sim(emb[idx],emb[idx+1:]).cpu().numpy())
     return dis
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
 from models import RobertaForCL
@@ -94,7 +94,7 @@ train_data_loader = DataLoader(
 MAX_LEN=len(train_data_loader)
 progress_bar = tqdm(range(MAX_LEN))
 total_num = 0
-embeddings = torch.tensor([[]]).view(-1,768)############################################
+embeddings = torch.tensor([[]]).view(-1,768).cuda()############################################
 tmp_samples = []
 center_samples = []
 center_embs = []
@@ -109,7 +109,7 @@ for step, batch in enumerate(train_data_loader):
             # print(embeddings.shape)
             # print('start calculate')
             # curr_time = time.time()
-            dis = squareform(cal_sim(embeddings))
+            dis = squareform(cal_sim(embeddings).cpu())################################
             # print('end calculate')
             # print(time.time()-curr_time)
             # curr_time = time.time()
@@ -133,7 +133,7 @@ for step, batch in enumerate(train_data_loader):
                   format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
             del embeddings, dis, dis_sum
             torch.cuda.empty_cache()
-            embeddings = torch.tensor([[]]).view(-1, 768)#################################################
+            embeddings = torch.tensor([[]]).view(-1, 768).cuda()#################################################
             tmp_samples = []
             # print('end restart')
             # print(time.time() - curr_time)
@@ -145,7 +145,7 @@ for step, batch in enumerate(train_data_loader):
                             attention_mask=batch['attention_mask'].cuda(),
                             token_type_ids=batch['token_type_ids'].cuda(),
                             output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
-            embeddings = torch.cat((embeddings,outputs.cpu()),0)##########################################
+            embeddings = torch.cat((embeddings,outputs),0)##########################################
         previous_label = labels[-1]
     progress_bar.update(1)
 np.savez(args.save+'_'+str(args.CUR_SPLIT),center_samples=np.array(center_samples),\
