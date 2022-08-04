@@ -110,4 +110,4 @@ for emoji_one in tqdm(emoji_thre_list):
     emoji_num[idx] = len(emoji_data[emoji_one])
     idx+=1
 with open('./selected_noemoji_thre'+str(args.thre)+'_num'+str(args.num) + '_num.json', 'w', encoding='utf-8') as f:
-    json.dump(emoji_convert, f)
+    json.dump(emoji_num, f)
