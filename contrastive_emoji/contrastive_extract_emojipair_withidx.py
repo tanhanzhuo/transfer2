@@ -71,3 +71,5 @@ for emoji_one in tqdm(emoji_thre_list):
     emoji_idx+=1
 
 write_json('emoji_pair_thre'+str(args.thre)+'_num'+str(args.num), emoji_pair)
+with open('emoji_pair_thre'+str(args.thre)+'_num'+str(args.num) + '_index.json', 'w', encoding='utf-8') as f:
+    json.dump(emoji_convert, f)
