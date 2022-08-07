@@ -48,12 +48,12 @@ model.eval()
 tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
 
 import json
-f=open('./selected_thre100_num500_index.json','r',encoding='utf-8')
-hash_dic = json.load(f)
-f.close()
-f=open('./selected_thre100_num3000_word_nltk.json','r',encoding='utf-8')
-hash_word = json.load(f)
-f.close()
+# f=open('./selected_thre100_num500_index.json','r',encoding='utf-8')
+# hash_dic = json.load(f)
+# f.close()
+# f=open('./selected_thre100_num3000_word_nltk.json','r',encoding='utf-8')
+# hash_word = json.load(f)
+# f.close()
 
 def read_data(fileName):
     with open(fileName, 'r', encoding='utf-8') as f:
@@ -126,7 +126,7 @@ for task in args.task_name.split(','):
                         best_distance.append(dis[tmp_idx].cpu().numpy())
                         # best_text.append(hash_samples[sp][tmp_idx])
                         best_hash.append(hash_tags[sp][tmp_idx])
-                        best_word.append(hash_word[hash_tags[sp][tmp_idx]])#list of keywords
+                        # best_word.append(hash_word[hash_tags[sp][tmp_idx]])#list of keywords
                     del dis
                     torch.cuda.empty_cache()
                 for tmp_idx in range(args.best):
