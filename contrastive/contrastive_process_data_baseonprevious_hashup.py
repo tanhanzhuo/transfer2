@@ -46,6 +46,10 @@ for task in tqdm(args.task_name.split(',')):
                 data_one = dataset[idx_one]
                 text_sp = data_one['text'].strip().split(' ')
                 hash = text_sp[-1]
+                tmp = hash_convert.get(hash)
+                if tmp is None:
+                    print(hash)
+                    continue
                 text = ' '.join(text_sp[:-1]) + ' ' + hash_convert[hash]
                 dataset_up[idx_one]['text'] = text
             write_json(dataset_up, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(top) \
@@ -58,6 +62,10 @@ for task in tqdm(args.task_name.split(',')):
                 data_one = dataset[idx_one]
                 text_sp = data_one['text'].strip().split(' ')
                 hash = text_sp[0]
+                tmp = hash_convert.get(hash)
+                if tmp is None:
+                    print(hash)
+                    continue
                 text = hash_convert[hash]+ ' '+' '.join(text_sp[1:])
                 dataset_up[idx_one]['text'] = text
             write_json(dataset_up, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(top) \
