@@ -38,9 +38,10 @@ def cal_sim(emb):
     dis = []
     # dis = torch.tensor([]) #############################
     length = len(emb)
-    for idx in trange(length):
-        dis.extend(cos_sim(emb[idx],emb[idx+1:]).cpu().numpy())
-        # dis = torch.cat((dis, cos_sim(emb[idx],emb[idx+1:]).cpu()),0)
+    with torch.no_grad():
+        for idx in trange(length):
+            dis.extend(cos_sim(emb[idx],emb[idx+1:]).cpu().numpy())
+            # dis = torch.cat((dis, cos_sim(emb[idx],emb[idx+1:]).cpu()),0)
     return dis
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
 from models import RobertaForCL
