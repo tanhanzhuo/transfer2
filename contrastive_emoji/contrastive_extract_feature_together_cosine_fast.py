@@ -40,7 +40,9 @@ def cal_sim(emb):
     length = len(emb)
     with torch.no_grad():
         for idx in trange(length):
-            dis.extend(cos_sim(emb[idx],emb[idx+1:]).cpu().numpy())
+            dis_tmp = cos_sim(emb[idx],emb[idx+1:]).cpu().numpy()
+            dis.extend(dis_tmp)
+            del dis_tmp
             # dis = torch.cat((dis, cos_sim(emb[idx],emb[idx+1:]).cpu()),0)
     return dis
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
