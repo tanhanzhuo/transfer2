@@ -11,17 +11,17 @@ import copy
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--emoji_file',default='feature_modelT100N100S_fileT100S_num10',type=str)
+parser.add_argument('--emoji_file',default='feature_modelT100000N100000_file100000_num1',type=str)
 # parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
-parser.add_argument('--model',default='199999',type=str)
+parser.add_argument('--model',default='9',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
 
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
-parser.add_argument("--best", default=2, type=int)
-parser.add_argument("--num_samples", default=10, type=int)
+parser.add_argument("--best", default=1, type=int)
+parser.add_argument("--num_samples", default=1, type=int)
 parser.add_argument("--word", default=False, type=bool)
-parser.add_argument('--method',default='model10001000_num1000100',type=str)
+parser.add_argument('--method',default='_model10001000_num1000100',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 #simcse
 parser.add_argument('--temp',default=0.05,type=float)
@@ -90,7 +90,7 @@ for task in args.task_name.split(','):
         train_dataset = read_data(args.dataset_path + task + '/' + fileName)
         data_emoji_all = []
         for tmp_idx in range(args.best):
-            data_emoji_all.append([copy.deepcopy(train_dataset)])
+            data_emoji_all.append(copy.deepcopy(train_dataset))
         train_dataset = read_data_noemoji(args.dataset_path + task + '/' + fileName) ###remove emoji to retrieve
         for idx in trange(len(train_dataset)):
             one = train_dataset[idx]
