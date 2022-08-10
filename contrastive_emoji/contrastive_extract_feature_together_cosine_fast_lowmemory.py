@@ -125,7 +125,7 @@ for step, batch in enumerate(train_data_loader):
             with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
                 f.write('current emojitag:{}, {}, number emojitag:{}, cur emoji sample:{}, total emoji samples:{} \n'. \
                   format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
-            del embeddings, dis, dis_sum
+            del embeddings, dis_sum
             torch.cuda.empty_cache()
             embeddings = torch.tensor([[]]).view(-1, 768).cuda()#################################################
             tmp_samples = []
