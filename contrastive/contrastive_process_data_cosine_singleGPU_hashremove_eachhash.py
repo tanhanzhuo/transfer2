@@ -133,14 +133,14 @@ for task in args.task_name.split(','):
                     best_idx = np.argpartition(np.array(best_distance), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
                         data_hash_all[tmp_idx][0][idx]['text'] = best_hash[cur_idx] \
-                                                 + ' ' + data_hash_all[tmp_idx][0][idx]['text']
-                        data_hash_all[tmp_idx][2][idx]['text'] = data_hash_all[tmp_idx][2][idx]['text']\
-                                                                 + ' ' + best_hash[cur_idx]
+                                                 + ' ' + data_hash_all[tmp_idx][0][idx]['text'].strip() + ' \n'
+                        data_hash_all[tmp_idx][2][idx]['text'] = data_hash_all[tmp_idx][2][idx]['text'].strip()\
+                                                                 + ' ' + best_hash[cur_idx] + ' \n'
                         if args.word:
                             data_hash_all[tmp_idx][1][idx]['text'] = ' '.join(best_word[cur_idx][:10]) \
-                                                                     + ' ' + data_hash_all[tmp_idx][1][idx]['text']
-                            data_hash_all[tmp_idx][3][idx]['text'] = data_hash_all[tmp_idx][3][idx]['text']\
-                                                                 + ' ' + ' '.join(best_word[cur_idx][:10])
+                                                                     + ' ' + data_hash_all[tmp_idx][1][idx]['text'].strip() + ' \n'
+                            data_hash_all[tmp_idx][3][idx]['text'] = data_hash_all[tmp_idx][3][idx]['text'].strip()\
+                                                                 + ' ' + ' '.join(best_word[cur_idx][:10]) + ' \n'
         for tmp_idx in range(args.best):
             write_json(data_hash_all[tmp_idx][0], args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
                        +'_'+'hashfirst')

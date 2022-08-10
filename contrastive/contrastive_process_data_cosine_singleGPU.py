@@ -100,7 +100,7 @@ for task in args.task_name.split(','):
                     best_idx = np.argpartition(np.array(best_distance), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
                         data_hash_all[tmp_idx][idx]['text'] = emoji.emojize(tokenizer.decode(best_text[cur_idx][1:]).replace(tokenizer.pad_token,'').strip()) \
-                                                 + ' ' + data_hash_all[tmp_idx][idx]['text']
+                                                 + ' ' + data_hash_all[tmp_idx][idx]['text'].strip() + ' \n'
         for tmp_idx in range(args.best):
             write_json(data_hash_all[tmp_idx], args.dataset_path + task + '/' + fileName + args.method+'_'+str(tmp_idx))
 

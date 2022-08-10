@@ -118,8 +118,8 @@ for task in args.task_name.split(','):
                 for tmp_idx in range(args.best):
                     best_idx = np.argpartition(np.array(best_distance), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
-                        data_emoji_all[tmp_idx][idx]['text'] = data_emoji_all[tmp_idx][idx]['text']\
-                                                                + best_emoji[cur_idx]
+                        data_emoji_all[tmp_idx][idx]['text'] = data_emoji_all[tmp_idx][idx]['text'].strip()\
+                                                               + ' ' + best_emoji[cur_idx] + ' \n'
 
         for tmp_idx in range(args.best):
             write_json(data_emoji_all[tmp_idx],
