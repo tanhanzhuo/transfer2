@@ -84,7 +84,10 @@ if __name__ == "__main__":
     for idx in range(args.split):
         tmp = np.load(args.hash_file + '_' + str(idx) + '.npz', allow_pickle=True)
         hash_embs.extend(tmp['center_embs'])
-        hash_tags.extend(tmp['center_hash'])
+        if 'emoji' in args.hash_file:
+            hash_tags.extend(tmp['center_hash'])
+        else:
+            hash_tags.extend(tmp['center_emoji'])
         tmp.close()
     hash_dic = dict(zip(hash_tags, hash_embs))
     for task in args.task_name.split(','):
