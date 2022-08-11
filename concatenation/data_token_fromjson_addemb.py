@@ -85,9 +85,9 @@ if __name__ == "__main__":
         tmp = np.load(args.hash_file + '_' + str(idx) + '.npz', allow_pickle=True)
         hash_embs.extend(tmp['center_embs'])
         if 'emoji' in args.hash_file:
-            hash_tags.extend(tmp['center_hash'])
-        else:
             hash_tags.extend(tmp['center_emoji'])
+        else:
+            hash_tags.extend(tmp['center_hash'])
         tmp.close()
     hash_dic = dict(zip(hash_tags, hash_embs))
     for task in args.task_name.split(','):
@@ -96,4 +96,8 @@ if __name__ == "__main__":
             args_tmp.task_name = task
             args_tmp.method = method
             tokenized_datasets = tokenization(args_tmp, hash_dic)
-            tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/' + args_tmp.hash_file.split('/')[-1])
+            if 'emoji' in args.hash_file:
+                tokenized_datasets.save_to_disk(
+                    args_tmp.dataset_path + args_tmp.task_name + '/emoji_' + args_tmp.hash_file.split('/')[-1])
+            else:
+                tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/' + args_tmp.hash_file.split('/')[-1])

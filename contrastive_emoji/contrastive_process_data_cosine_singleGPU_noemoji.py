@@ -77,11 +77,11 @@ emoji_embs = []
 emoji_tags = []
 for idx in trange(args.split):
     tmp = np.load(args.emoji_file+'_'+str(idx)+'.npz',allow_pickle=True)
-    emoji_samples.append(tmp['center_samples'])
-    # emoji_embs.extend(tmp['center_embs'])
-    emoji_embs.append(torch.tensor(tmp['center_embs']))
-    emoji_tags.append(tmp['center_emoji'])
-    tmp.close()
+emoji_samples.append(tmp['center_samples'])
+# emoji_embs.extend(tmp['center_embs'])
+emoji_embs.append(torch.tensor(tmp['center_embs']))
+emoji_tags.append(tmp['center_emoji'])
+tmp.close()
 
 # emoji_embs= torch.tensor(np.array(emoji_embs))
 cos_sim = torch.nn.CosineSimilarity(dim=1)
