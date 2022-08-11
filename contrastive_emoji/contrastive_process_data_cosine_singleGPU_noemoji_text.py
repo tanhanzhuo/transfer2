@@ -120,10 +120,10 @@ for task in args.task_name.split(','):
                     best_idx = np.argpartition(np.array(best_distance), -(tmp_idx+1))[-(tmp_idx+1):]
                     for cur_idx in best_idx:
                         data_emoji_all[tmp_idx][0][idx]['text'] = ' '+tokenizer.decode(best_text[cur_idx][1:]).replace(tokenizer.pad_token,'').strip() \
-                                                                + ' ' + best_emoji[cur_idx] + ' ' \
+                                                                + ' ' + best_emoji[cur_idx] + ' \n ' \
                                                                 + data_emoji_all[tmp_idx][0][idx]['text'].strip() + ' \n '
 
-                        data_emoji_all[tmp_idx][1][idx]['text'] = ' '+data_emoji_all[tmp_idx][1][idx]['text'].strip() \
+                        data_emoji_all[tmp_idx][1][idx]['text'] = ' '+data_emoji_all[tmp_idx][1][idx]['text'].strip() + ' \n '\
                                                                 + tokenizer.decode(best_text[cur_idx][1:]).replace(tokenizer.pad_token,'').strip() \
                                                                 +  ' ' + best_emoji[cur_idx] + ' \n '
 

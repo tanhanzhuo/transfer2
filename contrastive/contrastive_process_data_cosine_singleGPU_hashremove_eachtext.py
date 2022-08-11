@@ -135,9 +135,9 @@ for task in args.task_name.split(','):
                     for cur_idx in best_idx:
                         data_hash_all[tmp_idx][0][idx]['text'] = ' ' + best_hash[cur_idx] + ' ' \
                                                 + emoji.emojize(tokenizer.decode(best_text[cur_idx][1:]).replace(tokenizer.pad_token,'').strip())\
-                                                + ' ' + data_hash_all[tmp_idx][0][idx]['text'].strip() + ' \n '
+                                                + ' \n ' + data_hash_all[tmp_idx][0][idx]['text'].strip() + ' \n '
                         data_hash_all[tmp_idx][2][idx]['text'] = ' ' + data_hash_all[tmp_idx][2][idx]['text'].strip()\
-                                                + ' ' + best_hash[cur_idx] + ' '\
+                                                + ' \n ' + best_hash[cur_idx] + ' '\
                                                 + emoji.emojize(tokenizer.decode(best_text[cur_idx][1:]).replace(tokenizer.pad_token,'').strip()) + ' \n '
                         if args.word:
                             data_hash_all[tmp_idx][1][idx]['text'] = ' '.join(best_word[cur_idx][:10]) \
