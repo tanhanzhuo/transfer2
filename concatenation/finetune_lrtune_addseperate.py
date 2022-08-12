@@ -82,7 +82,7 @@ class RobertaClassificationHead(nn.Module):
 
     def forward(self, features, **kwargs):
         # x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
-        x = self.dropout(x)
+        x = self.dropout(features)
         x = self.dense(x)
         x = torch.tanh(x)
         x = self.dropout(x)
@@ -107,6 +107,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
         batch_size = input_ids.size(0)
         num_sent = input_ids.size(1)
         input_ids = input_ids.view((-1, input_ids.size(-1)))  # (bs * num_sent, len)
+        token_type_ids = token_type_ids.view((-1, input_ids.size(-1)))  # (bs * num_sent, len)
         attention_mask = attention_mask.view((-1, attention_mask.size(-1)))  # (bs * num_sent len)
 
         outputs = self.roberta(
@@ -121,7 +122,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
         sequence_cls = sequence_output[:, 0, :]
         sequence_cls = sequence_cls.view(batch_size, num_sent, sequence_cls.size(-1))
         sequence_cls = sequence_cls.sum(dim=1)
-        logits = self.classifier(sequence_output)
+        logits = self.classifier(sequence_cls)
         return logits
 
 from dataclasses import dataclass
@@ -201,7 +202,7 @@ def parse_args():
     )
     parser.add_argument(
         "--method",
-        default='token',
+        default='emojihash_modelT1000000N1000000_file1000000_num10000_modelT100N100R_fileT100R_num1__top_3',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -241,7 +242,7 @@ def parse_args():
         help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--batch_size",
-        default=32,
+        default=4,
         type=int,
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
@@ -277,9 +278,12 @@ def evaluate(model, data_loader):
     label_all = []
     pred_all = []
     for batch in data_loader:
-        input_ids, segment_ids, labels = batch
-        logits = model(input_ids.cuda(), segment_ids.cuda())
-
+        # input_ids, segment_ids, labels = batch
+        # logits = model(input_ids.cuda(), segment_ids.cuda())
+        logits = model(input_ids=batch['input_ids'].cuda(),
+                       token_type_ids=batch['token_type_ids'].cuda(),
+                       attention_mask=batch['attention_mask'].cuda())
+        labels = batch['labels']
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
@@ -321,7 +325,7 @@ def do_train(args):
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         model = RobertaForMulti.from_pretrained(
             args.model_name_or_path, config=config).cuda()
-        batchify_fn = DataCollatorMulti(tokenizer=tokenizer, ignore_label=-100)
+        batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer)
         train_data_loader = DataLoader(
             train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
         )
@@ -363,9 +367,13 @@ def do_train(args):
             model.train()
             for step, batch in enumerate(train_data_loader):
                 global_step += 1
-                input_ids, segment_ids, labels = batch
-                logits = model(input_ids.cuda(), segment_ids.cuda())
-                loss = loss_fct(logits, labels.cuda().view(-1))
+                # input_ids, segment_ids, labels = batch
+                # logits = model(input_ids.cuda(), segment_ids.cuda())
+                # loss = loss_fct(logits, labels.cuda().view(-1))
+                logits = model(input_ids=batch['input_ids'].cuda(),
+                               token_type_ids = batch['token_type_ids'].cuda(),
+                               attention_mask=batch['attention_mask'].cuda() )
+                loss = loss_fct(logits, batch['labels'].cuda().view(-1))
                 # print(step)
                 loss.backward()
                 optimizer.step()

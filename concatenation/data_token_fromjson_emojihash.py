@@ -8,11 +8,11 @@ from accelerate import Accelerator
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--output_dir", default='/work/transfer2/finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
-parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/', type=str, required=False, help="dataset name")
+parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
+parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
-parser.add_argument('--method_hash',default='modelT100N100S_fileT100S_num1_cluster_top0_hashlast',type=str)
-parser.add_argument('--method_emoji',default='modelT100N100S_fileT100S_num1_cluster_top0_hashlast',type=str)
+parser.add_argument('--method_hash',default='modelT100N100R_fileT100R_num1_top0_textfirst',type=str)
+parser.add_argument('--method_emoji',default='modelT1000000N1000000_file1000000_num10000_top0_textfirst',type=str)
 parser.add_argument('--order',default='the',type=str)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")

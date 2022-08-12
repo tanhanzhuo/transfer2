@@ -8,11 +8,11 @@ from accelerate import Accelerator
 import numpy as np
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--output_dir", default='/work/transfer2/finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
-parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/', type=str, required=False, help="dataset name")
+parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
+parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
-parser.add_argument('--method_hash',default='modelT100N100S_fileT100S_num1_cluster_top0_hashlast',type=str)
-parser.add_argument('--method_emoji',default='modelT100N100S_fileT100S_num1_cluster_top0_hashlast',type=str)
+parser.add_argument('--method_hash',default='modelT100N100R_fileT100R_num1_top2_textfirst',type=str)
+parser.add_argument('--method_emoji',default='modelT1000000N1000000_file1000000_num10000_top2_textfirst',type=str)
 parser.add_argument('--top',default=3,type=int)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
@@ -51,8 +51,8 @@ def tokenization(args):
         for idx_tmp in range(args.top):
             save_emoji.append([])
         for idx in range(len(text_hash)):
-            all_hash = text_hash[idx].split('\n')[:-1]
-            all_emoji = text_emoji[idx].split('\n')[:-1]
+            all_hash = text_hash[idx].split('\n')[:-2]
+            all_emoji = text_emoji[idx].split('\n')[:-2]
             if len(all_emoji)!= args.top or len(all_hash)!= args.top:
                 print('error!!!!!!!!!!!!!!!! not same number of top emoji/hash')
                 print(args.task_name+'_'+sp)
@@ -62,7 +62,7 @@ def tokenization(args):
                 save_emoji[idx_tmp].append(all_emoji[idx_tmp].strip())
         for idx_tmp in range(args.top):
             train_dataset = train_dataset.add_column("hash"+str(idx_tmp), save_hash[idx_tmp])
-            train_dataset = train_dataset.add_column("emoji" + str(idx_tmp), save_hash[idx_tmp])
+            train_dataset = train_dataset.add_column("emoji" + str(idx_tmp), save_emoji[idx_tmp])
 
         raw_datasets[sp] = train_dataset.shuffle()
 
@@ -79,7 +79,7 @@ def tokenization(args):
 
     def tokenize_function(examples):
         total = len(examples['text'])
-        sentences = []
+        sentences = examples['text']
         for idx_tmp in range(args.top):
             sentences = sentences + examples['hash'+str(idx_tmp)]
             sentences = sentences + examples['emoji' + str(idx_tmp)]
@@ -113,7 +113,7 @@ def tokenization(args):
             print('error: wrong top K')
 
 
-        features['label'] = examples['label']
+        features['labels'] = examples['labels']
         return features
 
     tokenized_datasets = raw_datasets.map(
@@ -140,4 +140,4 @@ if __name__ == "__main__":
             save_emoji = save_emoji.split('top')[0]
 
             tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/emojihash_' \
-                                            + save_emoji + save_hash + '_top_'+str(args_tmp.top))
+                                            + save_emoji + save_hash + 'top_'+str(args_tmp.top))
