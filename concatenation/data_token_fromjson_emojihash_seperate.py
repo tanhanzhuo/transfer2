@@ -13,7 +13,7 @@ parser.add_argument("--dataset_path", default='/work/transfer2/finetune/data/', 
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument('--method_hash',default='modelT100N100S_fileT100S_num1_cluster_top0_hashlast',type=str)
 parser.add_argument('--method_emoji',default='modelT100N100S_fileT100S_num1_cluster_top0_hashlast',type=str)
-parser.add_argument('--order',default='the',type=str)
+parser.add_argument('--top',default=3,type=int)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
@@ -40,32 +40,29 @@ def tokenization(args):
 
     for sp in ['train', 'dev', 'test']:
         train_dataset = raw_datasets[sp]
-        text = train_dataset['text']
-        train_dataset = train_dataset.remove_columns(['text'])
 
         text_hash = raw_datasets_hash[sp]['text']
         text_emoji = raw_datasets_emoji[sp]['text']
 
-        text_new = []
-        for idx in range(len(text)):
-            one = text[idx].strip()
-            one_hash = text_hash[idx].strip()
-            one_emoji = text_emoji[idx].strip()
-            hash = one_hash.replace(one,'')
-            emoji = one_emoji.replace(one,'')
-            if args.order == 'the':
-                text_new.append(one+' '+hash+' '+emoji+' \n ')
-            elif args.order == 'teh':
-                text_new.append(one + ' ' + emoji + ' ' + hash + ' \n ')
-            elif args.order == 'hte':
-                text_new.append(hash + ' ' + one + ' ' + emoji + ' \n ')
-            elif args.order == 'het':
-                text_new.append(hash + ' ' + emoji + ' ' + one + ' \n ')
-            elif args.order == 'eth':
-                text_new.append(emoji + ' ' + one + ' ' + hash + ' \n ')
-            elif args.order == 'eht':
-                text_new.append(emoji + ' ' + hash + ' ' + one + ' \n ')
-        train_dataset = train_dataset.add_column("text", text_new)
+        save_hash = []
+        for idx_tmp in range(args.top):
+            save_hash.append([])
+        save_emoji = []
+        for idx_tmp in range(args.top):
+            save_emoji.append([])
+        for idx in range(len(text_hash)):
+            all_hash = text_hash[idx].split('\n')[:-1]
+            all_emoji = text_emoji[idx].split('\n')[:-1]
+            if len(all_emoji)!= args.top or len(all_hash)!= args.top:
+                print('error!!!!!!!!!!!!!!!! not same number of top emoji/hash')
+                print(args.task_name+'_'+sp)
+                print(train_dataset['text'][idx])
+            for idx_tmp in range(args.top):
+                save_hash[idx_tmp].append(all_hash[idx_tmp].strip())
+                save_emoji[idx_tmp].append(all_emoji[idx_tmp].strip())
+        for idx_tmp in range(args.top):
+            train_dataset = train_dataset.add_column("hash"+str(idx_tmp), save_hash[idx_tmp])
+            train_dataset = train_dataset.add_column("emoji" + str(idx_tmp), save_hash[idx_tmp])
 
         raw_datasets[sp] = train_dataset.shuffle()
 
@@ -81,22 +78,49 @@ def tokenization(args):
     padding = False
 
     def tokenize_function(examples):
-        examples[text_column_name] = [
-            line for line in examples[text_column_name] if len(line) > 0 and not line.isspace()
-        ]
-        return tokenizer(
-            examples[text_column_name],
+        total = len(examples['text'])
+        sentences = []
+        for idx_tmp in range(args.top):
+            sentences = sentences + examples['hash'+str(idx_tmp)]
+            sentences = sentences + examples['emoji' + str(idx_tmp)]
+        sent_features = tokenizer(
+            sentences,
             padding=padding,
             truncation=True,
             max_length=args.max_seq_length,
             return_special_tokens_mask=False,
         )
+        features = {}
+        if args.top == 1:
+            for key in sent_features:
+                features[key] = [
+                    [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2]] for i in
+                    range(total)]
+        elif args.top == 2:
+            for key in sent_features:
+                features[key] = [
+                    [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2],
+                     sent_features[key][i + total * 3], sent_features[key][i + total * 4] ] for i in
+                    range(total)]
+        elif args.top == 3:
+            for key in sent_features:
+                features[key] = [
+                    [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2],
+                     sent_features[key][i + total * 3], sent_features[key][i + total * 4],
+                     sent_features[key][i + total * 5], sent_features[key][i + total * 6]] for i in
+                    range(total)]
+        else:
+            print('error: wrong top K')
+
+
+        features['label'] = examples['label']
+        return features
 
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
         num_proc=args.preprocessing_num_workers,
-        remove_columns=[text_column_name],
+        remove_columns=column_names,#############need test
         load_from_cache_file=not args.overwrite_cache,
         desc="Running tokenizer on dataset line_by_line",
     )
@@ -116,4 +140,4 @@ if __name__ == "__main__":
             save_emoji = save_emoji.split('top')[0]
 
             tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/emojihash_' \
-                                            + save_emoji + save_hash + '_order_'+args_tmp.order)
+                                            + save_emoji + save_hash + '_top_'+str(args_tmp.top))
