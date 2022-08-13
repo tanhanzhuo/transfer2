@@ -97,8 +97,8 @@ for idx in trange(args.split):
 # hash_embs= torch.tensor(np.array(hash_embs))
 cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 for task in args.task_name.split(','):
-    # for fileName in ['train', 'dev', 'test']:
-    for fileName in ['test']:
+    for fileName in ['train', 'dev', 'test']:
+    # for fileName in ['test']:
         train_dataset = read_data(args.dataset_path + task + '/' + fileName)
         data_hash_all = []
         for tmp_idx in range(args.best):
