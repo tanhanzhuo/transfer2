@@ -73,7 +73,7 @@ class RobertaClassificationHead(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.dense = nn.Linear(config.hidden_size*(config.top*2+1), config.hidden_size)
+        self.dense = nn.Linear(config.hidden_size*config.top, config.hidden_size)
         classifier_dropout = (
             config.classifier_dropout if config.classifier_dropout is not None else config.hidden_dropout_prob
         )
@@ -322,7 +322,10 @@ def do_train(args):
 
         num_classes = len(label2idx.keys())
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
-        config.top = int(args.method.split('_')[-1])###############################################
+        if 'emojihash' in args.input_dir:
+            config.top = int(args.method.split('_')[-1])*2+1###############################################
+        else:
+            config.top = int(args.method.split('_')[-1]) + 1
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         model = RobertaForMulti.from_pretrained(
             args.model_name_or_path, config=config).cuda()
