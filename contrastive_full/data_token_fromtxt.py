@@ -36,6 +36,49 @@ def write_data(fileName):
         for one in tqdm(data):
             f.write(one + ' \n')
 
+import re
+import string
+HASH = re.compile(r"#\S+")
+def process(line):
+    hash_tmp = HASH.findall(line)
+    hash_tmp_clean = []
+    for hash_one in hash_tmp:
+        hash_one = hash_one.lower()
+        if len(hash_one) > 30:
+            continue
+        if hash_one[1].isalpha():
+            if hash_one[-1] == '…':
+                continue
+            if len(hash_one) > 3 and hash_one[-3:] == '...':
+                continue
+            if hash_one[-1] in string.punctuation:
+                hash_one = hash_one[:-1]
+            hash_clean = re.findall('[a-z0-9]*', hash_one)
+            hash_clean = '#' + ''.join(hash_clean)
+            if hash_one == hash_clean:
+                hash_tmp_clean.append(hash_one)
+    return hash_tmp_clean
+
+import json
+def refine_data(fileName):
+    with open('selected_hashremove_thre100_num1000_index.json', 'r', encoding='utf-8') as f:
+        hash_dic = json.load(f)
+    hash_refine = dict( zip(list(hash_dic.values()),list(hash_dic.keys())) )
+    # hash_refine = list(hash_dic.values())
+    print('refine lines')
+    data_100 = []
+    with open(fileName+'_clean.txt', 'r', encoding='utf-8') as f:
+        for line in tqdm(f):
+            hash_tmp_clean = process(line)
+            for hash_one in hash_tmp_clean:
+                tmp = hash_refine.get(hash_one)
+                if tmp is not None:
+                    data_100.append(line.strip())
+                    break
+    with open(fileName+'_clean_100.txt', 'w', encoding='utf-8') as f:
+        for one in tqdm(data_100):
+            f.write(one + ' \n')
+
 def tokenization(args):
     # if args.output_dir + args.task_name is not None:
     #     os.makedirs(args.output_dir+ args.task_name, exist_ok=True)
@@ -43,8 +86,10 @@ def tokenization(args):
     # if args.dataset_path is not None:
     if not os.path.isfile(args.dataset_path + args.task_name +'_clean.txt'):
         write_data(args.dataset_path + args.task_name)
+    if not os.path.isfile(args.dataset_path + args.task_name +'_clean_100.txt'):
+        refine_data(args.dataset_path + args.task_name)
     data_files = {}
-    data_files["train"] = args.dataset_path + args.task_name + '_clean.txt'
+    data_files["train"] = args.dataset_path + args.task_name + '_clean_100.txt'
     raw_datasets = datasets.load_dataset('text', data_files=data_files)
     raw_datasets["train"] = raw_datasets["train"].shuffle()
     # Load pretrained tokenizer
@@ -53,7 +98,7 @@ def tokenization(args):
                                                   normalization=True)
     else:
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, use_fast=not args.use_slow_tokenizer)
-        
+
     column_names = raw_datasets["train"].column_names
     text_column_name = "text" if "text" in column_names else column_names[0]
     padding = False
@@ -83,4 +128,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args_tmp = copy.deepcopy(args)
     tokenized_datasets = tokenization(args_tmp)
-    tokenized_datasets.save_to_disk(args_tmp.output_dir + args.task_name)
+    tokenized_datasets.save_to_disk(args_tmp.output_dir + args.task_name+'_100')
