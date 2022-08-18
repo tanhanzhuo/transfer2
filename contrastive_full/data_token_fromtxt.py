@@ -4,6 +4,7 @@ import datasets
 import json
 from transformers import  AutoTokenizer
 import copy
+from tqdm import tqdm
 from accelerate import Accelerator
 
 parser = argparse.ArgumentParser()
@@ -20,7 +21,8 @@ def read_data(fileName):
     with open(fileName, 'r', encoding='utf-8') as f:
         data = set()
         lines = f.readlines()
-        for line in lines:
+        print('read lines')
+        for line in tqdm(lines):
             line_clean = line.replace('[RT] ', '').replace('[USER]', '@USER').replace('[HTTP]', 'https').strip()
             line_no = line_clean.replace('@USER', '').replace('https', '').replace(' ','')
             if len(line_no) > 10:
@@ -29,8 +31,9 @@ def read_data(fileName):
 
 def write_data(fileName):
     data = list(read_data(fileName+'.txt'))
+    print('write lines')
     with open(fileName+'_clean.txt', 'w', encoding='utf-8') as f:
-        for one in data:
+        for one in tqdm(data):
             f.write(one + ' \n')
 
 def tokenization(args):
