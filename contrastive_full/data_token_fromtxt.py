@@ -75,21 +75,26 @@ def refine_data(fileName):
                 if tmp is not None:
                     data_100.append(line.strip())
                     break
-    with open(fileName+'_clean_100.txt', 'w', encoding='utf-8') as f:
+            # if len(data_100)>100000000:
+            #     with open(fileName+'_clean_100.txt', 'a', encoding='utf-8') as f:
+            #         for one in tqdm(data_100):
+            #             f.write(one + ' \n')
+            #     data_100 = []
+    with open(fileName + '_clean_100.txt', 'w', encoding='utf-8') as f:
         for one in tqdm(data_100):
             f.write(one + ' \n')
-
+    data_100 = []
 def tokenization(args):
     # if args.output_dir + args.task_name is not None:
     #     os.makedirs(args.output_dir+ args.task_name, exist_ok=True)
     # Get the datasets:
     # if args.dataset_path is not None:
-    if not os.path.isfile(args.dataset_path + args.task_name +'_clean.txt'):
-        write_data(args.dataset_path + args.task_name)
-    if not os.path.isfile(args.dataset_path + args.task_name +'_clean_100.txt'):
-        refine_data(args.dataset_path + args.task_name)
+    # if not os.path.isfile(args.dataset_path + args.task_name +'_clean.txt'):
+    #     write_data(args.dataset_path + args.task_name)
+    # if not os.path.isfile(args.dataset_path + args.task_name +'_clean_100.txt'):
+    #     refine_data(args.dataset_path + args.task_name)
     data_files = {}
-    data_files["train"] = args.dataset_path + args.task_name + '_clean_100.txt'
+    data_files["train"] = args.dataset_path + args.task_name + '.txt'
     raw_datasets = datasets.load_dataset('text', data_files=data_files)
     raw_datasets["train"] = raw_datasets["train"].shuffle()
     # Load pretrained tokenizer
@@ -128,4 +133,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args_tmp = copy.deepcopy(args)
     tokenized_datasets = tokenization(args_tmp)
-    tokenized_datasets.save_to_disk(args_tmp.output_dir + args.task_name+'_100')
+    tokenized_datasets.save_to_disk(args_tmp.output_dir + args.task_name)
