@@ -5,9 +5,12 @@ parser.add_argument('--num',default=1000,type=int)
 args = parser.parse_args()
 
 import json
-with open('selected_hashremove_thre100_num1000_index.json', 'r', encoding='utf-8') as f:
-    hash_dic = json.load(f)
-hash_dic = dict( zip(list(hash_dic.values()),list(hash_dic.keys())) )
+f=open('./hash_his.json','r',encoding='utf-8')
+hash_dic = json.load(f)
+f.close()
+for hash_one in list(hash_dic.keys()):
+    if hash_dic[hash_one] < args.thre:
+        hash_dic.pop(hash_one)
 
 from tqdm import tqdm, trange
 import re
@@ -41,21 +44,44 @@ def process(line):
 hash_thre_list = list(hash_dic.keys())
 hash_data = {}
 for hash_one in hash_thre_list:
-    hash_data[hash_one] = set()
+    hash_data[hash_one] = []
 with open(filePath, 'r', encoding='utf-8') as f:
     for line in tqdm(f):
         hash_tmp_clean = process(line)
         for hash_one in hash_tmp_clean:
             tmp = hash_data.get(hash_one)
             if tmp is not None:
-                hash_data[hash_one].add(line.strip())
+                hash_data[hash_one].append(line.strip())
+
+import random
+idx = 0
+hash_convert = {}
+for hash_one in tqdm(hash_thre_list):
+    if len(hash_data[hash_one]) < 100:
+        continue
+    hash_convert[idx] = hash_one
+    idx+=1
+with open('./thre100_index.json', 'w', encoding='utf-8') as f:
+    json.dump(hash_convert, f)
+
+idx = 0
+hash_convert = {}
+for hash_one in tqdm(hash_thre_list):
+    if len(hash_data[hash_one]) < 1000:
+        continue
+    hash_convert[idx] = hash_one
+    idx+=1
+with open('./thre1000_index.json', 'w', encoding='utf-8') as f:
+    json.dump(hash_convert, f)
 
 import random
 hash_save = set()
-
+THRE = 100
+NUM = 1000
 for hash_one in tqdm(hash_thre_list):
-
-    if args.num > len(hash_data[hash_one]):
+    if len(hash_data[hash_one]) < THRE:
+        continue
+    if len(hash_data[hash_one]) < NUM:
         for one in hash_data[hash_one]:
             hash_save.add(one)
     else:
@@ -63,11 +89,34 @@ for hash_one in tqdm(hash_thre_list):
         data_tmp = list(hash_data[hash_one])
         idx_tmp = list(range(len(data_tmp)))
         random.shuffle(idx_tmp)
-        for tmp in idx_tmp[:args.num]:
+        for tmp in idx_tmp[:THRE]:
             one = data_tmp[tmp]
             hash_save.add(one)
 
 hash_save = list(hash_save)
 with open('twitter_hash_thre100_num1000.txt', 'w', encoding='utf-8') as f:
+    for line in hash_save:
+        f.write(line + ' \n')
+
+hash_save = set()
+THRE = 1000
+NUM = 1000
+for hash_one in tqdm(hash_thre_list):
+    if len(hash_data[hash_one]) < THRE:
+        continue
+    if len(hash_data[hash_one]) < NUM:
+        for one in hash_data[hash_one]:
+            hash_save.add(one)
+    else:
+        # for one in random.sample(hash_data[hash_one], args.num):
+        data_tmp = list(hash_data[hash_one])
+        idx_tmp = list(range(len(data_tmp)))
+        random.shuffle(idx_tmp)
+        for tmp in idx_tmp[:THRE]:
+            one = data_tmp[tmp]
+            hash_save.add(one)
+
+hash_save = list(hash_save)
+with open('twitter_hash_thre1000_num1000.txt', 'w', encoding='utf-8') as f:
     for line in hash_save:
         f.write(line + ' \n')
