@@ -59,8 +59,8 @@ class MyDataCollatorWithPadding:
 # Import our models. The package will take care of downloading the models automatically
 from models import RobertaForCL
 tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
-config = AutoConfig.from_pretrained(args.model)
-model = RobertaForCL.from_pretrained(args.model,config=config,model_args=args).cuda()
+config = AutoConfig.from_pretrained(args.model_name)
+model = RobertaForCL.from_pretrained(args.model_name,config=config,model_args=args).cuda()
 model.eval()
 datafull = datasets.load_from_disk(args.dataset_path)
 datafull = datafull['train']
@@ -79,7 +79,8 @@ with torch.no_grad():
     for step, batch in enumerate(data_loader):
         embeddings = model(input_ids=batch['input_ids'].cuda(),
                            attention_mask=batch['attention_mask'].cuda(),
-                           output_hidden_states=True, return_dict=True).pooler_output
+                           token_type_ids=batch['token_type_ids'].cuda(),
+                           output_hidden_states=True, return_dict=True,sent_emb=True).pooler_output
         samples.extend(batch['text'])
         embs.extend(embeddings.cpu().numpy())
         progress_bar.update(1)
