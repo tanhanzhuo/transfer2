@@ -9,8 +9,8 @@ from accelerate import Accelerator
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='./', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
-parser.add_argument("--dataset_path", default='/work/data/', type=str, required=False, help="dataset name")
-parser.add_argument("--task_name", default='twitter_hash', type=str, required=False, help="dataset name")
+parser.add_argument("--dataset_path", default='./', type=str, required=False, help="dataset name")
+parser.add_argument("--task_name", default='twitter_hash_join_thre100_num100', type=str, required=False, help="dataset name")
 parser.add_argument("--use_slow_tokenizer", action="store_true", help="If passed, will use a slow tokenizer (not backed by the 🤗 Tokenizers library).")
 parser.add_argument("--tokenizer_name", default='princeton-nlp/sup-simcse-roberta-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
