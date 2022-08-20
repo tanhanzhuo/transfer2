@@ -83,7 +83,7 @@ for hash_one in tqdm(hash_thre_list):
     hash_convert[idx] = hash_one
     idx+=1
 
-with open('./thre'+str(THRE)+'_index.json', 'w', encoding='utf-8') as f:
+with open('./thre'+str(THRE)+'_index1.json', 'w', encoding='utf-8') as f:
     json.dump(hash_convert, f)
 
 hash_save_join = list(hash_save_join)
