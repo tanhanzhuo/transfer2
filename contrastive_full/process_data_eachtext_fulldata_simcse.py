@@ -11,7 +11,7 @@ import copy
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--hash_file',default='./features/twitter_hash',type=str)
+parser.add_argument('--hash_file',default='./features_simcse/twitter_hash_join_thre100_num1000',type=str)
 # parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
 parser.add_argument('--model',default='princeton-nlp/sup-simcse-roberta-base',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
@@ -19,8 +19,8 @@ parser.add_argument("--max_seq_length", default=128, type=int)
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=20, type=int)
-parser.add_argument('--method',default='_fulldata',type=str)
-parser.add_argument("--split", default=201, type=int)#for gpu memory
+parser.add_argument('--method',default='_fulldata_simcse',type=str)
+parser.add_argument("--split", default=101, type=int)#for gpu memory
 #simcse
 
 args = parser.parse_args()
