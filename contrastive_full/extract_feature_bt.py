@@ -1,18 +1,25 @@
 import torch
 from torch.utils.data import DataLoader
-from transformers import AutoModel, AutoTokenizer,DataCollatorWithPadding
+from transformers import AutoModel, AutoTokenizer,AutoConfig,DataCollatorWithPadding
 import datasets
 import argparse
 from tqdm import tqdm
 import os
 import numpy as np
 parser = argparse.ArgumentParser()
-parser.add_argument("--dataset_path", default='twitter_hash_join_thre100_num1000_test', type=str, required=False, help="dataset name")
-parser.add_argument("--model_name", default='princeton-nlp/sup-simcse-roberta-base', type=str, required=False, help="tokenizer name")
+parser.add_argument("--dataset_path", default='twitter_hash_join_thre100_num1000_hashremove', type=str, required=False, help="dataset name")
+parser.add_argument("--model_name", default='/work/SimCSE-main/results/thre100_num100_hashremove/13999', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--batch_size", default=64, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
-parser.add_argument("--save", default='./features/', type=str, required=False, help="dataset name")
+parser.add_argument("--save", default='./features_hashremove/', type=str, required=False, help="dataset name")
 parser.add_argument("--split", default=100, type=int, required=False, help="dataset name")
+
+parser.add_argument('--temp',default=0.05,type=float)
+parser.add_argument('--pooler_type',default='cls',type=str)
+parser.add_argument('--hard_negative_weight',default=0,type=float)
+parser.add_argument('--do_mlm',default=False,type=bool)
+parser.add_argument('--mlm_weight',default=0.1,type=float)
+parser.add_argument('--mlp_only_train',default=False,type=bool)
 
 args = parser.parse_args()
 
@@ -50,8 +57,10 @@ class MyDataCollatorWithPadding:
 
 
 # Import our models. The package will take care of downloading the models automatically
-tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-model = AutoModel.from_pretrained(args.model_name).cuda()
+from models import RobertaForCL
+tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
+config = AutoConfig.from_pretrained(args.model)
+model = RobertaForCL.from_pretrained(args.model,config=config,model_args=args).cuda()
 model.eval()
 datafull = datasets.load_from_disk(args.dataset_path)
 datafull = datafull['train']
