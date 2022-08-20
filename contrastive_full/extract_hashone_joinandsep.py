@@ -3,6 +3,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--thre',default=100,type=int)
 parser.add_argument('--num',default=1000,type=int)
 parser.add_argument('--splits',default=4,type=int)
+parser.add_argument('--file',default='/work/data/twitter_hash_clean.txt',type=str)
 args = parser.parse_args()
 
 import json
@@ -19,7 +20,7 @@ import string
 import random
 random.seed(0)
 HASH = re.compile(r"#\S+")
-filePath = 'twitter_hash_sample.txt'#'/work/data/twitter_hash_clean.txt'#'twitter_hash_sample.txt'
+filePath = args.file#'twitter_hash_sample.txt'
 
 def process(line):
     hash_tmp = HASH.findall(line)
