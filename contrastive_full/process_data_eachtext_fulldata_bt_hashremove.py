@@ -120,7 +120,7 @@ for task in args.task_name.split(','):
                     data_hash_all[idx]['text'] = ' ' +best_text[cur_idx].strip()\
                                             + ' \n ' + data_hash_all[idx]['text'].strip() + ' \n '
 
-        write_json(data_hash_all, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
+        write_json(data_hash_all, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(args.best)\
                    +'_'+'textfirst')
 
     print('task done! {}'.format(task))
