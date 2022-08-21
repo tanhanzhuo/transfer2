@@ -11,7 +11,7 @@ import copy
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--hash_file',default='./features_hashremove/twitter_hash_join_thre100_num100',type=str)
+parser.add_argument('--hash_file',default='./features_hashremove/twitter_hash_join_thre100_num100_hashremove',type=str)
 # parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
 parser.add_argument('--model_name',default='/work/SimCSE-main/result/thre100_num100_remove/1399999',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
