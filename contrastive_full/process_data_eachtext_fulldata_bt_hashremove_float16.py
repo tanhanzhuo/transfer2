@@ -21,7 +21,7 @@ parser.add_argument("--dataset_path", default='../finetune/data/', type=str, req
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=20, type=int)
 parser.add_argument('--method',default='_fulldata_bt_hashremove',type=str)
-parser.add_argument("--split", default=2, type=int)#for gpu memory
+parser.add_argument("--split", default=50, type=int)#for gpu memory
 
 parser.add_argument('--temp',default=0.05,type=float)
 parser.add_argument('--pooler_type',default='cls',type=str)
