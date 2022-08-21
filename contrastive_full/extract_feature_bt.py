@@ -7,8 +7,8 @@ from tqdm import tqdm
 import os
 import numpy as np
 parser = argparse.ArgumentParser()
-parser.add_argument("--dataset_path", default='twitter_hash_join_thre100_num1000_hashremove', type=str, required=False, help="dataset name")
-parser.add_argument("--model_name", default='/work/SimCSE-main/results/thre100_num100_hashremove/13999', type=str, required=False, help="tokenizer name")
+parser.add_argument("--dataset_path", default='twitter_hash_join_thre100_num100_hashremove', type=str, required=False, help="dataset name")
+parser.add_argument("--model_name", default='/work/SimCSE-main/result/thre100_num100_remove/1399999', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--batch_size", default=64, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--save", default='./features_hashremove/', type=str, required=False, help="dataset name")
