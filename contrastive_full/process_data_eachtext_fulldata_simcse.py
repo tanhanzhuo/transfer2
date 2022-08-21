@@ -11,7 +11,7 @@ import copy
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--hash_file',default='./features_simcse/twitter_hash_join_thre100_num100R',type=str)
+parser.add_argument('--hash_file',default='./features_simcse/twitter_hash_join_thre100_num100',type=str)
 # parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
 parser.add_argument('--model',default='princeton-nlp/sup-simcse-roberta-base',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
