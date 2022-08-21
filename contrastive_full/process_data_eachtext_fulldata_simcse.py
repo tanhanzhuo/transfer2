@@ -11,7 +11,7 @@ import copy
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--hash_file',default='./features_simcse/twitter_hash_join_thre100_num1000',type=str)
+parser.add_argument('--hash_file',default='./features_simcse/twitter_hash_join_thre100_num100R',type=str)
 # parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
 parser.add_argument('--model',default='princeton-nlp/sup-simcse-roberta-base',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
@@ -20,7 +20,7 @@ parser.add_argument("--dataset_path", default='../finetune/data/', type=str, req
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=20, type=int)
 parser.add_argument('--method',default='_fulldata_simcse',type=str)
-parser.add_argument("--split", default=101, type=int)#for gpu memory
+parser.add_argument("--split", default=50, type=int)#for gpu memory
 #simcse
 
 args = parser.parse_args()
@@ -65,10 +65,9 @@ for task in args.task_name.split(','):
             one = train_dataset[idx]
             input = tokenizer(one['text'],truncation=True)
             with torch.no_grad():
-                outputs = model(input_ids=torch.tensor([input['input_ids']]).cuda(),
-                                attention_mask=torch.tensor([input['attention_mask']]).cuda(),
-                                token_type_ids=torch.tensor([input['token_type_ids']]).cuda(),
-                                output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
+                outputs = model(input_ids=batch['input_ids'].cuda(),
+                                   attention_mask=batch['attention_mask'].cuda(),
+                                   output_hidden_states=True, return_dict=True).pooler_output
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
                 best_distance = []
                 best_text = []
@@ -87,7 +86,7 @@ for task in args.task_name.split(','):
 
                 best_idx = np.argsort(np.array(best_distance))[-args.best:]
                 for cur_idx in best_idx:
-                    data_hash_all[idx]['text'] = ' ' +tokenizer.decode(best_text[cur_idx][1:-1]).replace(tokenizer.pad_token,'').strip()\
+                    data_hash_all[idx]['text'] = ' ' +best_text[cur_idx].strip()\
                                             + ' \n ' + data_hash_all[idx]['text'].strip() + ' \n '
 
         write_json(data_hash_all, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(tmp_idx)\
