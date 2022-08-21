@@ -13,15 +13,15 @@ import copy
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash_file',default='./features_hashremove/twitter_hash_join_thre100_num100_hashremove',type=str)
 # parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
-parser.add_argument('--model_name',default='/work/SimCSE-main/result/thre100_num100_remove/1399999',type=str)
+# parser.add_argument('--model_name',default='/work/SimCSE-main/result/thre100_num100_remove/1399999',type=str)
+parser.add_argument('--model_name',default='./1399999/',type=str)
 parser.add_argument("--max_seq_length", default=128, type=int)
 
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=20, type=int)
 parser.add_argument('--method',default='_fulldata_bt_hashremove',type=str)
-parser.add_argument("--split", default=50, type=int)#for gpu memory
-parser.add_argument("--comb", default=5, type=int)#for gpu memory
+parser.add_argument("--split", default=2, type=int)#for gpu memory
 
 parser.add_argument('--temp',default=0.05,type=float)
 parser.add_argument('--pooler_type',default='cls',type=str)
@@ -42,7 +42,7 @@ model = RobertaForCL.from_pretrained(
                 args.model_name,
                 config=config,
                 model_args=args
-            ).cuda()
+            ).cuda(0)
 model.eval()
 
 def read_data(fileName):
@@ -75,29 +75,20 @@ def write_json(data, fileName):
             tmp = json.dumps(one, ensure_ascii=False)
             f.write(tmp+'\n')
 
-#########comb
 hash_samples = []
 hash_embs = []
-if args.split % args.comb != 0:
-    print('error!!!')
-    raise ValueError('comb must be divided by splits')
-args.split = int(args.split/args.comb)
 for idx in trange(args.split):
-    hash_samples_tmp = []
-    hash_embs_tmp = []
-    for idx2 in range(args.comb):
-        tmp = np.load(args.hash_file + '_' + str(idx*args.comb+idx2) + '.npz', allow_pickle=True)
-        hash_samples_tmp.extend(tmp['samples'])
-        # hash_embs.extend(tmp['center_embs'])
-        hash_embs_tmp.extend(tmp['embs'])
-        tmp.close()
-    hash_samples.append(hash_samples_tmp)
+    tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
+    hash_samples.append(tmp['samples'])
     # hash_embs.extend(tmp['center_embs'])
-    hash_embs.append(torch.tensor(hash_embs_tmp))
-hash_samples_tmp = []
-hash_embs_tmp = []
+    if idx < args.split/2:
+        hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16).cuda(0))
+    else:
+        hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(1))
+    tmp.close()
+
 # hash_embs= torch.tensor(np.array(hash_embs))
-cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
+cos_sim = torch.nn.CosineSimilarity(dim=1).cuda(0)
 for task in args.task_name.split(','):
     for fileName in ['train', 'dev', 'test']:
     # for fileName in ['test']:
@@ -108,16 +99,19 @@ for task in args.task_name.split(','):
             one = train_dataset[idx]
             input = tokenizer(one['text'],truncation=True)
             with torch.no_grad():
-                outputs = model(input_ids=torch.tensor([input['input_ids']]).cuda(),
-                                attention_mask=torch.tensor([input['attention_mask']]).cuda(),
-                                token_type_ids=torch.tensor([input['token_type_ids']]).cuda(),
+                outputs = model(input_ids=torch.tensor([input['input_ids']]).cuda(0),
+                                attention_mask=torch.tensor([input['attention_mask']]).cuda(0),
+                                token_type_ids=torch.tensor([input['token_type_ids']]).cuda(0),
                                 output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
                 best_distance = []
                 best_text = []
                 for sp in range(args.split):
-                    # dis = torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
-                    dis = cos_sim(outputs,hash_embs[sp].cuda())
+                    if sp < args.split/2:
+                        outputs = torch.tensor(outputs, dtype=torch.float16).cuda(0)
+                    else:
+                        outputs = torch.tensor(outputs, dtype=torch.float16).cuda(1)
+                    dis = cos_sim(outputs,hash_embs[sp])
                     # dis = dis.view(-1,args.num_samples).sum(dim=-1)##################################hash each
                     # best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
                     val,best_idx = dis.topk(args.best)
