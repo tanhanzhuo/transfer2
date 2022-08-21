@@ -25,7 +25,7 @@ def process(line):
     hash_tmp = HASH.findall(line)
     hash_tmp_clean = []
     for hash_one in hash_tmp:
-        hash_one = hash_one.lower()
+        # hash_one = hash_one.lower()
         if len(hash_one) > 30:
             continue
         if hash_one[1].isalpha():
@@ -35,7 +35,7 @@ def process(line):
                 continue
             if hash_one[-1] in string.punctuation:
                 hash_one = hash_one[:-1]
-            hash_clean = re.findall('[a-z0-9]*', hash_one)
+            hash_clean = re.findall('[a-zA-Z0-9]*', hash_one)
             hash_clean = '#' + ''.join(hash_clean)
             if hash_one == hash_clean:
                 hash_tmp_clean.append(hash_one)
