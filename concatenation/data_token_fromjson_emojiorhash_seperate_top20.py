@@ -130,8 +130,7 @@ if __name__ == "__main__":
         args_tmp = copy.deepcopy(args)
         args_tmp.task_name = task
         tokenized_datasets = tokenization(args_tmp)
-        save_hash = args_tmp.method_hash.split('/')[-1]
-        save_hash = save_hash.split('top')[0]
 
-        tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/emojiorhash_' \
+        save_hash = args_tmp.method_hash.split('top')[0]
+        tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/hash_' \
                                         + save_hash + 'top_'+str(args_tmp.top))
