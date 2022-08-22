@@ -27,7 +27,7 @@ parser.add_argument("--split", default=4, type=int)#for gpu memory
 
 args = parser.parse_args()
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
-model = AutoModel.from_pretrained(args.model_name).cuda()
+model = AutoModel.from_pretrained(args.model).cuda()
 model.eval()
 # model = accelerate.prepare(model)
 tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
