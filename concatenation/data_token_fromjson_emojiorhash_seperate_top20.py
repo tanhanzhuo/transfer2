@@ -12,7 +12,7 @@ parser.add_argument("--output_dir", default='../finetune/data/', type=str, requi
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument('--method_hash',default='modelT100N100R_fileT100N100R_num10_top20_textfirst',type=str)
-parser.add_argument('--top',default=3,type=int)
+parser.add_argument('--top',default=5,type=int)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
@@ -76,37 +76,25 @@ def tokenization(args):
             return_special_tokens_mask=False,
         )
         features = {}
-        if args.top == 1:
-            for key in sent_features:
-                features[key] = [
-                    [sent_features[key][i], sent_features[key][i + total]] for i in
-                    range(total)]
-        elif args.top == 2:
-            for key in sent_features:
-                features[key] = [
-                    [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2] ] for i in
-                    range(total)]
-        elif args.top == 3:
-            for key in sent_features:
-                features[key] = [
-                    [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2],
-                     sent_features[key][i + total * 3]] for i in
-                    range(total)]
-        elif args.top == 4:
-            for key in sent_features:
-                features[key] = [
-                    [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2],
-                     sent_features[key][i + total * 3], sent_features[key][i + total * 4]] for i in
-                    range(total)]
-        elif args.top == 5:
-            for key in sent_features:
-                features[key] = [
-                    [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2],
-                     sent_features[key][i + total * 3], sent_features[key][i + total * 4],
-                     sent_features[key][i + total * 5]] for i in
-                    range(total)]
-        else:
-            print('error: wrong top K')
+
+        for key in sent_features:
+            fea_one = []
+            for idx_len in range(total):
+                fea_one.append([])
+                for idx_top in range(args.top+1):
+                    fea_one[idx_len].append(sent_features[key][idx_top*total+idx_len])
+            features[key] = fea_one
+
+        # features = {}
+        # if args.top == 5:
+        #     for key in sent_features:
+        #         features[key] = [
+        #             [sent_features[key][i], sent_features[key][i + total], sent_features[key][i + total * 2],
+        #              sent_features[key][i + total * 3], sent_features[key][i + total * 4],
+        #              sent_features[key][i + total * 5]] for i in
+        #             range(total)]
+        # else:
+        #     print('error: wrong top K')
 
 
         features['labels'] = examples['labels']
