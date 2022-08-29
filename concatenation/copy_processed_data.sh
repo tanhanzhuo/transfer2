@@ -3,7 +3,6 @@ do
   for method in modelT100N100R_fileT100N100R_num10 modelT100N100R_fileT100N1000R_num10 fulldata_simcse fulldata_bt_hashremove
   do
     scp -r thz@10.21.4.61:/home/thz/transfer2/finetune/data/${task}/hash_${method}_top_* /home/thz/transfer2/finetune/data/${task}/
-    qwer1234
   done
 done
 
