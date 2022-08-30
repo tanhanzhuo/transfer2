@@ -18,7 +18,7 @@ for idx in range(args.split):
     hash_embs.extend(tmp['center_embs'])
     hash_tags.extend(tmp['center_hash'])
     tmp.close()
-hash_embs = torch.tensor(hash_embs)
+hash_embs = torch.tensor(hash_embs).cuda()
 [num,dim]=hash_embs.shape
 hash_embs = hash_embs.reshape(int(num/10),10,dim)
 # hash_embs = torch.mean(hash_embs,1)
@@ -33,6 +33,8 @@ cos_sim = torch.nn.CosineSimilarity(dim=-1)
 # b=cos_sim(a,a.unsqueeze(1))
 # b=cos_sim(a[0],a.unsqueeze(2))
 # print(b[3,1,2],cos_sim(a[0][2],a2[3][1]))
+SP=10
+BATCH = int( len(hash_tags)/SP )
 for hash_idx in trange(len(hash_embs)):
     merge_idx = -1
     for tmp_idx in range(len(hash_merge)):
@@ -42,8 +44,11 @@ for hash_idx in trange(len(hash_embs)):
     if merge_idx == -1:
         merge_idx = len(hash_merge)
         hash_merge.append(set([hash_tags[hash_idx]]))
-
-    dis = cos_sim(hash_embs[hash_idx], hash_embs.unsqueeze(2)).mean(dim=[1,2])
+    dis = []
+    for one in range(SP):
+        dis_tmp = cos_sim(hash_embs[hash_idx], hash_embs[one*BATCH:(one+1)*BATCH].unsqueeze(2)).mean(dim=[1,2])
+        dis.extend(dis_tmp.cpu().numpy())
+    dis = torch.tensor(dis)
     dis[hash_idx] = 0
     val,place = dis.topk(NUM)
     for idx_tmp in range(NUM):
