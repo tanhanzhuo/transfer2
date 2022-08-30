@@ -18,7 +18,7 @@ for idx in range(args.split):
     hash_embs.extend(tmp['center_embs'])
     hash_tags.extend(tmp['center_hash'])
     tmp.close()
-hash_embs = torch.tensor(hash_embs).cuda()
+hash_embs = torch.tensor(hash_embs)
 [num,dim]=hash_embs.shape
 hash_embs = hash_embs.reshape(int(num/10),10,dim)
 # hash_embs = torch.mean(hash_embs,1)
