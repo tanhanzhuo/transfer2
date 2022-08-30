@@ -28,7 +28,11 @@ THRE=args.thre
 hash_merge=[]
 
 import torch
-cos_sim = torch.nn.CosineSimilarity(dim=1)
+cos_sim = torch.nn.CosineSimilarity(dim=-1)
+# a=torch.tensor(numpy.random.random([5,3,17]))
+# b=cos_sim(a,a.unsqueeze(1))
+# b=cos_sim(a[0],a.unsqueeze(2))
+# print(b[3,1,2],cos_sim(a[0][2],a2[3][1]))
 for hash_idx in trange(len(hash_embs)):
     merge_idx = -1
     for tmp_idx in range(len(hash_merge)):
@@ -39,7 +43,7 @@ for hash_idx in trange(len(hash_embs)):
         merge_idx = len(hash_merge)
         hash_merge.append(set([hash_tags[hash_idx]]))
 
-    dis = cos_sim(hash_embs[hash_idx], hash_embs)
+    dis = cos_sim(hash_embs[hash_idx], hash_embs.unsqueeze(2)).sum(dim=[1,2])
     dis[hash_idx] = 0
     val,place = dis.topk(NUM)
     for idx_tmp in range(NUM):
