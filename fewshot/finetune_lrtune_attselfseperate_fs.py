@@ -318,7 +318,7 @@ def do_train(args):
     train_ds = data_all['train']
     train_ds = train_ds.map(trans_func)
     if len(args.shot) > 0:
-        if args.shot is not 'full':
+        if args.shot != 'full':
             sample_num = int(args.shot)
             train_ds = train_ds.shuffle()
             select_idx = []
