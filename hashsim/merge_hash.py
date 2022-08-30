@@ -21,7 +21,7 @@ for idx in range(args.split):
 hash_embs = torch.tensor(hash_embs).cuda()
 [num,dim]=hash_embs.shape
 hash_embs = hash_embs.reshape(int(num/10),10,dim)
-hash_embs = torch.mean(hash_embs,1)
+# hash_embs = torch.mean(hash_embs,1)
 
 NUM=20
 THRE=args.thre
@@ -43,7 +43,7 @@ for hash_idx in trange(len(hash_embs)):
         merge_idx = len(hash_merge)
         hash_merge.append(set([hash_tags[hash_idx]]))
 
-    dis = cos_sim(hash_embs[hash_idx], hash_embs.unsqueeze(2)).sum(dim=[1,2])
+    dis = cos_sim(hash_embs[hash_idx], hash_embs.unsqueeze(2)).mean(dim=[1,2])
     dis[hash_idx] = 0
     val,place = dis.topk(NUM)
     for idx_tmp in range(NUM):
