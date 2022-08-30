@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from tqdm import tqdm,trange
 parser = argparse.ArgumentParser()
-parser.add_argument('--hash_file',default='feature_modelT100N100R_fileT100N100R_num10',type=str)
+parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100N100R_fileT100N100R_num10',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 parser.add_argument("--thre", default=0.9, type=float)
 parser.add_argument('--save',default='cluster',type=str)
