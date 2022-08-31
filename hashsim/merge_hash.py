@@ -4,9 +4,9 @@ import numpy as np
 import torch
 from tqdm import tqdm,trange
 parser = argparse.ArgumentParser()
-parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100N100R_fileT100N100R_num10',type=str)
+parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100N100R_fileT100N1000R_num10',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
-parser.add_argument("--thre", default=0.9, type=float)
+parser.add_argument("--thre", default=0.8, type=float)
 parser.add_argument('--save',default='cluster',type=str)
 args = parser.parse_args()
 
@@ -18,7 +18,7 @@ for idx in range(args.split):
     hash_embs.extend(tmp['center_embs'])
     hash_tags.extend(tmp['center_hash'])
     tmp.close()
-hash_embs = torch.tensor(hash_embs).cuda()
+hash_embs = torch.tensor(np.array(hash_embs)).cuda()
 [num,dim]=hash_embs.shape
 hash_embs = hash_embs.reshape(int(num/10),10,dim)
 # hash_embs = torch.mean(hash_embs,1)
@@ -27,7 +27,6 @@ NUM=20
 THRE=args.thre
 hash_merge=[]
 
-import torch
 cos_sim = torch.nn.CosineSimilarity(dim=-1)
 # a=torch.tensor(numpy.random.random([5,3,17]))
 # b=cos_sim(a,a.unsqueeze(1))
