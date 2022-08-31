@@ -120,5 +120,6 @@ for hash_one in tqdm(hash_thre_list):
                     data_tmp[1] = data_tmp[1].replace(hash_two, tmp2)
                 else:
                     data_tmp[1] = data_tmp[1].replace(hash_two, hash_two[1:])
+        hash_pair.append({'text1': data_tmp[0], 'text2': data_tmp[1]})
 random.shuffle(hash_pair)
 write_json('hash_pairmix_thre' + str(args.thre) + '_num' + str(args.num), hash_pair)
