@@ -75,6 +75,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
 
 NUM = args.num
 hash_pair = []
+hash_idx = 0
 for hash_one in tqdm(hash_thre_list):
     data = list(hash_data[hash_one])
     # if len(data) < args.thre:
@@ -120,6 +121,7 @@ for hash_one in tqdm(hash_thre_list):
                     data_tmp[1] = data_tmp[1].replace(hash_two, tmp2)
                 else:
                     data_tmp[1] = data_tmp[1].replace(hash_two, hash_two[1:])
-        hash_pair.append({'text1': data_tmp[0], 'text2': data_tmp[1]})
+        hash_pair.append({'text1': data_tmp[0], 'text2': data_tmp[1], 'label':hash_idx})
+    hash_idx += 1
 random.shuffle(hash_pair)
 write_json('hash_pairmix_thre' + str(args.thre) + '_num' + str(args.num), hash_pair)
