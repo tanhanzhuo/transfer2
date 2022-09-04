@@ -4,6 +4,8 @@ import numpy as np
 parser = argparse.ArgumentParser()
 parser.add_argument('--thre', default=100, type=int)
 parser.add_argument('--num', default=100, type=int)
+parser.add_argument('--ran1', default=0.333, type=float)
+parser.add_argument('--ran2', default=0.667, type=float)
 args = parser.parse_args()
 
 import json
@@ -105,11 +107,11 @@ for hash_one in tqdm(hash_thre_list):
 
 
         ran1 = np.random.random()
-        if  ran1 < 0.333:
+        if  ran1 < args.ran1:
             hash_tmp = HASH.findall(data_tmp[1])
             for hash_two in hash_tmp:
                 data_tmp[1] = data_tmp[1].replace(hash_two, '')
-        elif ran1 < 0.667:
+        elif ran1 < args.ran1:
             hash_tmp = HASH.findall(data_tmp[1])
             for hash_two in hash_tmp:
                 data_tmp[1] = data_tmp[1].replace(hash_two, hash_two[1:])
