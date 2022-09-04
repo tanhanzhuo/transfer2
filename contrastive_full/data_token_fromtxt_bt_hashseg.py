@@ -115,4 +115,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args_tmp = copy.deepcopy(args)
     tokenized_datasets = tokenization(args_tmp)
-    tokenized_datasets.save_to_disk(args_tmp.output_dir + args.task_name+'_hashremove')
+    tokenized_datasets.save_to_disk(args_tmp.output_dir + args.task_name+'_hashseg')
