@@ -1,7 +1,7 @@
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
-parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
+parser.add_argument("--task_name", default='stance,sem-18,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm,sem18-task1-affect,sem21-task7-humor', type=str, required=False, help="dataset name")
 args = parser.parse_args()
 
 def read_data(fileName):
