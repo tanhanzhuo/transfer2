@@ -34,7 +34,7 @@ cos_sim = torch.nn.CosineSimilarity(dim=-1)
 # print(b[3,1,2],cos_sim(a[0][2],a2[3][1]))
 SP=20
 BATCH = int( len(hash_tags)/SP )
-for hash_idx in trange(10):
+for hash_idx in trange(len(hash_embs)):
     merge_idx = -1
     for tmp_idx in range(len(hash_merge)):
         if hash_tags[hash_idx] in hash_merge[tmp_idx]:
