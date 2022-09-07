@@ -186,7 +186,7 @@ for step, batch in enumerate(train_data_loader):
                         line = line.replace(hash_two, tmp2)
                     else:
                         line = line.replace(hash_two, hash_two[1:])
-                line_token = tokenizer(line)
+                line_token = tokenizer(line,truncation=True,max_length=args.max_seq_length)
 
                 outputs = model(input_ids=torch.tensor([line_token['input_ids']]).cuda(),
                            attention_mask=torch.tensor([line_token['attention_mask']]).cuda(),
