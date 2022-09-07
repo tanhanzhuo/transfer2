@@ -17,7 +17,7 @@ parser.add_argument('--save',default='feature_modelT100N100_fileT100_num10',type
 parser.add_argument("--max_seq_length", default=128, type=int)
 parser.add_argument("--preprocessing_num_workers", default=1, type=int)
 parser.add_argument("--batch_size", default=7, type=int)
-parser.add_argument("--thre", default=0.99, type=float)
+parser.add_argument("--thre", default=0.85, type=float)
 #simcse
 parser.add_argument('--temp',default=0.05,type=float)
 parser.add_argument('--pooler_type',default='cls',type=str)
@@ -110,7 +110,7 @@ text_column_name = "text"
 def tokenize_function(examples):
     text = []
     for line in examples['text']:
-        hash_tmp_clean = process(line)
+        hash_tmp_clean = HASH.findall(line)
         # remove hash
         for hash_one in hash_tmp_clean:
             line = line.replace(hash_one, '')
