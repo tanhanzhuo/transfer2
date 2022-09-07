@@ -10,7 +10,7 @@ import time
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='twitter_hash_sep_thre100_num1000_test',type=str)
+parser.add_argument('--file',default='twitter_hash_sep_thre100_num100_test',type=str)
 parser.add_argument('--model',default='./9/',type=str)
 parser.add_argument("--num_sample", default=10, type=int)
 parser.add_argument('--save',default='feature_modelT100N100_fileT100_num10',type=str)
@@ -35,6 +35,12 @@ args = parser.parse_args()
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
 from transformers.tokenization_utils_base import BatchEncoding, PaddingStrategy, PreTrainedTokenizerBase
+
+with open('../contrastive/hash_seg.txt', 'r', encoding='utf-8') as f:
+    lines = f.readlines()
+hash_seg = {}
+for line in lines:
+    hash_seg[line.split('\t')[0]] = line.split('\t')[1]
 
 @dataclass
 class MyDataCollatorWithPadding:
@@ -169,8 +175,25 @@ for step, batch in enumerate(train_data_loader):
             # print(time.time() - curr_time)
             # curr_time = time.time()
             for idx in best:
-                center_embs.append(embeddings[idx])
+                # center_embs.append(embeddings[idx])
                 center_samples.append(tmp_samples[idx])
+
+                line = tmp_samples[idx]
+                hash_tmp_clean = process(line)
+                for hash_two in hash_tmp_clean:
+                    tmp2 = hash_seg.get(hash_two.lower())
+                    if tmp2 is not None:
+                        line = line.replace(hash_two, tmp2)
+                    else:
+                        line = line.replace(hash_two, hash_two[1:])
+                line_token = tokenizer(line)
+
+                outputs = model(input_ids=torch.tensor([line_token['input_ids']]).cuda(),
+                           attention_mask=torch.tensor([line_token['attention_mask']]).cuda(),
+                           token_type_ids=torch.tensor([line_token['token_type_ids']]).cuda(),
+                           output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
+                center_embs.append( outputs.cpu().numpy()[0] )
+
             center_hash.append(CONVERT[str(previous_label.item())])
             # print('end save')
             # print(time.time() - curr_time)

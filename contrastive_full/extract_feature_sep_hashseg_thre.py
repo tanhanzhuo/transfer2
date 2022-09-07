@@ -10,7 +10,7 @@ import time
 # from accelerate import Accelerator
 # accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='twitter_hash_sep_thre100_num1000_test',type=str)
+parser.add_argument('--file',default='twitter_hash_sep_thre100_num100_test',type=str)
 parser.add_argument('--model',default='./9/',type=str)
 parser.add_argument("--num_sample", default=10, type=int)
 parser.add_argument('--save',default='feature_modelT100N100_fileT100_num10',type=str)
