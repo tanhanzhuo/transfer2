@@ -25,7 +25,7 @@ parser.add_argument('--hard_negative_weight',default=0,type=float)
 parser.add_argument('--do_mlm',default=False,type=bool)
 parser.add_argument('--mlm_weight',default=0.1,type=float)
 parser.add_argument('--mlp_only_train',default=False,type=bool)
-
+parser.add_argument("--thre", default=0.99, type=float)
 #####splits
 parser.add_argument("--NUM_SPLIT", default=4, type=int)
 parser.add_argument("--CUR_SPLIT", default=0, type=int)
@@ -170,7 +170,7 @@ for step, batch in enumerate(train_data_loader):
         labels= batch['labels']
         if labels[0] != labels[-1] or labels[0] != previous_label or step == MAX_LEN:#goes to another hashtag
             total_num+=1
-            
+
             dis = 1 - squareform(pdist(embeddings, 'cosine'))
             dis_good = np.sum(dis <= args.thre, axis=1)
             dis[dis > args.thre] = 0
