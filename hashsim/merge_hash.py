@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from tqdm import tqdm,trange
 parser = argparse.ArgumentParser()
-parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100N100R_fileT100N1000R_num10',type=str)
+parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100N100M_fileT100N100S_num10',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 parser.add_argument("--thre", default=0.8, type=float)
 parser.add_argument('--save',default='cluster',type=str)
@@ -44,7 +44,7 @@ for hash_idx in trange(len(hash_embs)):
         merge_idx = len(hash_merge)
         hash_merge.append(set([hash_tags[hash_idx]]))
     dis = []
-    for one in range(SP):
+    for one in range(SP+1):
         dis_tmp = cos_sim(hash_embs[hash_idx], hash_embs[one*BATCH:(one+1)*BATCH].unsqueeze(2)).mean(dim=[1,2])
         dis.extend(dis_tmp.cpu().numpy())
     dis = torch.tensor(dis)
