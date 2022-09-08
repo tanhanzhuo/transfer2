@@ -169,6 +169,10 @@ for step, batch in enumerate(train_data_loader):
             kmeans = KMeans(n_clusters=args.num_sample).fit(embeddings_norm)
             for idx_tmp in range(args.num_sample):
                 label_pos = np.where(kmeans.labels_ == idx_tmp)[0]
+                if len(label_pos) < 1:
+                    center_samples.append('bad example')
+                    center_embs.append(np.zeros(768,dtype=np.float32))
+                    continue
                 dis = []
                 for idx_tmp2 in range(len(label_pos)):
                     dis_tmp = np.dot(embeddings_norm[label_pos[idx_tmp2]] , kmeans.cluster_centers_[idx_tmp])

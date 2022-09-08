@@ -177,6 +177,10 @@ for step, batch in enumerate(train_data_loader):
             kmeans = KMeans(n_clusters=args.num_sample).fit(embeddings_norm)
             for idx_tmp in range(args.num_sample):
                 label_pos = np.where(kmeans.labels_ == idx_tmp)[0]
+                if len(label_pos) < 1:
+                    center_samples.append('bad example')
+                    center_embs.append(np.zeros(768,dtype=np.float32))
+                    continue
                 dis = []
                 for idx_tmp2 in range(len(label_pos)):
                     dis_tmp = np.dot(embeddings_norm[label_pos[idx_tmp2]], kmeans.cluster_centers_[idx_tmp])
@@ -193,7 +197,7 @@ for step, batch in enumerate(train_data_loader):
             with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
                 f.write('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
                   format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
-            del embeddings, embeddings_norm, kmeans
+            # del embeddings, embeddings_norm, kmeans
             torch.cuda.empty_cache()
             embeddings = []
             tmp_samples = []
