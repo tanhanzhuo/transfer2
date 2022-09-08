@@ -38,6 +38,12 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
 from transformers.tokenization_utils_base import BatchEncoding, PaddingStrategy, PreTrainedTokenizerBase
 
+with open('../contrastive/hash_seg.txt', 'r', encoding='utf-8') as f:
+    lines = f.readlines()
+hash_seg = {}
+for line in lines:
+    hash_seg[line.split('\t')[0]] = line.split('\t')[1]
+
 @dataclass
 class MyDataCollatorWithPadding:
     tokenizer: PreTrainedTokenizerBase
@@ -168,8 +174,25 @@ for step, batch in enumerate(train_data_loader):
                     dis_tmp = np.dot(embeddings_norm[label_pos[idx_tmp2]] , kmeans.cluster_centers_[idx_tmp])
                     dis.append(dis_tmp)
                 idx_best = np.argmax(dis)
-                center_embs.append(embeddings[label_pos[idx_best]])
+                # center_embs.append(embeddings[label_pos[idx_best]])
                 center_samples.append(tmp_samples[label_pos[idx_best]])
+
+                line = tmp_samples[label_pos[idx_best]]
+                hash_tmp_clean = process(line)
+                for hash_two in hash_tmp_clean:
+                    tmp2 = hash_seg.get(hash_two.lower())
+                    if tmp2 is not None:
+                        line = line.replace(hash_two, tmp2)
+                    else:
+                        line = line.replace(hash_two, hash_two[1:])
+                line_token = tokenizer(line, truncation=True, max_length=args.max_seq_length)
+
+                outputs = model(input_ids=torch.tensor([line_token['input_ids']]).cuda(),
+                                attention_mask=torch.tensor([line_token['attention_mask']]).cuda(),
+                                token_type_ids=torch.tensor([line_token['token_type_ids']]).cuda(),
+                                output_hidden_states=True, return_dict=True, sent_emb=True).pooler_output
+                center_embs.append(outputs.cpu().numpy()[0])
+
             center_hash.append(CONVERT[str(previous_label.item())])
             # print('end save')
             # print(time.time() - curr_time)
