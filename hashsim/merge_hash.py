@@ -6,6 +6,7 @@ from tqdm import tqdm,trange
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100N100M_fileT100N100S_num10',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
+parser.add_argument("--piece", default=20, type=int)#for gpu memory
 parser.add_argument("--thre", default=0.8, type=float)
 parser.add_argument('--save',default='cluster',type=str)
 args = parser.parse_args()
@@ -23,7 +24,7 @@ hash_embs = torch.tensor(np.array(hash_embs)).cuda()
 hash_embs = hash_embs.reshape(int(num/10),10,dim)
 # hash_embs = torch.mean(hash_embs,1)
 
-NUM=20
+NUM=args.piece
 THRE=args.thre
 hash_merge=[]
 
