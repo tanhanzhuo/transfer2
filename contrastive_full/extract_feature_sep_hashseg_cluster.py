@@ -172,7 +172,7 @@ for step, batch in enumerate(train_data_loader):
         labels= batch['labels']
         if labels[0] != labels[-1] or labels[0] != previous_label or step == MAX_LEN:#goes to another hashtag
             total_num+=1
-            
+
             embeddings_norm = preprocessing.normalize(embeddings)
             kmeans = KMeans(n_clusters=args.num_sample).fit(embeddings_norm)
             for idx_tmp in range(args.num_sample):
@@ -193,7 +193,7 @@ for step, batch in enumerate(train_data_loader):
             with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
                 f.write('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
                   format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
-            del embeddings, dis, dis_sum
+            del embeddings, embeddings_norm, kmeans
             torch.cuda.empty_cache()
             embeddings = []
             tmp_samples = []
