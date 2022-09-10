@@ -45,5 +45,5 @@ for hash_idx in trange(len(hash_embs)):
     val,place = dis.topk(args.top)
     for idx_tmp in range(args.top):
         tmp_merge = tmp_merge + '\t' + hash_tags[place[idx_tmp].item()]
-    tmp_merge += ' \n '
+    tmp_merge += ' \n'
     file.write(tmp_merge)
