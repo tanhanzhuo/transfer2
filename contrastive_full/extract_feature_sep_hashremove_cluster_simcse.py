@@ -94,7 +94,7 @@ from torch.utils.data import DataLoader
 model = AutoModel.from_pretrained(args.model).cuda()
 model.eval()
 # model = accelerate.prepare(model)
-tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
+tokenizer = AutoTokenizer.from_pretrained(args.model)
 text_column_name = "text"
 def tokenize_function(examples):
     text = []
