@@ -35,7 +35,7 @@ file = open('hash_merge_'+args.save+'.txt', 'a', encoding='utf-8')
 SP=20
 BATCH = int( len(hash_tags)/SP )
 for hash_idx in trange(len(hash_embs)):
-    tmp_merge = ''+[hash_tags[hash_idx]]
+    tmp_merge = ''+hash_tags[hash_idx]
     dis = []
     for one in range(SP+1):
         dis_tmp = cos_sim(hash_embs[hash_idx], hash_embs[one*BATCH:(one+1)*BATCH].unsqueeze(2)).mean(dim=[1,2])
