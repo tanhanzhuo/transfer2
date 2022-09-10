@@ -8,7 +8,7 @@ parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 parser.add_argument("--piece", default=20, type=int)#for gpu memory
 parser.add_argument("--thre", default=0.8, type=float)
-parser.add_argument("--top", default=5, type=float)
+parser.add_argument("--top", default=5, type=int)
 parser.add_argument('--save',default='cluster',type=str)
 args = parser.parse_args()
 
