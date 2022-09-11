@@ -107,8 +107,8 @@ for task in args.task_name.split(','):
             one = train_dataset[idx]
             input = tokenizer(one['text'],truncation=True)
             with torch.no_grad():
-                outputs = model(input_ids=batch['input_ids'].cuda(),
-                          attention_mask=batch['attention_mask'].cuda(),
+                outputs = model(input_ids=input['input_ids'].cuda(),
+                          attention_mask=input['attention_mask'].cuda(),
                           output_hidden_states=True, return_dict=True).pooler_output
                 # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
                 best_distance = []
