@@ -21,7 +21,7 @@ parser.add_argument("--task_name", default='stance,sem-18,sem19-task5-hate,sem19
 parser.add_argument("--best", default=20, type=int)
 parser.add_argument("--num_samples", default=10, type=int)
 parser.add_argument("--word", default=False, type=bool)
-parser.add_argument('--method',default='_simcse_fileT100N100S_num10_cluster',type=str)
+parser.add_argument('--method',default='_simcse_fileT100N100R_num10_cluster',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
 #simcse
 
