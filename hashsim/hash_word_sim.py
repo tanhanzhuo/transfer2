@@ -10,7 +10,7 @@ for hashone in tqdm(hashtags):
     for hashtwo in hashtags:
         if hashone in hashtwo:
             hash_save += '\t'+hashtwo
-        elif hashtwo in hashone and len(hashtwo)>2:
+        elif hashtwo in hashone and len(hashtwo)>3:
             hash_save += '\t' + hashtwo
     hash_save+=' \n'
     file.write(hash_save)
