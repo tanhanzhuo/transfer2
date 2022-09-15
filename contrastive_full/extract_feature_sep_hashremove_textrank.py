@@ -202,7 +202,7 @@ for step, batch in enumerate(train_data_loader):
             with open(args.save+'_'+str(args.CUR_SPLIT)+'.txt', 'a', encoding='utf-8') as f:
                 f.write('current hashtag:{}, {}, number hashtag:{}, cur hash sample:{}, total hash samples:{} \n'. \
                   format(previous_label.item(),CONVERT[str(previous_label.item())], total_num, len(embeddings), len(center_samples)))
-            del embeddings, dis, dis_sum
+            del embeddings, dis, nx_graph
             torch.cuda.empty_cache()
             embeddings = []
             tmp_samples = []
