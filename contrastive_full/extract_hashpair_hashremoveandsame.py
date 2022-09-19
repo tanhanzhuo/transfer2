@@ -10,7 +10,7 @@ args = parser.parse_args()
 
 import json
 
-f = open('./thre100_index.json', 'r', encoding='utf-8')
+f = open('./thre'+str(args.thre)+'_index.json', 'r', encoding='utf-8')
 hash_dic = json.load(f)
 f.close()
 
