@@ -1,5 +1,6 @@
 import json
-from tqdm import tqdm
+import re
+
 with open('../contrastive_full/thre100_index.json', 'r', encoding='utf-8') as f:
     CONVERT = json.load(f)
 hashtags = list(CONVERT.values())
@@ -14,9 +15,11 @@ hashtags_seg = []
 for hashone in hashtags:
     tmp = hash_seg.get(hashone)
     if tmp is None:
-        hashtags_seg.append(hashone[1:])
+        hash_re = ' '.join( re.findall('[a-z]*', hashone[1:]) )
+        hashtags_seg.append(hash_re)
     else:
-        hashtags_seg.append(tmp)
+        hash_re = ' '.join(re.findall('[a-z]*', tmp))
+        hashtags_seg.append(hash_re)
 
 
 import numpy as np
