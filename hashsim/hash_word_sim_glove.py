@@ -47,7 +47,7 @@ cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 TOP=5
 file = open('hash_word_sim_glove.txt', 'a', encoding='utf-8')
 with torch.no_grad():
-    for idx in trange(10000):
+    for idx in trange(len(hash_vectors)):
         dis = cos_sim(hash_vectors[idx],hash_vectors)
         dis[idx] = 0
         val, place = dis.topk(TOP)
