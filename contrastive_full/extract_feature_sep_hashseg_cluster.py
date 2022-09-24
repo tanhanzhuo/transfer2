@@ -19,7 +19,7 @@ parser.add_argument('--save',default='feature_modelT100N100_fileT100_num10',type
 parser.add_argument("--max_seq_length", default=128, type=int)
 parser.add_argument("--preprocessing_num_workers", default=1, type=int)
 parser.add_argument("--batch_size", default=7, type=int)
-
+parser.add_argument("--convert", default='thre100_index.json', type=str)
 #simcse
 parser.add_argument('--temp',default=0.05,type=float)
 parser.add_argument('--pooler_type',default='cls',type=str)
@@ -134,7 +134,7 @@ def tokenize_function(examples):
         # return_special_tokens_mask=True,
     )
 
-with open('thre100_index.json', 'r', encoding='utf-8') as f:
+with open(args.convert, 'r', encoding='utf-8') as f:
     CONVERT = json.load(f)
 
 SPLIT = args.NUM_SPLIT
