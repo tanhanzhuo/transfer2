@@ -57,7 +57,7 @@ with torch.no_grad():
             place = random.sample(hashtags, TOP)
         tmp_merge = '' + hashtags[idx]
         for idx_tmp in range(TOP):
-            tmp_merge = tmp_merge + '\t' + hashtags[place[idx_tmp].item()]
+            tmp_merge = tmp_merge + '\t' + hashtags[place[idx_tmp]]
         tmp_merge += ' \n'
         file.write(tmp_merge)
 file.close()
