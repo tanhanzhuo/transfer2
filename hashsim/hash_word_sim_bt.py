@@ -23,19 +23,19 @@ for hashone in hashtags:
 
 from transformers import AutoModel,AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base')
-model = AutoModel.from_pretrained('vinai/bertweet-base')
+model = AutoModel.from_pretrained('vinai/bertweet-base').cuda()
 
 
 with torch.no_grad():
-    hash_vectors = torch.tensor([[]]).view(-1,768)
+    hash_vectors = torch.tensor([[]]).view(-1,768).cuda()
     for idx in trange(len(hashtags_seg)):
         word = hashtags_seg[idx]
         hash_token = tokenizer.convert_tokens_to_ids(tokenizer.tokenize(word))
-        hash_emb = model.embeddings.word_embeddings(torch.tensor(hash_token))
+        hash_emb = model.embeddings.word_embeddings(torch.tensor(hash_token)).detach()
         hash_emb_mean = torch.mean(hash_emb, dim=0, keepdim=True)
         hash_vectors = torch.cat((hash_vectors,hash_emb_mean),0)
 
-    hash_vectors = hash_vectors.cuda()
+    # hash_vectors = hash_vectors.cuda()
     cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
     TOP=5
     file = open('hash_word_sim_bt.txt', 'a', encoding='utf-8')
