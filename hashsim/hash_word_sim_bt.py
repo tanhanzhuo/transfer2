@@ -31,7 +31,7 @@ with torch.no_grad():
     for idx in trange(len(hashtags_seg)):
         word = hashtags_seg[idx]
         hash_token = tokenizer.convert_tokens_to_ids(tokenizer.tokenize(word))
-        hash_emb = model.embeddings.word_embeddings(torch.tensor(hash_token)).detach()
+        hash_emb = model.embeddings.word_embeddings(torch.tensor(hash_token).cuda()).detach()
         hash_emb_mean = torch.mean(hash_emb, dim=0, keepdim=True)
         hash_vectors = torch.cat((hash_vectors,hash_emb_mean),0)
 
