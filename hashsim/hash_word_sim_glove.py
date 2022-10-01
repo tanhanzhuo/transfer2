@@ -53,11 +53,16 @@ with torch.no_grad():
             dis = cos_sim(hash_vectors[idx],hash_vectors)
             dis[idx] = 0
             val, place = dis.topk(TOP)
+            tmp_merge = '' + hashtags[idx]
+            for idx_tmp in range(TOP):
+                tmp_merge = tmp_merge + '\t' + hashtags[place[idx_tmp].item()]
+            tmp_merge += ' \n'
+            file.write(tmp_merge)
         else:
-            place = random.sample(hashtags, TOP)
-        tmp_merge = '' + hashtags[idx]
-        for idx_tmp in range(TOP):
-            tmp_merge = tmp_merge + '\t' + hashtags[place[idx_tmp]]
-        tmp_merge += ' \n'
-        file.write(tmp_merge)
+            val = random.sample(hashtags, TOP)
+            tmp_merge = '' + hashtags[idx]
+            for hash_tmp in val:
+                tmp_merge = tmp_merge + '\t' + hash_tmp
+            tmp_merge += ' \n'
+            file.write(tmp_merge)
 file.close()
