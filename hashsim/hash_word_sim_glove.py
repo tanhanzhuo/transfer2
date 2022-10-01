@@ -1,4 +1,5 @@
 import json
+import random
 import re
 
 with open('../contrastive_full/thre100_index.json', 'r', encoding='utf-8') as f:
@@ -48,9 +49,12 @@ TOP=5
 file = open('hash_word_sim_glove.txt', 'a', encoding='utf-8')
 with torch.no_grad():
     for idx in trange(len(hash_vectors)):
-        dis = cos_sim(hash_vectors[idx],hash_vectors)
-        dis[idx] = 0
-        val, place = dis.topk(TOP)
+        if hash_vectors[idx].sum().item() > 0:
+            dis = cos_sim(hash_vectors[idx],hash_vectors)
+            dis[idx] = 0
+            val, place = dis.topk(TOP)
+        else:
+            place = random.sample(hashtags, TOP)
         tmp_merge = '' + hashtags[idx]
         for idx_tmp in range(TOP):
             tmp_merge = tmp_merge + '\t' + hashtags[place[idx_tmp].item()]
