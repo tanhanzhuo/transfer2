@@ -28,7 +28,8 @@ model = AutoModel.from_pretrained('vinai/bertweet-base')
 
 with torch.no_grad():
     hash_vectors = torch.tensor([[]]).view(-1,768)
-    for word in hashtags_seg[:100]:
+    for idx in trange(len(hashtags_seg)):
+        word = hashtags_seg[idx]
         hash_token = tokenizer.convert_tokens_to_ids(tokenizer.tokenize(word))
         hash_emb = model.embeddings.word_embeddings(torch.tensor(hash_token))
         hash_emb_mean = torch.mean(hash_emb, dim=0, keepdim=True)
