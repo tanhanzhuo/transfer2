@@ -41,7 +41,7 @@ with torch.no_grad():
     file = open('hash_word_sim_bt.txt', 'a', encoding='utf-8')
     with torch.no_grad():
         for idx in trange(len(hash_vectors)):
-            if hash_vectors[idx].sum().item() > 0:
+            if hash_vectors[idx].sum().item() != 0:
                 dis = cos_sim(hash_vectors[idx],hash_vectors)
                 dis[idx] = 0
                 val, place = dis.topk(TOP)
