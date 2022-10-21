@@ -1,7 +1,4 @@
 #reminder	#selfreminder	#reminders	#selfnote	#messagetoself	#friendlyreminder
-#happynewyear2020	#hello2021	#happynewyear2019	#happy2019	#happynewyear2021	#newyear2018
-#muscle	#musclebuilding	#buildmuscle	#bodybuilding	#musclegrowth	#physique
-#grow	#growtogether	#learnandgrow	#growers	#cultivate	#letsgrow
 #top	#toprated	#tops	#shirtstops	#topsellers	#topmusicuk
 #military	#usmilitary	#ustroops	#troops	#usnavy	#usarmy
 #nswfires	#australianfires	#vicfires	#australianbushfire	#bushfirecrisis	#grassfire
@@ -11,16 +8,12 @@
 #hiring	#itjob	#projectmgmt	#choicecareers	#toptechjobs	#kellyjobs
 #careers	#itcareers	#hotjobs	#jobsandinternships	#hiringnow	#hrjobs
 #nowplaying	#nowplayling	#allhitsalldays	#bestofhitsurbanradio	#webradio	#rockradio
-#buffalo	#buffalove	#onebuffalo	#buffaloweather	#buffalobills	#buffalojobs
 #loseit	#fatburn	#loseweightfast	#bodyfat	#losefat	#looseweight
 #backtowork	#back2work	#backtoreality	#backtobusiness	#offtowork	#returntowork
 #wisdom	#inspirationalquote	#motivationquotes	#inspirationalquotes	#proverbs	#inspiredquotes
 #cine	#filmnews	#cinemax	#cinephiletweets	#watchmovie	#films
 #start	#howtomakemoney	#earnonline	#starter	#starthere	#socibox
-#magic	#puremagic	#magictrick	#letsgomagic	#magick	#bigmagic
-#birthday	#bdaygirl	#birthdayprincess	#birthdaytomorrow	#birthdaygirls	#bdaygift
 #decentralized	#decentralised	#openledger	#cryptocurency	#crytocurrency	#decentraland
-#ps4live	#supportsmallstreamers	#pubgxboxone	#twitchstream	#xboxlive	#twitchrt
 #cybersecurity	#breaches	#infosec	#cybersec	#cyberthreats	#databreaches
 #hacker	#hackernews	#hackers	#cybersec	#pentesting	#bugbounties
 #awesome	#awesum	#awesomebaby	#awesomeness	#supercool	#youareawesome
@@ -33,12 +26,10 @@
 #maga	#draintheswamp	#maga3x	#americafirst	#trumptrain2020	#trumppencelandslide
 #ai	#machinelearning	#machineintelligence	#cognitivecomputing	#iiot	#chatbot
 #hkers	#hongkongers	#hkgov	#hkpoliceterrorists	#uyghurs	#hongkonger
-#holiday	#holidaydeals	#handmadeholiday	#familyholidays	#holidaysarecoming	#chistmas
 #save	#buxoff	#onlinedeals	#discounts	#vouchercodes	#dealsofday
 #patreon	#onpatreon	#webcomic	#indiecomics	#teefury	#linewebtoon
 #sidereel	#beamly	#icheckmovies	#showgoers	#seenitapp	#followmytv
 #light	#darkness	#bluelight	#lightingtheworld	#fluorescent	#naturallight
-#writing	#writertips	#writingquote	#writingadvice	#novelwriting	#amwriting
 #determination	#dontquit	#disciplineequalsfreedom	#perserverance	#pushyourself	#motivateyourself
 #ww3	#worldwarthree	#worldwar3	#worldwariii	#wwlll	#ww3memes
 #australiaburning	#australianfires	#australiaonfire	#australiafires	#australianbushfire	#bushfirecrisis
@@ -54,7 +45,6 @@
 #rentals	#condominiums	#vacationrentals	#rentalproperty	#servicedapartments	#renting
 #rent	#landlord	#renting	#renters	#lease	#rentalproperty
 #depression	#mentalillness	#anxiety	#psychotherapy	#socialanxiety	#emotionalhealth
-#letstalk	#timetotalkday	#bellletstalk	#bellletstalkday	#itsokaytotalk	#itsoktotalk
 #escapefromtarkov	#arksurvivalevolved	#subnautica	#destinythegame	#playerunknownsbattlegrounds	#esotu
 #liarfromtheshire	#scottydoesnothing	#scottyfommarketing	#scottyfrommarketting	#scottyfromcoverups	#boristheliar
 #australianfires	#australiafires	#australianbushfire	#bushfirecrisis	#australianbushfires	#australiaburning
@@ -73,7 +63,6 @@
 #trump	#trumps	#racistdrumpf	#donald	#drumpf	#nevertrump
 #taxi	#minicab	#lyft	#blackcab	#freelyft	#limousine
 #apology	#apologize	#sorryday	#blowback	#clarification	#retribution
-#humorous	#chuckle	#mirth	#funniness	#romanticcomedy	#darkhumor
 #churchtech	#churchonline	#chstech	#stumin	#worshipleader	#missional
 #catsoftwitter	#rescuecat	#cutecats	#catsontwitter	#catpics	#catsofinstagram
 #indices	#dollarindex	#indexes	#spx500	#stockindex	#saxostrats
@@ -84,7 +73,6 @@
 #onthisday	#thisdayingahistory	#onthisday1940	#thisdaythatyear	#todayinhistory	#onthisdayinhistory
 #frozen	#disneyfrozen	#elsa	#frozen2	#frozenfever	#frostythesnowman
 #capricorn	#astrologyfacts	#thefiresigns	#geminisignz	#zodiacsignfacts	#lovescopes
-#titanium	#steel	#stainless	#diamante	#stainlesssteel	#solidgold
 #bushfirecrisis	#australianfires	#australianbushfire	#australianbushfires	#australiafires	#australiaonfire
 #healthyfoods	#eatinghealthy	#healthydiet	#rawfoods	#superfoods	#healthfood
 #graphicdesign	#logodesigner	#logodesign	#bannerdesign	#uidesign	#brochuredesign
@@ -167,7 +155,6 @@
 #ghosts	#ghoststories	#ghosthunting	#haunted	#scarystories	#ghosthunters
 #didyouknow	#uselessfacts	#coolfacts	#interestingfacts	#tmyk	#dyk
 #supportsmallstreamers	#twitchaffiliate	#newstreamer	#twitchraid	#smallstreamercommunity	#supportsmallerstreamers
-#newfollowers	#welcometweet	#followsback	#nowfollowingback	#newfollow	#topnewfollowers
 #plasticpollution	#singleuseplastics	#plasticwaste	#endplasticpollution	#singleuseplastic	#microplastic
 #recycling	#plasticwaste	#globalrecyclingday	#ewaste	#zerowaste	#reducewaste
 #acrylic	#oilpaint	#oilpainting	#pleinair	#drawingillustration	#abstractpainting
@@ -320,3 +307,12 @@
 #tbh	#honestlyhour	#confessionight	#sincewebeinghonest	#confessiontime	#honesthour
 #tbt	#throwbackthurs	#throwbackfriday	#throwbackthurday	#thowbackthursday	#throwbacksaturday
 #yolo	#yoloswag	#rebelstatus	#straightthuggin	#livinglifeontheedge	#teamnopants
+#metal	#hairmetal	#hardrock	#progmetal	#heavymetal	#metalcore 
+#nonprofits	#smallcharities	#ethicalgiving	#nonprofit	#philanthropic	#philanthropy 
+#unfittobepresident	#unfittoserve	#trumpisunfit	#trumpunfit	#unfitforoffice	#failureinchief 
+#resume	#videoresume	#videocv	#resumetip	#jobsearchtips	#resumetips 
+#themoreyouknow	#uselessfacts	#uselessknowledgetopossess	#tmyk	#thoughtyoushouldknow	#interestingfact 
+#mindgames	#braingames	#brainteasers	#mindcontrol	#brainteaser	#brainsport 
+#renewables	#cleanpower	#sustainableenergy	#renewableenergy	#solarenergy	#windenergy 
+#allnatural	#chemicalfree	#naturalproducts	#naturalskincare	#nontoxic	#organicbeauty 
+#crazy	#crazyy	#craycray	#socrazy	#crazyyy	#crazyness 

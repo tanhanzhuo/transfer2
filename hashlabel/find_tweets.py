@@ -137,52 +137,71 @@
 # with open('hash_select_all.json', 'w', encoding='utf-8') as f:
 #     json.dump(hash_all, f)
 #
+# hash_all_keys = list(hash_all.keys())
+# random.shuffle(hash_all_keys)
 # with open('hash_pair.txt', 'w', encoding='utf-8') as f:
-#     for hash_one in hash_all.keys():
+#     for hash_one in hash_all_keys:
 #         for hash_two in hash_all[hash_one]:
 #             f.write(hash_one + '\t' + hash_two + '\n')
 
-######################### display two hashtags with samples
-import json
 
-# with open('hash_select_all.json', 'r', encoding='utf-8') as f:
-#     hash_all = json.load(f)
+############################################ write comments to the hashtag
 
 with open('hash_pair.txt', 'r', encoding='utf-8') as f:
     lines = f.readlines()
     data = []
     for line in lines:
         line = line.strip().split('\t')
-        data.append(line)
+        for one in line:
+            if one not in data:
+                data.append(one)
 
-with open('hash_sample_random10.json', 'r', encoding='utf-8') as f:
-    hash_sample_random = json.load(f)
+with open('hash_comment.txt', 'w', encoding='utf-8') as f:
+    for hash_one in data:
+        f.write(hash_one + '\t' + hash_one + '\n')
 
-from prettytable import PrettyTable
 
-NUM=10
-for idx in range(len(data)):
-    pair = data[idx]
-    if len(pair) == 3:
-        continue
-    if len(pair) != 2:
-        print('!!!!!!!!!!!!!!!!!ERROR!!!!!!!!!!!!!!!')
-    hash_one = pair[0]
-    hash_two = pair[1]
-    table = PrettyTable(['IDX',hash_one,hash_two],max_width=50)
-    table.hrules=True
-    table.align = 'l'
-    for idx in range(NUM):
-        table.add_row([str(idx), hash_sample_random[hash_one][idx], hash_sample_random[hash_two][idx]])
-    print(table)
-    print('In *% of tweets, these two hashtag can be replaced by each other, please select from [1,3,5,7,9]')
-    print('1: around 10%; 3: around 30%; 5: around 50%; 7: around 70%; 9: around 90%')
-    rate = input('type your rate')
-    pair.append(rate)
-
-    with open('hash_pair.txt', 'w', encoding='utf-8') as f:
-        for pair in data:
-            f.write('\t'.join(pair) + '\n')
+######################### display two hashtags with samples
+# import json
+#
+# with open('hash_select_all.json', 'r', encoding='utf-8') as f:
+#     hash_all = json.load(f)
+#
+# with open('hash_pair.txt', 'r', encoding='utf-8') as f:
+#     lines = f.readlines()
+#     data = []
+#     for line in lines:
+#         line = line.strip().split('\t')
+#         data.append(line)
+#
+# with open('hash_sample_random10.json', 'r', encoding='utf-8') as f:
+#     hash_sample_random = json.load(f)
+#
+# from prettytable import PrettyTable
+#
+# NUM=10
+# for idx in range(len(data)):
+#     pair = data[idx]
+#     if len(pair) == 3:
+#         continue
+#     if len(pair) != 2:
+#         print('!!!!!!!!!!!!!!!!!ERROR!!!!!!!!!!!!!!!')
+#     hash_one = pair[0]
+#     hash_two = pair[1]
+#     table = PrettyTable(['IDX',hash_one,hash_two],max_width=50)
+#     table.hrules=True
+#     table.align = 'l'
+#     for idx in range(NUM):
+#         table.add_row([str(idx), hash_sample_random[hash_one][idx], hash_sample_random[hash_two][idx]])
+#     print(table)
+#     print('In *% of tweets, these two hashtag can be replaced by each other, please select from [1,3,5,7,9]')
+#     print('1: around 10%; 3: around 30%; 5: around 50%; 7: around 70%; 9: around 90%')
+#     rate = input('type your rate: ')
+#     pair.append(rate)
+#
+#     with open('hash_pair.txt', 'w', encoding='utf-8') as f:
+#         for pair in data:
+#             f.write('\t'.join(pair) + '\n')
 
 ####### write down all the hash pairs
 
