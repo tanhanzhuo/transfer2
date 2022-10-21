@@ -6,13 +6,11 @@ from tqdm import tqdm,trange
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash_file',default='../contrastive_full/feature_modelT100N100M_fileT100N100S_num10',type=str)
 parser.add_argument("--split", default=4, type=int)#for gpu memory
-parser.add_argument("--piece", default=20, type=int)#for gpu memory
-parser.add_argument("--thre", default=0.8, type=float)
-parser.add_argument("--top", default=5, type=int)
-parser.add_argument('--save',default='cluster',type=str)
+parser.add_argument("--hash_pair", default='hash_pair.txt', type=str)
+parser.add_argument("--num", default=500, type=int)
 args = parser.parse_args()
 
-fileName = 'hash_pair.txt'
+fileName = args.hash_pair
 with open(fileName, 'r', encoding='utf-8') as f:
     lines = f.readlines()
     data = {}
@@ -58,7 +56,15 @@ for hash_one in data.keys():
         data_score.append(data[hash_one][hash_two])
         data_hash_score.append(data_hash[hash_one][hash_two])
 
+idx = np.array(range(len(data_score)))
+np.random.shuffle(idx)
+data_score = np.array(data_score)
+data_hash_score = np.array(data_hash_score)
+data_score = data_score[idx]
+data_hash_score = data_hash_score[idx]
+
 import scipy.stats
-print(scipy.stats.pearsonr(data_score, data_hash_score)[0])  # Pearson's r
-print(scipy.stats.spearmanr(data_score, data_hash_score)[0])   # Spearman's rho
-print(scipy.stats.kendalltau(data_score, data_hash_score)[0])  # Kendall's tau
+for num in [100,200,300,400,500]:
+    print(scipy.stats.pearsonr(data_score[:num], data_hash_score[:num])[0])  # Pearson's r
+    print(scipy.stats.spearmanr(data_score[:num], data_hash_score[:num])[0])   # Spearman's rho
+    print(scipy.stats.kendalltau(data_score[:num], data_hash_score[:num])[0])  # Kendall's tau
