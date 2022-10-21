@@ -58,7 +58,7 @@ for hash_one in data.keys():
         data_score.append(data[hash_one][hash_two])
         data_hash_score.append(data_hash[hash_one][hash_two])
 
-import scipy
+import scipy.stats
 print(scipy.stats.pearsonr(data_score, data_hash_score)[0])  # Pearson's r
 print(scipy.stats.spearmanr(data_score, data_hash_score)[0])   # Spearman's rho
 print(scipy.stats.kendalltau(data_score, data_hash_score)[0])  # Kendall's tau
