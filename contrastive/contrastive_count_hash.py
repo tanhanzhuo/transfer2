@@ -105,9 +105,16 @@ if __name__ == "__main__":
     # time3 = time.time()
     # print(time3-time2)
 
-    for hash_one in list(hash_dic.keys()):
-        if hash_dic[hash_one] < 10:
-            hash_dic.pop(hash_one)
+    # for hash_one in list(hash_dic.keys()):
+    #     if hash_dic[hash_one] < 10:
+    #         hash_dic.pop(hash_one)
+
 
     with open('hash_his' + '.json', 'w', encoding='utf-8') as f:
         json.dump(hash_dic, f)
+
+    import numpy as np
+
+    hash_num = np.array(list(hash_dic.values()))
+    for thre in [0, 1, 3, 5, 10, 50, 100]:
+        print('larger than {}:{}'.format(thre, np.sum(hash_num > thre)))
