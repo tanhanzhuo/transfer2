@@ -105,8 +105,8 @@ class RobertaClassificationHead(nn.Module):
         self.dropout = nn.Dropout(classifier_dropout)
         self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
 
-    def forward(self, features, **kwargs):
-        x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
+    def forward(self, features, mask, **kwargs):
+        x = (features * mask.unsqueeze(-1)).sum(1) / mask.sum(-1).unsqueeze(-1) # take <s> token (equiv. to [CLS])
         x = self.dropout(x)
         x = self.dense(x)
         x = torch.tanh(x)
@@ -173,7 +173,8 @@ class RobertaForMulti(RobertaPreTrainedModel):
                 input_ids,
                 token_type_ids=None,
                 position_ids=None,
-                attention_mask=None):
+                attention_mask=None,
+                text_mask=None):
         return_dict = False
 
         outputs = self.roberta(
@@ -186,7 +187,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
 
         sequence_output = outputs[0]
         # sequence_cls = sequence_cls.sum(dim=1)
-        logits = self.classifier(sequence_output)
+        logits = self.classifier(sequence_output,1-text_mask)
         return logits
 
 from dataclasses import dataclass
@@ -216,6 +217,10 @@ class OurDataCollatorWithPadding:
             flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:],flat_features[idx_fea]['input_ids'])
             flat_features[idx_fea]['attention_mask'] = flat_features[idx_fea]['attention_mask'] + \
                                                        [1]*(len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['attention_mask']))
+
+            flat_features[idx_fea]['special_tokens_mask'] = [0] * len(flat_features[idx_fea]['token_type_ids']) + \
+                                             [1] * (len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['token_type_ids']))
+
             flat_features[idx_fea]['token_type_ids'] = flat_features[idx_fea]['token_type_ids'] + \
                                                        [self.tokenizer.pad_token_type_id] * (len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['token_type_ids']))
 
@@ -474,7 +479,8 @@ def do_train(args):
                 # loss = loss_fct(logits, labels.cuda().view(-1))
                 logits = model(input_ids=batch['input_ids'].cuda(),
                                token_type_ids = batch['token_type_ids'].cuda(),
-                               attention_mask=batch['attention_mask'].cuda() )
+                               attention_mask=batch['attention_mask'].cuda(),
+                               text_mask = batch['special_tokens_mask'].cuda())
                 loss = loss_fct(logits, batch['labels'].cuda().view(-1))
                 # print(step)
                 loss.backward()
