@@ -55,7 +55,7 @@ def tokenization(args):
 
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
-        # batched=True,
+        batched=True,
         num_proc=args.preprocessing_num_workers,
         remove_columns=[text_column_name],
         load_from_cache_file=not args.overwrite_cache,

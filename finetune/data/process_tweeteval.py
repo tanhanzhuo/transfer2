@@ -20,6 +20,8 @@ for sp in ['train','val','test']:
             for idx in range(len(lines_text)):
                 line_text = lines_text[idx].strip()
                 line_label = lines_labels[idx].strip()
+                if len(line_text)<1:
+                    continue
                 one = {'labels':line_label,'text':line_text}
                 tmp = json.dumps(one, ensure_ascii=False)
                 f.write(tmp + '\n')
