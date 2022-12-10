@@ -1,0 +1,93 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_size": 508633,
+  "description": "",
+  "download_checksums": {
+    "D:\\polyNew\\multi\\transfer2\\finetune\\data\\eval-emotion\\train.json": {
+      "num_bytes": 394544,
+      "checksum": "2f8201102dc61524ca6f256ddb913114c49b0c6d153835100ec93a8a0da1eff0"
+    },
+    "D:\\polyNew\\multi\\transfer2\\finetune\\data\\eval-emotion\\dev.json": {
+      "num_bytes": 44669,
+      "checksum": "d4b0a75f8ee2e50c0ba8a8e73a1a8bcdb7da74a72b45d00b94e54a004b98c538"
+    },
+    "D:\\polyNew\\multi\\transfer2\\finetune\\data\\eval-emotion\\test.json": {
+      "num_bytes": 170985,
+      "checksum": "c700b00baf71028138b77aee834f9dffd1a6fe3307b9568ccf0be4a81a7bb7f3"
+    }
+  },
+  "download_size": 610198,
+  "features": {
+    "labels": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "token_type_ids": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "post_processed": null,
+  "post_processing_size": null,
+  "size_in_bytes": 1118831,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 329100,
+      "num_examples": 3257,
+      "dataset_name": "json"
+    },
+    "dev": {
+      "name": "dev",
+      "num_bytes": 37151,
+      "num_examples": 374,
+      "dataset_name": "json"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 142382,
+      "num_examples": 1421,
+      "dataset_name": "json"
+    }
+  },
+  "supervised_keys": null,
+  "task_templates": null,
+  "version": {
+    "version_str": "0.0.0",
+    "description": null,
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

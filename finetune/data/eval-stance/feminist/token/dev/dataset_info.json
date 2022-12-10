@@ -1,0 +1,93 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "default",
+  "dataset_size": 109002,
+  "description": "",
+  "download_checksums": {
+    "D:\\polyNew\\multi\\transfer2\\finetune\\data\\eval-stance\\feminist\\train.json": {
+      "num_bytes": 80793,
+      "checksum": "c7151c222f2670c3208503475977c6fe6987385478fa9715c49a16bba4e836ba"
+    },
+    "D:\\polyNew\\multi\\transfer2\\finetune\\data\\eval-stance\\feminist\\dev.json": {
+      "num_bytes": 9204,
+      "checksum": "bdeb96757f1f4a8731b544df95f1d9c1a16b1c32fbbdd77d24c4daeea2a587bc"
+    },
+    "D:\\polyNew\\multi\\transfer2\\finetune\\data\\eval-stance\\feminist\\test.json": {
+      "num_bytes": 38206,
+      "checksum": "575eb6362d0627d38b12268a55e4018bdb11a53d6d1cab7a6069a5fb735c19cc"
+    }
+  },
+  "download_size": 128203,
+  "features": {
+    "labels": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "token_type_ids": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "post_processed": null,
+  "post_processing_size": null,
+  "size_in_bytes": 237205,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 68718,
+      "num_examples": 597,
+      "dataset_name": "json"
+    },
+    "dev": {
+      "name": "dev",
+      "num_bytes": 7834,
+      "num_examples": 67,
+      "dataset_name": "json"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 32450,
+      "num_examples": 285,
+      "dataset_name": "json"
+    }
+  },
+  "supervised_keys": null,
+  "task_templates": null,
+  "version": {
+    "version_str": "0.0.0",
+    "description": null,
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
