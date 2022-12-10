@@ -70,6 +70,22 @@ CONVERT = {
     'sem21-task7-humor':{'0':0,'1':1}
 }
 
+CONVERT = {
+    'eval-emoji':{'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,\
+                  '9':9,'10':10,'11':11,'12':12,'13':13,'14':14,'15':15,\
+                  '16':16,'17':17,'18':18,'19':19},
+    'eval-emotion':{'0':0,'1':1,'2':2,'3':3},
+    'eval-hate':{'0':0,'1':1},
+    'eval-irony':{'0':0,'1':1},
+    'eval-offensive':{'0':0,'1':1},
+    'eval-sentiment':{'0':0,'1':1,'2':2},
+    'eval-stance/abortion':{'0':0,'1':1,'2':2},
+    'eval-stance/atheism':{'0':0,'1':1,'2':2},
+    'eval-stance/climate':{'0':0,'1':1,'2':2},
+    'eval-stance/feminist':{'0':0,'1':1,'2':2},
+    'eval-stance/hillary':{'0':0,'1':1,'2':2}
+}
+
 class RobertaForMulti(RobertaPreTrainedModel):
 
     def __init__(self, config):
@@ -127,7 +143,7 @@ def parse_args():
     parser.add_argument(
         "--task_name",
         # default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
-        default='stance,sem-18,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm,sem18-task1-affect,sem21-task7-humor',
+        default='eval-emoji,eval-emotion,eval-hate,eval-irony,eval-offensive,eval-sentiment,eval-stance/abortion,eval-stance/atheism,eval-stance/climate,eval-stance/feminist,eval-stance/hillary',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
@@ -226,7 +242,7 @@ def parse_args():
     return args
 
 @torch.no_grad()
-def evaluate(model, data_loader):
+def evaluate(model, data_loader, task='eval-emoji'):
     model.eval()
     label_all = []
     pred_all = []
@@ -238,11 +254,41 @@ def evaluate(model, data_loader):
         label_all += [tmp for tmp in labels.numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
 
-    f1_ma = f1_score(label_all, pred_all,average='macro')
-    f1_mi = f1_score(label_all, pred_all, average='micro')
-    f1_we = f1_score(label_all, pred_all, average='weighted')
-    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (f1_ma, f1_mi, f1_we))
-    return f1_ma, f1_mi, f1_we
+    results = classification_report(label_all, pred_all, output_dict=True)
+
+    if 'emoji' in task:
+        tweeteval_result = results['macro avg']['f1-score']
+
+        # Emotion (Macro f1)
+    elif 'emotion' in task:
+        tweeteval_result = results['macro avg']['f1-score']
+
+        # Hate (Macro f1)
+    elif 'hate' in task:
+        tweeteval_result = results['macro avg']['f1-score']
+
+        # Irony (Irony class f1)
+    elif 'irony' in task:
+        tweeteval_result = results['1']['f1-score']
+
+        # Offensive (Macro f1)
+    elif 'offensive' in task:
+        tweeteval_result = results['macro avg']['f1-score']
+
+        # Sentiment (Macro Recall)
+    elif 'sentiment' in task:
+        tweeteval_result = results['macro avg']['recall']
+
+        # Stance (Macro F1 of 'favor' and 'against' classes)
+    elif 'stance' in task:
+        f1_against = results['1']['f1-score']
+        f1_favor = results['2']['f1-score']
+        tweeteval_result = (f1_against + f1_favor) / 2
+
+
+
+    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (tweeteval_result, tweeteval_result, tweeteval_result))
+    return tweeteval_result,tweeteval_result,tweeteval_result
 
 def convert_example(example, label2idx):
     if example.get('special_tokens_mask') is not None:
