@@ -178,7 +178,7 @@ def parse_args():
              "than this will be truncated, sequences shorter will be padded.", )
     parser.add_argument(
         "--learning_rate",
-        default='1e-5,2e-5,3e-5',
+        default='1e-3,1e-4,1e-5',
         type=str,
         help="The initial learning rate for Adam.")
     parser.add_argument(
@@ -226,7 +226,8 @@ def parse_args():
         "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
     parser.add_argument(
         "--shot", default='10,20,40,80,160,320,640,1280,full', type=str, help="random seed for initialization")
-
+    parser.add_argument(
+        "--stop", default=5, type=int, help="early stop")
     args = parser.parse_args()
     return args
 
@@ -319,6 +320,7 @@ def do_train(args):
 
     learning_rate = args.learning_rate.split(',')
     best_metric = [0, 0, 0]
+
     for lr in learning_rate:
 
         num_classes = len(label2idx.keys())
@@ -364,6 +366,7 @@ def do_train(args):
         global_step = 0
         tic_train = time.time()
 
+        stop_sign = 0
         for epoch in trange(args.num_train_epochs):
             model.train()
             for step, batch in enumerate(train_data_loader):
@@ -383,13 +386,18 @@ def do_train(args):
                        loss, args.logging_steps / (time.time() - tic_train),
                        args.seed,float(lr),args.input_dir))
                 tic_train = time.time()
-            if (epoch + 1) % args.save_steps == 0:
+            if (epoch + 1) % args.save_steps == 0 and (epoch + 1) > 3:
                 tic_eval = time.time()
                 cur_metric = evaluate(model, dev_data_loader,args.task)
                 print("eval done total : %s s" % (time.time() - tic_eval))
                 if cur_metric[0] > best_metric[0]:
                     model_best = copy.deepcopy(model).cpu()
                     best_metric = cur_metric
+                    stop_sign = 0
+                else:
+                    stop_sign += 1
+            if stop_sign >= args.stop:
+                break
         del model
         torch.cuda.empty_cache()
 
