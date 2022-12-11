@@ -57,18 +57,7 @@ import torch.nn as nn
 # import paddle.nn.functional as F
 from transformers.models.roberta.modeling_roberta import RobertaModel, RobertaPreTrainedModel, RobertaClassificationHead
 
-CONVERT = {
-    'stance':{'NONE':0,'FAVOR':1,'AGAINST':2},
-    'hate': {'normal':0,'hatespeech':1,'offensive':2},
-    'sem-18':{'0':0,'1':1},
-    'sem-17':{'neutral':0,'positive':1,'negative':2},
-    'imp-hate':{'not_hate':0,'implicit_hate':1,'negative':2},
-    'sem19-task5-hate':{'0':0,'1':1},
-    'sem19-task6-offen':{'NOT':0,'OFF':1},
-    'sem22-task6-sarcasm':{'0':0,'1':1},
-    'sem18-task1-affect':{'0':0,'1':1,'2':2,'3':3},
-    'sem21-task7-humor':{'0':0,'1':1}
-}
+
 
 CONVERT = {
     'eval-emoji':{'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,\
