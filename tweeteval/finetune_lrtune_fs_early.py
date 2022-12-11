@@ -322,7 +322,7 @@ def do_train(args):
     best_metric = [0, 0, 0]
 
     for lr in learning_rate:
-
+        best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
@@ -390,10 +390,13 @@ def do_train(args):
                 tic_eval = time.time()
                 cur_metric = evaluate(model, dev_data_loader,args.task)
                 print("eval done total : %s s" % (time.time() - tic_eval))
-                if cur_metric[0] > best_metric[0]:
-                    model_best = copy.deepcopy(model).cpu()
-                    best_metric = cur_metric
+                if cur_metric[0] > best_metric_lr[0]:
+                    best_metric_lr = cur_metric
                     stop_sign = 0
+                    if best_metric_lr[0] > best_metric[0]:
+                        model_best = copy.deepcopy(model).cpu()
+                        best_metric = best_metric_lr
+
                 else:
                     stop_sign += 1
             if stop_sign >= args.stop:
