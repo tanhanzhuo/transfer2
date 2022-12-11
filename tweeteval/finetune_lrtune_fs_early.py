@@ -178,7 +178,7 @@ def parse_args():
              "than this will be truncated, sequences shorter will be padded.", )
     parser.add_argument(
         "--learning_rate",
-        default='1e-3,1e-4,1e-5',
+        default='1e-3,1e-4,1e-5,1e-6',
         type=str,
         help="The initial learning rate for Adam.")
     parser.add_argument(
