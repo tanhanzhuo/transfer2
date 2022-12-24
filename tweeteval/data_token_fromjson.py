@@ -16,6 +16,15 @@ parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
 parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwrite the cached training and evaluation sets")
 
+def preprocess(text):
+    preprocessed_text = []
+    for t in text.split():
+        if len(t) > 1:
+            t = '@user' if t[0] == '@' and t.count('@') == 1 else t
+            t = 'http' if t.startswith('http') else t
+        preprocessed_text.append(t)
+    return ' '.join(preprocessed_text)
+
 def tokenization(args):
     # if args.output_dir + args.task_name is not None:
     #     os.makedirs(args.output_dir+ args.task_name, exist_ok=True)
@@ -31,8 +40,10 @@ def tokenization(args):
     raw_datasets["dev"] = raw_datasets["dev"].shuffle()
     raw_datasets["test"] = raw_datasets["test"].shuffle()
     # Load pretrained tokenizer
-    if args.tokenizer_name:
+    if 'bertweet' in args.tokenizer_name:
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name,normalization=True)
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name)
 
     # First we tokenize all the texts.
 
@@ -42,9 +53,14 @@ def tokenization(args):
     padding = False
 
     def tokenize_function(examples):
-        examples[text_column_name] = [
-            line for line in examples[text_column_name] if len(line) > 0 and not line.isspace()
-        ]
+        if 'cardiffnlp' in args.tokenizer_name:
+            examples[text_column_name] = [
+                preprocess(line) for line in examples[text_column_name] if len(line) > 0 and not line.isspace()
+            ]
+        else:
+            examples[text_column_name] = [
+                line for line in examples[text_column_name] if len(line) > 0 and not line.isspace()
+            ]
         return tokenizer(
             examples[text_column_name],
             padding=padding,
