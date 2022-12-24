@@ -133,7 +133,7 @@ class DataCollatorMulti():
         return examples
 
 
-tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
+
 
 
 def parse_args():
@@ -334,7 +334,10 @@ def do_train(args):
 
         num_classes = len(label2idx.keys())
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
-        # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+        if 'bertweet' in args.model_name_or_path:
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+        else:
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         model = RobertaForMulti.from_pretrained(
             args.model_name_or_path, config=config).cuda()
         batchify_fn = DataCollatorMulti(tokenizer=tokenizer, ignore_label=-100)
