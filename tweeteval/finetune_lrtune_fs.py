@@ -119,11 +119,17 @@ class DataCollatorMulti():
     def __init__(self, tokenizer, ignore_label, batch_pad=None):
         self.batch_pad = batch_pad
         if batch_pad is None:
-            self.batch_pad = lambda samples, fn=Dict({
-                'input_ids': Pad(axis=0, pad_val=tokenizer.pad_token_id, dtype='int64'),  # input
-                'token_type_ids': Pad(axis=0, pad_val=tokenizer.pad_token_type_id, dtype='int64'),  # segment
-                'labels': Stack(dtype="int64"),  # label
-            }): fn(samples)
+            if 'cardiffnlp' in tokenizer.name_or_path:
+                self.batch_pad = lambda samples, fn=Dict({
+                    'input_ids': Pad(axis=0, pad_val=tokenizer.pad_token_id, dtype='int64'),  # input
+                    'labels': Stack(dtype="int64"),  # label
+                }): fn(samples)
+            else:
+                self.batch_pad = lambda samples, fn=Dict({
+                    'input_ids': Pad(axis=0, pad_val=tokenizer.pad_token_id, dtype='int64'),  # input
+                    'token_type_ids': Pad(axis=0, pad_val=tokenizer.pad_token_type_id, dtype='int64'),  # segment
+                    'labels': Stack(dtype="int64"),  # label
+                }): fn(samples)
         else:
             self.batch_pad = batch_pad
 
