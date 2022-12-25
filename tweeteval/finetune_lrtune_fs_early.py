@@ -292,7 +292,7 @@ def do_train(args):
     # set_seed(args.seed)
     print(args)
     data_all = datasets.load_from_disk(args.input_dir)
-    label2idx = CONVERT[args.task.replace('_evensplit','')]
+    label2idx = CONVERT[args.task.split('_')[0]]
     trans_func = partial(
         convert_example,
         label2idx=label2idx)
