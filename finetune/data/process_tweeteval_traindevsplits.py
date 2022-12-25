@@ -21,7 +21,7 @@ for epoch in range(10):
                     continue
                 one = {'labels':line_label,'text':line_text}
                 data_tmp.append(one)
-            val_num = len(line_text)
+            val_num = len(lines_text)
         random.shuffle(data_tmp)
         total_num = len(data_tmp)
 
