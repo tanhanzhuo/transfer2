@@ -434,18 +434,19 @@ if __name__ == "__main__":
                     args_tmp.model_name_or_path = model_name
                     ave_metric.append(do_train(args_tmp))
                 ave_metric = np.array(ave_metric)
+                num_seed = len(args.seed.split(','))
                 print("*************************************************************************************")
                 print('Task: %s, model: %s, shot: %s' % (task, model_name, shot))
-                print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / 5,
-                                                                    sum(ave_metric[:, 1]) / 5,
-                                                                    sum(ave_metric[:, 2]) / 5))
+                print('final aveRec:%.5f, f1PN:%.5f, acc: %.5f ' % (sum(ave_metric[:, 0]) / num_seed,
+                                                                    sum(ave_metric[:, 1]) / num_seed,
+                                                                    sum(ave_metric[:, 2]) / num_seed))
                 with open(args.results_name, 'a') as f_res:
 
                     f_res.write('Task: %s, model: %s, shot: %s\n' % (task, model_name, shot) )
-                    f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / 5,
-                                                                            sum(ave_metric[:, 1]) / 5,
-                                                                            sum(ave_metric[:, 2]) / 5))
-                    for tmp in range(5):
+                    f_res.write('aveRec:%.5f, f1PN:%.5f, acc: %.5f \n' % (sum(ave_metric[:, 0]) / num_seed,
+                                                                            sum(ave_metric[:, 1]) / num_seed,
+                                                                            sum(ave_metric[:, 2]) / num_seed))
+                    for tmp in range(num_seed):
                         f_res.write('%.5f, %.5f, %.5f \n' % (ave_metric[tmp, 0],ave_metric[tmp, 1],ave_metric[tmp, 2]))
 
                     f_res.close()
