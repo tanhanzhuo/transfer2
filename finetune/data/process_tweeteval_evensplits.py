@@ -5,7 +5,7 @@ import json
 for epoch in range(10):
     # for task in ['emoji','emotion','hate','irony','offensive','sentiment',\
     #                  'stance/abortion','stance/atheism','stance/climate','stance/feminist','stance/hillary']:
-    for task in ['hate', 'irony', 'offensive']:
+    for task in ['emotion']:#['hate', 'irony', 'offensive']:
         data_tmp = []
         for sp in ['train','val','test']:
             if not os.path.isdir('eval-'+task+'_evensplit'+str(epoch)):
