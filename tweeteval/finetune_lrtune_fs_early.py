@@ -73,7 +73,7 @@ CONVERT = {
     'eval-stance/climate':{'0':0,'1':1,'2':2},
     'eval-stance/feminist':{'0':0,'1':1,'2':2},
     'eval-stance/hillary':{'0':0,'1':1,'2':2},
-    'eval-sarcasm':{'0':0,'1':1,'2':2,'3':3}
+    'eval-sarcasm':{'0':0,'1':1}
 }
 
 class RobertaForMulti(RobertaPreTrainedModel):
@@ -276,6 +276,8 @@ def evaluate(model, data_loader, task='eval-emoji'):
         f1_against = results['1']['f1-score']
         f1_favor = results['2']['f1-score']
         tweeteval_result = (f1_against + f1_favor) / 2
+    elif 'sarcasm' in task:
+        tweeteval_result = results['1']['f1-score']
 
 
 
