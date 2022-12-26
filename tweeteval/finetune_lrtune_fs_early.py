@@ -72,7 +72,8 @@ CONVERT = {
     'eval-stance/atheism':{'0':0,'1':1,'2':2},
     'eval-stance/climate':{'0':0,'1':1,'2':2},
     'eval-stance/feminist':{'0':0,'1':1,'2':2},
-    'eval-stance/hillary':{'0':0,'1':1,'2':2}
+    'eval-stance/hillary':{'0':0,'1':1,'2':2},
+    'eval-sarcasm':{'0':0,'1':1,'2':2,'3':3}
 }
 
 class RobertaForMulti(RobertaPreTrainedModel):

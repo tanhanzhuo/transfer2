@@ -72,16 +72,16 @@ for epoch in range(10):
         split_num = int(total_num/3)
         with open('./eval-' + task + '_evensplit' + str(epoch) + '/' + 'train.json', 'w', encoding='utf-8') as f:
             for idx in range(0, split_num):
-                one = data_tmp[idx]
+                one = data[idx]
                 tmp = json.dumps(one, ensure_ascii=False)
                 f.write(tmp + '\n')
         with open('./eval-' + task + '_evensplit' + str(epoch) + '/' + 'dev.json', 'w', encoding='utf-8') as f:
             for idx in range(split_num, split_num * 2):
-                one = data_tmp[idx]
+                one = data[idx]
                 tmp = json.dumps(one, ensure_ascii=False)
                 f.write(tmp + '\n')
         with open('./eval-' + task + '_evensplit' + str(epoch) + '/' + 'test.json', 'w', encoding='utf-8') as f:
             for idx in range(split_num * 2, total_num):
-                one = data_tmp[idx]
+                one = data[idx]
                 tmp = json.dumps(one, ensure_ascii=False)
                 f.write(tmp + '\n')
