@@ -277,7 +277,7 @@ def evaluate(model, data_loader, task='eval-emoji'):
         f1_favor = results['2']['f1-score']
         tweeteval_result = (f1_against + f1_favor) / 2
     elif 'sarcasm' in task:
-        tweeteval_result = results['1']['f1-score']
+        tweeteval_result = results['0']['f1-score']
 
 
 
