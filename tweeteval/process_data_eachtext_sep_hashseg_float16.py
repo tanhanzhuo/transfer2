@@ -62,7 +62,7 @@ import json
 # f.close()
 
 def read_data(fileName):
-    with open(fileName, 'r', encoding='utf-8') as f:
+    with open(fileName+'.json', 'r', encoding='utf-8') as f:
         data = []
         lines = f.readlines()
         for line in lines:
@@ -71,7 +71,7 @@ def read_data(fileName):
 import re
 HASH = re.compile(r"#\S+")
 def read_data_hashseg(fileName):
-    with open(fileName, 'r', encoding='utf-8') as f:
+    with open(fileName+'.json', 'r', encoding='utf-8') as f:
         data = []
         lines = f.readlines()
         for line in lines:
