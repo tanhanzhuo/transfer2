@@ -75,7 +75,7 @@ def read_data_hashseg(fileName):
         data = []
         lines = f.readlines()
         for line in lines:
-            one_dic = json.loads(lines)
+            one_dic = json.loads(line)
             one = one_dic['text']
             hash_tmp = HASH.findall(one)
             # for hash_two in hash_tmp:
