@@ -10,9 +10,9 @@ import os
 import copy
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset',default='eval-irony',type=str)
-parser.add_argument('--num',default=5,type=int)
-parser.add_argument('--thre',default=0.85,type=float)
-parser.add_argument('--print',default=0,type=int)
+parser.add_argument('--num',default=1,type=int)
+parser.add_argument('--thre',default=0.80,type=float)
+parser.add_argument('--print',default=1,type=int)
 args = parser.parse_args()
 
 def preprocess(text):
@@ -82,7 +82,7 @@ for idx in trange(len(data_test)):
         for idx2 in range(args.num):
             if args.print == 1:
                 print(val[idx2])
-                print(data_test[idx]['text'])
-                print(data_train[best_idx[idx2]]['text'])
+                print(data_test[idx]['text'] +'-----'+ str(data_test[idx]['labels']))
+                print(data_train[best_idx[idx2]]['text'] +'-----'+ str(data_train[best_idx[idx2]]['labels']))
         total_test += 1
 print('test:{}/{}'.format(total_test,len(data_test)))
