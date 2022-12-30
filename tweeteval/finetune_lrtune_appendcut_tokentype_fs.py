@@ -232,7 +232,7 @@ def parse_args():
     parser.add_argument(
         "--task_name",
         # default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
-        default='stance,sem-18,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm,sem18-task1-affect,sem21-task7-humor',
+        default='eval-irony_evensplit4',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
@@ -258,7 +258,7 @@ def parse_args():
     )
     parser.add_argument(
         "--method",
-        default='hash_modelT100N100R_fileT100N100R_num10_top_9',
+        default='hash_modelT100N100M_fileT100N100S_num10_cluster_fromjson_top_1',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -272,13 +272,13 @@ def parse_args():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=514,
+        default=130,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
              "than this will be truncated, sequences shorter will be padded.", )
     parser.add_argument(
         "--token_type",
-        default=2,
+        default=1,
         type=int)
     parser.add_argument(
         "--learning_rate",
@@ -329,7 +329,7 @@ def parse_args():
     parser.add_argument(
         "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
     parser.add_argument(
-        "--shot", default='10,20,40,80,160,320,640,1280,full', type=str, help="random seed for initialization")
+        "--shot", default='full', type=str, help="random seed for initialization")
     parser.add_argument(
         "--stop", default=5, type=int, help="early stop")
     args = parser.parse_args()
@@ -438,9 +438,10 @@ def do_train(args):
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
         if 'bertweet' in args.model_name_or_path:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, truncation=True)
         else:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, truncation=True)
+
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
@@ -448,7 +449,7 @@ def do_train(args):
             args.model_name_or_path, config=config).cuda()
         model.resize_position_embeddings(args.max_seq_length)
         model.resize_type_embeddings(args.token_type)
-        batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer)
+        batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer)#########
         train_data_loader = DataLoader(
             train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
         )
@@ -485,7 +486,7 @@ def do_train(args):
         print('start Training!!!')
         global_step = 0
         tic_train = time.time()
-
+        evaluate(model, dev_data_loader, args.task)
         stop_sign = 0
         for epoch in trange(args.num_train_epochs):
             model.train()
