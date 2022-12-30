@@ -196,11 +196,11 @@ class OurDataCollatorWithPadding:
         for idx_fea in range(len(features)):
             feature = features[idx_fea]
             flat_features.append({k: feature[k][0] if k in special_keys else feature[k] for k in feature})
-            # flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:],flat_features[idx_fea]['input_ids'])
-            # flat_features[idx_fea]['attention_mask'] = flat_features[idx_fea]['attention_mask'] + \
-            #                                            [1]*(len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['attention_mask']))
-            # flat_features[idx_fea]['token_type_ids'] = flat_features[idx_fea]['token_type_ids'] + \
-            #                                            [self.tokenizer.pad_token_type_id] * (len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['token_type_ids']))
+            flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:],flat_features[idx_fea]['input_ids'])
+            flat_features[idx_fea]['attention_mask'] = flat_features[idx_fea]['attention_mask'] + \
+                                                       [1]*(len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['attention_mask']))
+            flat_features[idx_fea]['token_type_ids'] = flat_features[idx_fea]['token_type_ids'] + \
+                                                       [self.tokenizer.pad_token_type_id] * (len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['token_type_ids']))
 
             # for i in range(num_sent):
                 # flat_features.append({k: feature[k][i] if k in special_keys else feature[k] for k in feature})

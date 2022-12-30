@@ -186,7 +186,7 @@ class OurDataCollatorWithPadding:
 
     def __call__(self, features: List[Dict[str, Union[List[int], List[List[int]], torch.Tensor]]]) -> Dict[
         str, torch.Tensor]:
-        special_keys = ['input_ids', 'attention_mask', 'token_type_ids']
+        special_keys = []#['input_ids', 'attention_mask', 'token_type_ids']
         bs = len(features)
         if bs > 0:
             num_sent = len(features[0]['input_ids'])
@@ -438,9 +438,9 @@ def do_train(args):
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
         if 'bertweet' in args.model_name_or_path:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, truncation=True)
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
         else:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, truncation=True)
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
 
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
@@ -486,7 +486,7 @@ def do_train(args):
         print('start Training!!!')
         global_step = 0
         tic_train = time.time()
-        evaluate(model, dev_data_loader, args.task)
+        # evaluate(model, dev_data_loader, args.task)
         stop_sign = 0
         for epoch in trange(args.num_train_epochs):
             model.train()
