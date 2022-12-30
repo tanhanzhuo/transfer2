@@ -11,7 +11,7 @@ import copy
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset',default='eval-irony',type=str)
 parser.add_argument('--num',default=1,type=int)
-parser.add_argument('--thre',default=0.80,type=float)
+parser.add_argument('--thre',default=0.90,type=float)
 parser.add_argument('--print',default=1,type=int)
 args = parser.parse_args()
 
