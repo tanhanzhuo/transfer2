@@ -23,6 +23,9 @@ def preprocess(text):
         preprocessed_text.append(t)
     return ' '.join(preprocessed_text)
 
+
+
+########## USING RAW DATA
 # task = args.tweeteval
 # data_tweet = []
 # for sp in ['train','val','test']:
@@ -85,7 +88,7 @@ def preprocess(text):
 #     print(data_tweet[idx])
 #     print(data_sem[best_idx[0]])
 
-
+######## USING ORIGINAL SPLITS
 print('loading model')
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
 tokenizer = AutoTokenizer.from_pretrained('princeton-nlp/sup-simcse-roberta-base')

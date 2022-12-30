@@ -186,7 +186,7 @@ class OurDataCollatorWithPadding:
 
     def __call__(self, features: List[Dict[str, Union[List[int], List[List[int]], torch.Tensor]]]) -> Dict[
         str, torch.Tensor]:
-        special_keys = []#['input_ids', 'attention_mask', 'token_type_ids']
+        special_keys = ['input_ids', 'attention_mask', 'token_type_ids']
         bs = len(features)
         if bs > 0:
             num_sent = len(features[0]['input_ids'])
@@ -196,11 +196,11 @@ class OurDataCollatorWithPadding:
         for idx_fea in range(len(features)):
             feature = features[idx_fea]
             flat_features.append({k: feature[k][0] if k in special_keys else feature[k] for k in feature})
-            # flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:],flat_features[idx_fea]['input_ids'])
-            # flat_features[idx_fea]['attention_mask'] = flat_features[idx_fea]['attention_mask'] + \
-            #                                            [1]*(len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['attention_mask']))
-            # flat_features[idx_fea]['token_type_ids'] = flat_features[idx_fea]['token_type_ids'] + \
-            #                                            [self.tokenizer.pad_token_type_id] * (len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['token_type_ids']))
+            flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:],flat_features[idx_fea]['input_ids'])
+            flat_features[idx_fea]['attention_mask'] = flat_features[idx_fea]['attention_mask'] + \
+                                                       [1]*(len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['attention_mask']))
+            flat_features[idx_fea]['token_type_ids'] = flat_features[idx_fea]['token_type_ids'] + \
+                                                       [self.tokenizer.pad_token_type_id] * (len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['token_type_ids']))
 
             # for i in range(num_sent):
                 # flat_features.append({k: feature[k][i] if k in special_keys else feature[k] for k in feature})
@@ -258,7 +258,7 @@ def parse_args():
     )
     parser.add_argument(
         "--method",
-        default='hash_modelT100N100M_fileT100N100S_num10_cluster_fromjson_top_1',
+        default='hash_modelT100N100M_fileT100N100S_num10_cluster_fromjson_top_1',#'token',#
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -272,7 +272,7 @@ def parse_args():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=130,
+        default=514,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
              "than this will be truncated, sequences shorter will be padded.", )
@@ -282,7 +282,7 @@ def parse_args():
         type=int)
     parser.add_argument(
         "--learning_rate",
-        default='1e-3,1e-4,1e-5,1e-6',
+        default='1e-5',#'1e-3,1e-4,1e-5,1e-6',
         type=str,
         help="The initial learning rate for Adam.")
     parser.add_argument(
