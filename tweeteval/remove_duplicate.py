@@ -68,6 +68,6 @@ for idx in trange(len(data_sem)-1):
             if args.print == 1:
                 print(val[idx2])
                 print(data_sem[idx]['text'])
-                print(data_sem[best_idx[idx2]]['text'])
+                print(data_sem[best_idx[idx2+idx+1]]['text'])
         total_du += 1
 print('duplicate:{}/{}'.format(total_du,len(data_sem)))
