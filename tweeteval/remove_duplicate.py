@@ -59,7 +59,10 @@ for one in tqdm(data_sem):
 
 
 total_du = 0
+bad_idx = []
 for idx in trange(len(data_sem)-1):
+    if idx in bad_idx:
+        continue
     fea_one = fea_sem[idx]
     dis = cos_sim(fea_one, fea_sem[idx+1:])
     val, best_idx = dis.topk(args.num)
@@ -69,5 +72,6 @@ for idx in trange(len(data_sem)-1):
                 print(val[idx2])
                 print(data_sem[idx]['text'])
                 print(data_sem[best_idx[idx2+idx+1]]['text'])
+        bad_idx.append(idx)
         total_du += 1
 print('duplicate:{}/{}'.format(total_du,len(data_sem)))
