@@ -69,7 +69,8 @@ for dataset_one in args.dataset.split(','):
         if len(one) < 3:
             bad_idx.append(idx)
             bad_pair.append([idx])
-            print('empty_sample:'+data_sem[idx]['labels'] + ' ' +data_sem[idx]['text'])
+            if args.print == 1:
+                print('empty_sample:'+data_sem[idx]['labels'] + ' ' +data_sem[idx]['text'])
         inputs = tokenizer(one, truncation=True)
         with torch.no_grad():
             outputs = model(input_ids=torch.tensor([inputs['input_ids']]).cuda(),
