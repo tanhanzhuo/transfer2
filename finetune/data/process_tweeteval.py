@@ -25,3 +25,28 @@ for sp in ['train','val','test']:
                 one = {'labels':line_label,'text':line_text}
                 tmp = json.dumps(one, ensure_ascii=False)
                 f.write(tmp + '\n')
+
+for sp in ['train','val','test']:
+    data_tmp = []
+    for task in ['stance/abortion','stance/atheism','stance/climate','stance/feminist','stance/hillary']:
+        with open('../data_raw/eval-'+task+'/'+sp+'_text.txt','r',encoding='utf-8') as f:
+            lines_text = f.readlines()
+        with open('../data_raw/eval-' + task + '/' + sp + '_labels.txt', 'r', encoding='utf-8') as f:
+            lines_labels = f.readlines()
+
+        for idx in range(len(lines_text)):
+            line_text = lines_text[idx].strip()
+            line_label = lines_labels[idx].strip()
+            if len(line_text) < 1:
+                continue
+            one = {'labels': line_label, 'text': line_text}
+            data_tmp.append(one)
+
+    if sp == 'val':
+        sp_w = 'dev'
+    else:
+        sp_w = sp
+    with open('./eval-stance/'+sp_w+'.json','w',encoding='utf-8') as f:
+        for one in data_tmp:
+            tmp = json.dumps(one, ensure_ascii=False)
+            f.write(tmp + '\n')
