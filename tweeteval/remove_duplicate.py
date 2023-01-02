@@ -100,16 +100,16 @@ for dataset_one in args.dataset.split(','):
                     #     if rate == '1' or rate == '0':
                     #         break
                     # rate = int(rate)
-                    rate = 1
-                    if rate == 1:
-                        bad_idx.append(idx1+idx+1)
-                        bad_pair.append([idx,idx1+idx+1])
-                        fea_sem[idx1+idx+1] = fea_sem[idx1+idx+1]*0
-
-    with open('../finetune/data/' + dataset_one + '/bad_pair.txt', 'w', encoding='utf-8') as f:
-        for line in bad_pair:
-            line = [str(i) for i in line]
-            f.write(' '.join(line) + '\n')
+                rate = 1
+                if rate == 1:
+                    bad_idx.append(idx1+idx+1)
+                    bad_pair.append([idx,idx1+idx+1])
+                    fea_sem[idx1+idx+1] = fea_sem[idx1+idx+1]*0
+    if args.write == 1:
+        with open('../finetune/data/' + dataset_one + '/bad_pair.txt', 'w', encoding='utf-8') as f:
+            for line in bad_pair:
+                line = [str(i) for i in line]
+                f.write(' '.join(line) + '\n')
 
     bad_train = 0
     conflict_train = 0
