@@ -37,8 +37,8 @@ def read_data(fileName):
         for line in lines:
             data.append(json.loads(line))
     return data
-import json
 
+import json
 def write_json(data, fileName):
     with open(fileName + '.json', 'w', encoding='utf-8') as f:
         for one in data:
@@ -51,7 +51,10 @@ for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.append(tmp['samples'])
     # hash_embs.extend(tmp['center_embs'])
-    hash_embs.append(torch.tensor(tmp['embs']))
+    if idx < args.split / 2:
+        hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(0))
+    else:
+        hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(1))
     tmp.close()
 
 # hash_embs= torch.tensor(np.array(hash_embs))
@@ -72,8 +75,11 @@ for task in args.task_name.split(','):
                 best_distance = []
                 best_text = []
                 for sp in range(args.split):
-                    # dis = torch.linalg.vector_norm(outputs.cuda(sp) - hash_embs[sp], dim=1).cpu()
-                    dis = cos_sim(outputs,hash_embs[sp].cuda())
+                    if sp < args.split / 2:
+                        outputs = torch.tensor(outputs, dtype=torch.float16).cuda(0)
+                    else:
+                        outputs = torch.tensor(outputs, dtype=torch.float16).cuda(1)
+                    dis = cos_sim(outputs, hash_embs[sp])
                     # dis = dis.view(-1,args.num_samples).sum(dim=-1)##################################hash each
                     # best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
                     val,best_idx = dis.topk(args.best)
