@@ -332,6 +332,8 @@ def parse_args():
         "--shot", default='10,20,40,80,160,320,640,1280,full', type=str, help="random seed for initialization")
     parser.add_argument(
         "--stop", default=5, type=int, help="early stop")
+    parser.add_argument(
+        "--weight", default=1, type=int, help="weighted loss")
     args = parser.parse_args()
     return args
 
@@ -481,6 +483,17 @@ def do_train(args):
         )
 
         loss_fct = nn.CrossEntropyLoss().cuda()
+        if args.weight == 1:
+            num_dic = {}
+            for val in label2idx.values():
+                num_dic[val] = 0.0
+            for idx in range(len(train_ds)):
+                label_tmp = train_ds[idx]['labels']
+                num_dic[label_tmp] += 1.0
+            num_max = max(num_dic.values())
+            class_weights = [num_max / i for i in num_dic.values()]
+            class_weights = torch.FloatTensor(class_weights).cuda()
+            loss_fct = nn.CrossEntropyLoss(weight=class_weights).cuda()
 
         print('start Training!!!')
         global_step = 0
