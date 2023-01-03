@@ -16,7 +16,7 @@ parser.add_argument('--num',default=3,type=int)
 parser.add_argument('--thre',default=0.95,type=float)
 parser.add_argument('--print',default=1,type=int)
 parser.add_argument('--write',default=1,type=int)
-parser.add_argument('--length',default=3,type=int)
+parser.add_argument('--length',default=1,type=int)
 args = parser.parse_args()
 
 def preprocess(text):
@@ -27,8 +27,8 @@ def preprocess(text):
             # t = 'http' if t.startswith('http') else t
             if t[0] == '@' and t.count('@') == 1:
                 t = ''
-            elif t[0] == '#' and t.count('#') == 1:
-                t = ''
+            # elif t[0] == '#' and t.count('#') == 1:
+            #     t = ''
             elif t.startswith('http'):
                 t = ''
             else:
