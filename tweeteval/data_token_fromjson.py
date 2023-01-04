@@ -5,11 +5,11 @@ import json
 from transformers import  AutoTokenizer
 import copy
 from accelerate import Accelerator
-
+#'eval-emoji,eval-emotion,eval-hate,eval-irony,eval-offensive,eval-sentiment,eval-stance/abortion,eval-stance/atheism,eval-stance/climate,eval-stance/feminist,eval-stance/hillary'
 parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
-parser.add_argument("--task_name", default='eval-emoji,eval-emotion,eval-hate,eval-irony,eval-offensive,eval-sentiment,eval-stance/abortion,eval-stance/atheism,eval-stance/climate,eval-stance/feminist,eval-stance/hillary', type=str, required=False, help="dataset name")
+parser.add_argument("--task_name", default='eval-stance,sem21-task7-humor', type=str, required=False, help="dataset name")
 parser.add_argument('--method',default='token',type=str)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
