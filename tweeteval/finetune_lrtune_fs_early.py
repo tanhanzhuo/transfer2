@@ -75,6 +75,10 @@ CONVERT = {
     'eval-stance/hillary':{'0':0,'1':1,'2':2},
     'eval-sarcasm':{'0':0,'1':1},
     'sem22-task6-sarcasm':{'0':0,'1':1},
+    'eval-stance':{'0':0,'1':1,'2':2},
+    'stance':{'NONE':0,'FAVOR':1,'AGAINST':2},
+    'sem22-task6-sarcasm':{'0':0,'1':1},
+    'sem21-task7-humor':{'0':0,'1':1}
 }
 
 class RobertaForMulti(RobertaPreTrainedModel):
