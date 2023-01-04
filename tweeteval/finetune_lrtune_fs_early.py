@@ -74,7 +74,6 @@ CONVERT = {
     'eval-stance/feminist':{'0':0,'1':1,'2':2},
     'eval-stance/hillary':{'0':0,'1':1,'2':2},
     'eval-sarcasm':{'0':0,'1':1},
-    'sem22-task6-sarcasm':{'0':0,'1':1},
     'eval-stance':{'0':0,'1':1,'2':2},
     'stance':{'NONE':0,'FAVOR':1,'AGAINST':2},
     'sem22-task6-sarcasm':{'0':0,'1':1},
@@ -284,6 +283,8 @@ def evaluate(model, data_loader, task='eval-emoji'):
         f1_favor = results['2']['f1-score']
         tweeteval_result = (f1_against + f1_favor) / 2
     elif 'sarcasm' in task:
+        tweeteval_result = results['1']['f1-score']
+    elif 'humor' in task:
         tweeteval_result = results['1']['f1-score']
 
 

@@ -71,8 +71,11 @@ CONVERT = {
     'eval-stance/climate':{'0':0,'1':1,'2':2},
     'eval-stance/feminist':{'0':0,'1':1,'2':2},
     'eval-stance/hillary':{'0':0,'1':1,'2':2},
-    'eval-sarcasm':{'0':0,'1':1},
-    'sem22-task6-sarcasm':{'0':0,'1':1},
+    'eval-sarcasm': {'0': 0, '1': 1},
+    'eval-stance': {'0': 0, '1': 1, '2': 2},
+    'stance': {'NONE': 0, 'FAVOR': 1, 'AGAINST': 2},
+    'sem22-task6-sarcasm': {'0': 0, '1': 1},
+    'sem21-task7-humor': {'0': 0, '1': 1}
 }
 # from att import ScaledDotProductAttention
 # class RobertaClassificationHead(nn.Module):
@@ -413,7 +416,10 @@ def evaluate(model, data_loader, task='eval-emoji'):
         tweeteval_result = (f1_against + f1_favor) / 2
     elif 'sarcasm' in task:
         tweeteval_result = results['1']['f1-score']
-
+    elif 'sarcasm' in task:
+        tweeteval_result = results['1']['f1-score']
+    elif 'humor' in task:
+        tweeteval_result = results['1']['f1-score']
 
 
     print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (tweeteval_result, tweeteval_result, tweeteval_result))
