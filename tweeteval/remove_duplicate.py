@@ -11,11 +11,12 @@ import copy
 import json
 #'eval-irony,eval-hate,eval-offensive,eval-emotion,eval-stance'
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset',default='sem21-task7-humor,sem22-task6-sarcasm,stance',type=str)
+parser.add_argument('--dataset',default='sem21-task7-humor,sem22-task6-sarcasm,stance,eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate',type=str)
 parser.add_argument('--num',default=3,type=int)
 parser.add_argument('--thre',default=0.95,type=float)
-parser.add_argument('--print',default=1,type=int)
-parser.add_argument('--write',default=1,type=int)
+parser.add_argument('--print',default=0,type=int)
+parser.add_argument('--write',default=0,type=int)
+parser.add_argument('--write_clean',default=1,type=int)
 parser.add_argument('--length',default=1,type=int)
 args = parser.parse_args()
 
@@ -155,6 +156,22 @@ for dataset_one in args.dataset.split(','):
             os.mkdir('../finetune/data/' + dataset_one + '_clean/')
         with open('../finetune/data/' + dataset_one + '_clean/all.json', 'w', encoding='utf-8') as f:
             for idx in range(len(data_sem)):
+                if idx not in bad_idx:
+                    tmp = json.dumps(data_sem[idx], ensure_ascii=False)
+                    f.write(tmp + '\n')
+    if args.write_clean == 1:
+        with open('../finetune/data/' + dataset_one + '_clean/train.json', 'w', encoding='utf-8') as f:
+            for idx in range(bad_pair[0][0]):
+                if idx not in bad_idx:
+                    tmp = json.dumps(data_sem[idx], ensure_ascii=False)
+                    f.write(tmp + '\n')
+        with open('../finetune/data/' + dataset_one + '_clean/dev.json', 'w', encoding='utf-8') as f:
+            for idx in range(bad_pair[0][0],bad_pair[0][1]):
+                if idx not in bad_idx:
+                    tmp = json.dumps(data_sem[idx], ensure_ascii=False)
+                    f.write(tmp + '\n')
+        with open('../finetune/data/' + dataset_one + '_clean/test.json', 'w', encoding='utf-8') as f:
+            for idx in range(bad_pair[0][1],bad_pair[0][2]):
                 if idx not in bad_idx:
                     tmp = json.dumps(data_sem[idx], ensure_ascii=False)
                     f.write(tmp + '\n')
