@@ -33,12 +33,12 @@ for task in args.tasks.split(','):
                 lines = f.readlines()
                 for line in lines:
                     one = json.loads(line)
-                    data_sem.append(one)
+                    data_sem.append(one['text'].strip())
 
             with open('../finetune/data/' + task + args.sp + str(epoch) + '/' + sp + args.method + '.json', 'w',
                       encoding='utf-8') as f:
                 for idx in range(len(data_sem)):
-                    one_text = data_sem[idx]['text'].strip()
+                    one_text = data_sem[idx]
                     match = 0
                     for idx2 in range(len(data_source_text)):
                         two_text = data_source_text[idx2]
