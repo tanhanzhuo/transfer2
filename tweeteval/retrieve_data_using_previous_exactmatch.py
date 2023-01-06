@@ -27,8 +27,9 @@ for task in args.tasks.split(','):
                 data_source_text.append(one['text'].split(' \n ')[-2].strip())
 
     for epoch in trange(10):
-        data_sem = []
+
         for sp in ['train', 'dev', 'test']:
+            data_sem = []
             with open('../finetune/data/' + task+args.sp+str(epoch) + '/' + sp + '.json', 'r', encoding='utf-8') as f:
                 lines = f.readlines()
                 for line in lines:
