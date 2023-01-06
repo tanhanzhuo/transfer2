@@ -15,6 +15,7 @@ parser.add_argument('--method',default='_fulldata_simcse_top20_textfirst',type=s
 args = parser.parse_args()
 
 for task in args.tasks.split(','):
+    print(task)
     data_source = []
     data_source_text = []
     for sp in ['train', 'dev', 'test']:
@@ -25,7 +26,7 @@ for task in args.tasks.split(','):
                 data_source.append(one)
                 data_source_text.append(one['text'].split(' \n ')[-2].strip())
 
-    for epoch in range(10):
+    for epoch in trange(10):
         data_sem = []
         for sp in ['train', 'dev', 'test']:
             with open('../finetune/data/' + task+args.sp+str(epoch) + '/' + sp + '.json', 'r', encoding='utf-8') as f:
