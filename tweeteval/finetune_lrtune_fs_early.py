@@ -376,7 +376,7 @@ def do_train(args):
         )
 
         loss_fct = nn.CrossEntropyLoss().cuda()
-        if args.weight == 1:
+        if args.weight == 1 or 'sarcasm' in args.task:
             num_dic = {}
             for val in label2idx.values():
                 num_dic[val] = 0.0

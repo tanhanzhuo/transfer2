@@ -387,8 +387,6 @@ def evaluate(model, data_loader, task='eval-emoji'):
         tweeteval_result = (f1_against + f1_favor) / 2
     elif 'sarcasm' in task:
         tweeteval_result = results['1']['f1-score']
-    elif 'sarcasm' in task:
-        tweeteval_result = results['1']['f1-score']
     elif 'humor' in task:
         tweeteval_result = results['1']['f1-score']
 
@@ -488,7 +486,7 @@ def do_train(args):
         )
 
         loss_fct = nn.CrossEntropyLoss().cuda()
-        if args.weight == 1:
+        if args.weight == 1 or 'sarcasm' in args.task:
             num_dic = {}
             for val in label2idx.values():
                 num_dic[val] = 0.0
