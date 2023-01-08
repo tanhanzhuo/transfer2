@@ -4,10 +4,10 @@ import os
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset',default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm,stance',type=str)
-parser.add_argument('--split',default='111',type=str)
+parser.add_argument('--split',default='811',type=str)
 args = parser.parse_args()
 
-for epoch in range(10):
+for epoch in range(10,20):
     for task in args.dataset.split(','):
         if not os.path.isdir('../finetune/data/' + task + '_clean_'+args.split+'_'+str(epoch)):
             os.mkdir('../finetune/data/' + task + '_clean_'+args.split+'_'+str(epoch))

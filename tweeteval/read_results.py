@@ -30,19 +30,28 @@ def read_txt(file):
 
     return  results1
 
-re_ori = read_txt('results_111_lrtune_full_lr1e5.txt')
-re_roberta = read_txt('results_111_lrtune_full_lr1e5_extend_type1.txt')
-# re_time = read_txt('results_ori_full_early_weight_time.txt')
+re_ori = read_txt('results_811_lrtune_full_lr1e5.txt')
+re_roberta = read_txt('results_811_lrtune_full_lr1e5_roberta.txt')
+re_time = read_txt('results_811_lrtune_full_lr1e5_extend_type1.txt')
 
 
 for task in re_roberta.keys():
     st, val_ro = ttest_ind(re_ori[task], re_roberta[task])
-    # st, val_ti = ttest_ind(re_ori[task], re_time[task])
-    # print('task:{}, bertweet:{:.5f},std:{:.5f}, roberta:{:.5f},std:{:.5f}, time:{:.5f},std:{:.5f}'\
-    #       .format(task, np.mean(re_ori[task]),np.std(re_ori[task]), np.mean(re_roberta[task]),np.std(re_roberta[task]),np.mean(re_time[task]),np.std(re_roberta[task])))
-    # print('task:{}, vs roberta:{:.5f}, vs time:{:.5f}'.format(task,val_ro,val_ti))
+    if np.mean(re_ori[task]) > np.mean(re_roberta[task]) and val_ro < 0.1:
+        st2, val_ro2 = ttest_ind(re_ori[task], re_time[task])
 
-    print('task:{}, bertweet:{:.5f},std:{:.5f}, roberta:{:.5f},std:{:.5f}' \
-          .format(task, np.mean(re_ori[task]), np.std(re_ori[task]), np.mean(re_roberta[task]),
-                  np.std(re_roberta[task])))
-    print('task:{}, vs roberta:{:.5f}'.format(task, val_ro))
+        # st, val_ti = ttest_ind(re_ori[task], re_time[task])
+        # print('task:{}, bertweet:{:.5f},std:{:.5f}, roberta:{:.5f},std:{:.5f}, time:{:.5f},std:{:.5f}'\
+        #       .format(task, np.mean(re_ori[task]),np.std(re_ori[task]), np.mean(re_roberta[task]),np.std(re_roberta[task]),np.mean(re_time[task]),np.std(re_roberta[task])))
+        # print('task:{}, vs roberta:{:.5f}, vs time:{:.5f}'.format(task,val_ro,val_ti))
+
+        #
+        # print('task:{}, bertweet:{:.5f},std:{:.5f}, time:{:.5f},std:{:.5f}' \
+        #       .format(task, np.mean(re_ori[task]), np.std(re_ori[task]), np.mean(re_time[task]),
+        #               np.std(re_time[task])))
+        # print('task:{}, vs roberta:{:.5f}'.format(task, val_ro2))
+        if np.mean(re_ori[task]) < np.mean(re_time[task]) and val_ro2 < 0.1:
+            print('task:{}, bertweet:{:.5f},std:{:.5f}, roberta:{:.5f},std:{:.5f}, time:{:.5f},std:{:.5f}' \
+                  .format(task, np.mean(re_ori[task]), np.std(re_ori[task]), np.mean(re_roberta[task]), np.std(re_roberta[task]),
+                          np.mean(re_time[task]), np.std(re_time[task])))
+            print('task:{}, vs roberta:{:.5f}, vs time:{:.5f}'.format(task, val_ro, val_ro2))
