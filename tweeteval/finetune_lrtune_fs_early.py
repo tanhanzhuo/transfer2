@@ -254,7 +254,7 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
         label_all += [tmp for tmp in labels.numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
     if len(write_result) > 0:
-        with open(write_result, 'w', encoding='utf-8') as f:
+        with open(write_result, 'a', encoding='utf-8') as f:
             f.write(task+'\n')
             for one in pred_all:
                 f.write(str(one))
