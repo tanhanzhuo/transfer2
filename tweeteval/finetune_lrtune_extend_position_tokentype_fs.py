@@ -336,11 +336,13 @@ def parse_args():
         "--stop", default=5, type=int, help="early stop")
     parser.add_argument(
         "--weight", default=1, type=int, help="weighted loss")
+    parser.add_argument(
+        "--write_result", default='', type=str, help="weighted loss")
     args = parser.parse_args()
     return args
 
 @torch.no_grad()
-def evaluate(model, data_loader, task='eval-emoji'):
+def evaluate(model, data_loader, task='eval-emoji',write_result=''):
     model.eval()
     label_all = []
     pred_all = []
@@ -354,7 +356,12 @@ def evaluate(model, data_loader, task='eval-emoji'):
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
-
+    if len(write_result) > 0:
+        with open(write_result, 'w', encoding='utf-8') as f:
+            f.write(task+'\n')
+            for one in pred_all:
+                f.write(str(one))
+            f.write('\n')
     results = classification_report(label_all, pred_all, output_dict=True)
 
     if 'emoji' in task:
@@ -461,7 +468,7 @@ def do_train(args):
             dev_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
         )
         test_data_loader = DataLoader(
-            test_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
+            test_ds, shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
         )
         print('data ready!!!')
         no_decay = ["bias", "LayerNorm.weight"]
@@ -545,7 +552,7 @@ def do_train(args):
         torch.cuda.empty_cache()
 
     model = model_best.cuda()
-    cur_metric = evaluate(model, test_data_loader,args.task)
+    cur_metric = evaluate(model, test_data_loader,args.task,args.write_result)
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
