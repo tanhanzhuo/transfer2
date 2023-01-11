@@ -30,12 +30,12 @@ def read_txt(file):
 
     return  results1
 
+re_ori = read_txt('results_lr1e5_ori_full_early.txt')
+re_roberta = read_txt('results_lr1e5_ori_full_early_roberta.txt')
+re_time = read_txt('results_lr1e5_ori_full_early_extend_type1.txt')
 # re_ori = read_txt('results_811_lrtune_full_lr1e5.txt')
 # re_roberta = read_txt('results_811_lrtune_full_lr1e5_roberta.txt')
 # re_time = read_txt('results_811_lrtune_full_lr1e5_extend_type1.txt')
-re_ori = read_txt('results_811_lrtune_full_lr1e5.txt')
-re_roberta = read_txt('results_811_lrtune_full_lr1e5_roberta.txt')
-re_time = read_txt('results_811_lrtune_full_lr1e5_extend_type1.txt')
 
 END = -2
 count = {}
@@ -51,7 +51,18 @@ for task in count.keys():
     print('task:{}, larger:{},significant:{}'.format(task,count[task][0],count[task][1]))
 
 
-for task in 'eval-stance_clean_811_8,eval-emotion_clean_811_5,eval-irony_clean_811_3,eval-offensive_clean_811_0,eval-hate_clean_811_3,sem21-task7-humor_clean_811_2,sem22-task6-sarcasm_clean_811_2,stance_clean_811_0'.split(','):
+# for task in 'eval-stance_clean_811_8,eval-emotion_clean_811_5,eval-irony_clean_811_3,eval-offensive_clean_811_0,eval-hate_clean_811_3,sem21-task7-humor_clean_811_2,sem22-task6-sarcasm_clean_811_2,stance_clean_811_0'.split(','):
+#     st, val_ro = ttest_ind(re_ori[task], re_roberta[task])
+#     st2, val_ro2 = ttest_ind(re_ori[task], re_time[task])
+#     print('task:{}, bertweet:{:.5f},std:{:.5f}, roberta:{:.5f},std:{:.5f}, time:{:.5f},std:{:.5f}' \
+#           .format(task, np.mean(re_ori[task]), np.std(re_ori[task]), np.mean(re_roberta[task]),
+#                   np.std(re_roberta[task]),
+#                   np.mean(re_time[task]), np.std(re_time[task])))
+#     print('task:{}, vs roberta:{:.5f}, vs time:{:.5f}'.format(task, val_ro, val_ro2))
+
+
+
+for task in re_ori.keys():
     st, val_ro = ttest_ind(re_ori[task], re_roberta[task])
     st2, val_ro2 = ttest_ind(re_ori[task], re_time[task])
     print('task:{}, bertweet:{:.5f},std:{:.5f}, roberta:{:.5f},std:{:.5f}, time:{:.5f},std:{:.5f}' \
