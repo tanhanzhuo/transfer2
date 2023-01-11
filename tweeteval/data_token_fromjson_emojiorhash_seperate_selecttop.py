@@ -76,7 +76,7 @@ def tokenization(args):
     def tokenize_function(examples):
         total = len(examples['text'])
         sentences = examples['text']
-        for idx_tmp in range(args.top):
+        for idx_tmp in range(1):
             sentences = sentences + examples['hash'+str(idx_tmp)]
         sent_features = tokenizer(
             sentences,
@@ -92,7 +92,7 @@ def tokenization(args):
             fea_one = []
             for idx_len in range(total):
                 fea_one.append([])
-                for idx_top in range(args.top+1):
+                for idx_top in range(1+1):
                     fea_one[idx_len].append(sent_features[key][idx_top*total+idx_len])
             features[key] = fea_one
 
