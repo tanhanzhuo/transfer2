@@ -100,10 +100,10 @@ for task in args.task_name.split(','):
         train_dataset = read_data_hashseg(args.dataset_path + task + '/' + fileName) ###remove hash to retrieve
         for idx in trange(len(train_dataset)):
             one = train_dataset[idx]
-        best_text = random.sample(hash_samples, args.best)
-        for cur_idx in range(args.best):
-            data_hash_all[idx]['text'] = ' ' + best_text[cur_idx].strip() \
-                                         + ' \n ' + data_hash_all[idx]['text'].strip() + ' \n '
+            best_text = random.sample(hash_samples, args.best)
+            for cur_idx in range(args.best):
+                data_hash_all[idx]['text'] = ' ' + best_text[cur_idx].strip() \
+                                             + ' \n ' + data_hash_all[idx]['text'].strip() + ' \n '
         write_json(data_hash_all, args.dataset_path + task + '/' + fileName + '_random_top' + str(args.best) \
                + '_' + 'textfirst')
 
