@@ -26,7 +26,7 @@ for task in args.tasks.split(','):
                 data_source.append(one)
                 data_source_text.append(one['text'].split(' \n ')[-2].strip())
 
-    for epoch in trange(10,20):
+    for epoch in trange(0,10):
 
         for sp in ['train', 'dev', 'test']:
             data_sem = []
