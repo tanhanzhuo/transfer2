@@ -52,11 +52,11 @@ model = RobertaForCL.from_pretrained(
 model.eval()
 
 def read_data(fileName):
-    with open(fileName, 'r', encoding='utf-8') as f:
+    with open(fileName+'.json', 'r', encoding='utf-8') as f:
         data = []
         lines = f.readlines()
         for line in lines:
-            data.append({'labels': line.split('\t')[0], 'text': line.split('\t')[1]})
+            data.append(json.loads(line))
     return data
 
 import re
