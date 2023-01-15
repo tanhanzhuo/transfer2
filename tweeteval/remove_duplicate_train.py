@@ -13,9 +13,9 @@ import copy
 import json
 #'eval-irony,eval-hate,eval-offensive,eval-emotion,eval-stance'
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset',default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm,stance',type=str)
+parser.add_argument('--dataset',default='sem21-task7-humor,sem22-task6-sarcasm,stance,eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate',type=str)
 parser.add_argument('--num',default=3,type=int)
-parser.add_argument('--thre',default=0.97,type=float)
+parser.add_argument('--thre',default=0.95,type=float)
 parser.add_argument('--print',default=1,type=int)
 parser.add_argument('--write',default=0,type=int)
 parser.add_argument('--write_clean',default=1,type=int)
@@ -70,7 +70,7 @@ for dataset_one in args.dataset.split(','):
             one = preprocess(one['text'])
             if len(one) < 3 and sp == 'train':
                 if args.print == 1:
-                    print('empty_sample:'+data_sem[idx]['labels'] + ' ' +data_sem[idx]['text'])
+                    print('empty_sample:'+data_sem[sp][idx]['labels'] + ' ' +data_sem[sp][idx]['text'])
                 emp_idx.append(idx)
             inputs = tokenizer(one, truncation=True)
             with torch.no_grad():
@@ -132,6 +132,10 @@ for dataset_one in args.dataset.split(','):
                 if idx not in emp_idx and idx not in bad_idx_flat:
                     tmp = json.dumps(data_sem['train'][idx], ensure_ascii=False)
                     f.write(tmp + '\n')
+        import shutil
+        shutil.copyfile('../finetune/data/' + dataset_one + '/dev.json', '../finetune/data/' + dataset_one + '_clean/dev.json')
+        shutil.copyfile('../finetune/data/' + dataset_one + '/test.json',
+                        '../finetune/data/' + dataset_one + '_clean/test.json')
         # with open('../finetune/data/' + dataset_one + '_clean/dev.json', 'w', encoding='utf-8') as f:
         #     for idx in range(len(data_sem['train'])):
         #         if idx not in bad_idx:
