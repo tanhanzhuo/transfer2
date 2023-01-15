@@ -62,16 +62,17 @@ def read_data(fileName):
 import re
 HASH = re.compile(r"#\S+")
 def read_data_hashremove(fileName):
-    with open(fileName, 'r', encoding='utf-8') as f:
+    with open(fileName+'.json', 'r', encoding='utf-8') as f:
         data = []
         lines = f.readlines()
         for line in lines:
-            one = line.split('\t')[1]
+            one_dic = json.loads(line)
+            one = one_dic['text']
             hash_tmp = HASH.findall(one)
             for hash_two in hash_tmp:
                 one = one.replace(hash_two, '')
 
-            data.append({'labels': line.split('\t')[0], 'text':one })
+            data.append({'labels': one_dic['labels'], 'text':one })
     return data
 
 import json
