@@ -27,7 +27,7 @@ def preprocess(text):
         preprocessed_text.append(t)
     return ' '.join(preprocessed_text)
 
-def tokenization(args):
+def tokenization(args,tokenizer):
     data_files = {}
     data_files["train"] = args.dataset_path + args.task_name + '/train.json'
     data_files["dev"] = args.dataset_path + args.task_name + '/dev.json'
@@ -61,10 +61,7 @@ def tokenization(args):
         raw_datasets[sp] = train_dataset.shuffle()
 
     # Load pretrained tokenizer
-    if 'bertweet' in args.tokenizer_name:
-        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, normalization=True)
-    else:
-        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name)
+
 
     # First we tokenize all the texts.
 
@@ -125,10 +122,14 @@ def tokenization(args):
 
 if __name__ == "__main__":
     args = parser.parse_args()
+    if 'bertweet' in args.tokenizer_name:
+        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, normalization=True)
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name)
     for task in args.task_name.split(','):
         args_tmp = copy.deepcopy(args)
         args_tmp.task_name = task
-        tokenized_datasets = tokenization(args_tmp)
+        tokenized_datasets = tokenization(args_tmp,tokenizer)
 
         save_hash = args_tmp.method_hash.split('top')[0]
         tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/hash_' \
