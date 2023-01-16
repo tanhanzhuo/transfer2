@@ -12,7 +12,7 @@ parser.add_argument("--output_dir", default='../finetune/data/', type=str, requi
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm,sem18-task1-affect,sem21-task7-humor', type=str, required=False, help="dataset name")
 parser.add_argument('--method_hash',default='modelT100N100R_fileT100N100R_num10_top20_textfirst',type=str)
-parser.add_argument('--top',default=5,type=int)
+parser.add_argument('--top',default='2',type=str)
 parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str, required=False, help="tokenizer name")
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
@@ -127,10 +127,12 @@ if __name__ == "__main__":
     else:
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name)
     for task in args.task_name.split(','):
-        args_tmp = copy.deepcopy(args)
-        args_tmp.task_name = task
-        tokenized_datasets = tokenization(args_tmp,tokenizer)
+        for top in args.top.split(','):
+            args_tmp = copy.deepcopy(args)
+            args_tmp.task_name = task
+            args_tmp.top = int(top)
+            tokenized_datasets = tokenization(args_tmp,tokenizer)
 
-        save_hash = args_tmp.method_hash.split('top')[0]
-        tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/hash_' \
-                                        + save_hash + 'top_'+str(args_tmp.top))
+            save_hash = args_tmp.method_hash.split('top')[0]
+            tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/hash_' \
+                                            + save_hash + 'top_'+str(args_tmp.top))
