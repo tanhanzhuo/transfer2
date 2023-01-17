@@ -72,7 +72,7 @@ with open(filePath, 'r', encoding='utf-8') as f:
 
 hash_his_clean = {}
 for hash_one in hash_thre_list:
-    hash_his_clean = len(hash_data[hash_one])
+    hash_his_clean[hash_one] = len(hash_data[hash_one])
 
 with open('hash_his_clean' + '.json', 'w', encoding='utf-8') as f:
     json.dump(hash_his_clean, f)
