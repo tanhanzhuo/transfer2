@@ -135,5 +135,5 @@ if __name__ == "__main__":
         tokenized_datasets = tokenization(args_tmp,tokenizer)
 
         save_hash = args_tmp.method_hash.split('top')[0]
-        tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + args_tmp.name \
+        tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name +'/' +args_tmp.name \
                                         + save_hash + 'top_'+str(args_tmp.top))
