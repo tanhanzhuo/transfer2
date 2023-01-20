@@ -35,7 +35,7 @@ for idx in trange(args.split):
 cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 
 with torch.no_grad():
-    for idx in range(args.N):
+    for idx in trange(args.N):
         outputs = np.array([np.random.rand(1,768)])
         for sp in range(args.split):
             if sp < args.split / 2:
