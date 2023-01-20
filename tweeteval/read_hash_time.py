@@ -19,7 +19,7 @@ for idx in range(4):
     tmp.close()
 
 time1 = time.time()
-for idx in range(N):
+for idx in range(args.N):
     d=metrics.pairwise.cosine_similarity([hash_embs[idx]],hash_embs)
 time2 = time.time()
 print((time2-time1)/args.N)
