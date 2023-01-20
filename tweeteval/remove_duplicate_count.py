@@ -14,9 +14,9 @@ import json
 #'eval-irony,eval-hate,eval-offensive,eval-emotion,eval-stance'
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset',default='sem21-task7-humor,sem22-task6-sarcasm,stance,eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate',type=str)
-parser.add_argument('--num',default=3,type=int)
+parser.add_argument('--num',default=1,type=int)
 parser.add_argument('--thre',default=0.95,type=float)
-parser.add_argument('--print',default=1,type=int)
+parser.add_argument('--print',default=0,type=int)
 parser.add_argument('--write',default=0,type=int)
 parser.add_argument('--write_clean',default=0,type=int)
 parser.add_argument('--length',default=0,type=int)
