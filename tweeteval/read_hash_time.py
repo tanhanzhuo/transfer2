@@ -1,25 +1,48 @@
 import json
 import datasets
-import numpy as np
-from sklearn import metrics
-import time
 import argparse
-
+import torch
+import numpy as np
+from tqdm import tqdm,trange
+import emoji
+from scipy.spatial.distance import pdist, squareform
+import time
+import copy
+# from accelerate import Accelerator
+# accelerate = Accelerator()
 parser = argparse.ArgumentParser()
-parser.add_argument("--file", default='../contrastive_full/feature_modelT100N100M_fileT100N100S_num10_cluster', type=str, required=False)
-parser.add_argument("--N", default=10000, type=int, required=False)
+parser.add_argument('--hash_file',default='../contrastive_full/features_simcse/twitter_hash_join_thre100_num100',type=str)
+# parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
+parser.add_argument("--split", default=50, type=int)#for gpu memory
+parser.add_argument("--N", default=100, type=int)#for gpu memory
+#simcse
 
 args = parser.parse_args()
 
+hash_samples = []
 hash_embs = []
-hash_tags = []
-for idx in range(4):
-    tmp = np.load(args.file+'_'+str(idx)+'.npz',allow_pickle=True)
-    hash_embs.extend(tmp['center_embs'])
+for idx in trange(args.split):
+    tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
+    hash_samples.append(tmp['samples'])
+    # hash_embs.extend(tmp['center_embs'])
+    if idx < args.split / 2:
+        hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(0))
+    else:
+        hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(1))
     tmp.close()
 
-time1 = time.time()
-for idx in range(args.N):
-    d=metrics.pairwise.cosine_similarity([hash_embs[idx]],hash_embs)
-time2 = time.time()
-print((time2-time1)/args.N)
+# hash_embs= torch.tensor(np.array(hash_embs))
+cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
+
+with torch.no_grad():
+    for idx in range(args.N):
+        outputs = np.array([np.random.rand(1,768)])
+        for sp in range(args.split):
+            if sp < args.split / 2:
+                outputs = torch.tensor(outputs, dtype=torch.float16).cuda(0)
+            else:
+                outputs = torch.tensor(outputs, dtype=torch.float16).cuda(1)
+            dis = cos_sim(outputs, hash_embs[sp])
+            # dis = dis.view(-1,args.num_samples).sum(dim=-1)##################################hash each
+            # best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
+            val,best_idx = dis.topk(1)
