@@ -100,7 +100,7 @@ for dataset_one in args.dataset.split(','):
 
                 bad_idx['train'].append(idx1 + idx + 1)
                 fea_sem[idx1 + idx + 1] = fea_sem[idx1 + idx + 1] * 0
-
+    bb = {'dev':[], 'test':[]}
     for sp in ['dev', 'test']:
         for idx in range(len(data_sem[sp+'_token'])):
             fea_one = data_sem[sp+'_token'][idx]
@@ -115,6 +115,8 @@ for dataset_one in args.dataset.split(','):
                         print('bad_pair1:'+data_sem[sp][idx]['labels'] + ' ' +data_sem[sp][idx]['text'])
                         print('bad_pair2:'+data_sem['train'][idx1]['labels'] + ' ' +data_sem['train'][idx1]['text'])
                     bad_idx[sp].append(idx1)
+                    if data_sem[sp][idx]['labels'] != data_sem['train'][idx1]['labels']:
+                        bb[sp].append(idx1)
 
     for sp in ['test']:
         for idx in range(len(data_sem[sp+'_token'])):
@@ -135,7 +137,7 @@ for dataset_one in args.dataset.split(','):
     print('data:{}, dev total:{} empty:{}, duplicate:{}'.format(dataset_one,len(data_sem['dev']),len(emp_idx),len(bad_idx['dev'])))
     print('data:{}, test total:{} empty:{}, duplicate:{}'.format(dataset_one,len(data_sem['test']),len(emp_idx),len(bad_idx['test'])))
     print('data:{}, test total:{} empty:{}, duplicate:{}'.format(dataset_one, len(data_sem['test']), len(emp_idx),
-                                                                 len(bad_idx['dev-test'])))
+                                                                 len(bb['test'])))
 
     bad_idx_flat = []
     for values in bad_idx.values():
