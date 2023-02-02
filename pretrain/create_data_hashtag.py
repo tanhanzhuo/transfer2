@@ -9,7 +9,7 @@ import copy
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--thre', default=0.98, type=int)
-parser.add_argument('--num', default=100, type=int)
+parser.add_argument('--num', default=1000, type=int)
 args = parser.parse_args()
 
 import json
