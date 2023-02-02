@@ -80,8 +80,7 @@ for hash_one in tqdm(hash_thre_list):
     # fea_sem = torch.tensor([[]]).view(-1, 768).cuda()
     for idx in range(len(hash_data_one)):
         text_one = hash_data_one[idx]
-        text_one = text_one.replace('@USER', '')
-        text_one = text_one.replace('https', '')
+        text_one = text_one.replace('@USER', '').replace('https', '').strip()
         hash_tmp = HASH.findall(text_one)
         for hash_tmp1 in hash_tmp:
             text_one = text_one.replace(hash_tmp1, '')
