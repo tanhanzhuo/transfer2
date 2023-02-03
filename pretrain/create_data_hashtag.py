@@ -9,21 +9,23 @@ import copy
 from scipy.spatial.distance import pdist, squareform
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--hash', default=100, type=int)
 parser.add_argument('--thre', default=0.95, type=float)
 parser.add_argument('--num', default=1000, type=int)
 parser.add_argument('--name', default='tweet_hash_clean_group.txt', type=str)
 args = parser.parse_args()
 
 # import json
-# with open('../contrastive/hash_his.json','r',encoding='utf-8') as f:
-#     hash_dic = json.load(f)
-# for hash_one in list(hash_dic.keys()):
-#     if hash_dic[hash_one] < 100:
-#         hash_dic.pop(hash_one)
-
-f = open('../contrastive_full/thre100_index.json', 'r', encoding='utf-8')
-hash_dic = json.load(f)
-f.close()
+if args.hash != 100:
+    with open('../contrastive/hash_his.json','r',encoding='utf-8') as f:
+        hash_dic = json.load(f)
+    for hash_one in list(hash_dic.keys()):
+        if hash_dic[hash_one] < args.hash:
+            hash_dic.pop(hash_one)
+else:
+    f = open('../contrastive_full/thre100_index.json', 'r', encoding='utf-8')
+    hash_dic = json.load(f)
+    f.close()
 
 HASH = re.compile(r"#\S+")
 USER = re.compile(r"@\S+")
