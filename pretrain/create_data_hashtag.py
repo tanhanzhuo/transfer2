@@ -84,8 +84,8 @@ with torch.no_grad():
     for hash_one in tqdm(hash_thre_list):
         hash_data_one = list(hash_data[hash_one])
         random.shuffle(hash_data_one)
-        if len(hash_data_one) > NUM:
-            hash_data_one[:int(NUM)]
+        if len(hash_data_one) > NUM*1.5:
+            hash_data_one = hash_data_one[:int(NUM*1.5)]
         if len(hash_data_one) < 10:
             continue
         hash_data_one_remove = []
@@ -101,11 +101,11 @@ with torch.no_grad():
                 bad_idx.append(idx)
             hash_data_one_remove.append(text_one)
 
-        with open('record_tweets', 'a', encoding='utf-8') as f:
-            f.write('TANS_HASH:'+hash_one+'\n')
-            num_count = 0
-            for idx in range(len(hash_data_one_remove)):
-                f.write(hash_data_one_remove[idx])
+        # with open('record_tweets', 'a', encoding='utf-8') as f:
+        #     f.write('TANS_HASH:'+hash_one+'\n')
+        #     num_count = 0
+        #     for idx in range(len(hash_data_one_remove)):
+        #         f.write(hash_data_one_remove[idx])
 
         hash_data_one_remove_token = tokenizer(
             hash_data_one_remove,
@@ -115,17 +115,15 @@ with torch.no_grad():
             return_special_tokens_mask=False,
             return_token_type_ids=False
         )
-        print(hash_one)
-        print(len(hash_data_one_remove_token['input_ids']))
-        print(len(hash_data_one_remove_token['input_ids'][0]))
+        # print(hash_one)
+        # print(len(hash_data_one_remove_token['input_ids']))
+        # print(len(hash_data_one_remove_token['input_ids'][0]))
 
-        outputs = model(input_ids=torch.tensor(hash_data_one_remove_token['input_ids']).cuda(),
+        fea_sem = model(input_ids=torch.tensor(hash_data_one_remove_token['input_ids']).cuda(),
                         attention_mask=torch.tensor(hash_data_one_remove_token['attention_mask']).cuda(),
                         # token_type_ids=torch.tensor([inputs['token_type_ids']]).cuda(),
-                        output_hidden_states=True, return_dict=True)
-        fea_sem = outputs.pooler_output.detach().cpu().numpy()
-        del outputs
-        torch.cuda.empty_cache()
+                        output_hidden_states=True, return_dict=True).pooler_output.cpu().numpy()
+
         # fea_sem = torch.cat((fea_sem, outputs), 0)
         # fea_sem = copy.deepcopy(outputs)
 
