@@ -22,10 +22,18 @@ if args.hash != 100:
     for hash_one in list(hash_dic.keys()):
         if hash_dic[hash_one] < args.hash:
             hash_dic.pop(hash_one)
+    hash_thre_list = list(hash_dic.keys())
 else:
     f = open('../contrastive_full/thre100_index.json', 'r', encoding='utf-8')
     hash_dic = json.load(f)
     f.close()
+    hash_thre_list = list(hash_dic.values())
+
+
+hash_data = {}
+for hash_one in hash_thre_list:
+    hash_data[hash_one] = set()
+hash_bad = set()
 
 HASH = re.compile(r"#\S+")
 USER = re.compile(r"@\S+")
@@ -54,12 +62,6 @@ def process(line):
 
     return hash_tmp_clean
 
-
-hash_thre_list = list(hash_dic.values())
-hash_data = {}
-for hash_one in hash_thre_list:
-    hash_data[hash_one] = set()
-hash_bad = set()
 with open(filePath, 'r', encoding='utf-8') as f:
     for line in tqdm(f):
         hash_tmp_clean = process(line)
@@ -82,8 +84,8 @@ with torch.no_grad():
     for hash_one in tqdm(hash_thre_list):
         hash_data_one = list(hash_data[hash_one])
         random.shuffle(hash_data_one)
-        if len(hash_data_one) > NUM*1.5:
-            hash_data_one[:int(NUM*1.5)]
+        if len(hash_data_one) > NUM:
+            hash_data_one[:int(NUM)]
         if len(hash_data_one) < 10:
             continue
         hash_data_one_remove = []
