@@ -39,7 +39,7 @@ HASH = re.compile(r"#\S+")
 USER = re.compile(r"@\S+")
 HTTP = re.compile(r"http\S+")
 META = re.compile(r"[http|#|@]\S+")
-filePath = '/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
+filePath = 'twitter_hash_test_clean.txt'#'/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
 
 def process(line):
     hash_tmp = HASH.findall(line)
@@ -145,21 +145,26 @@ with torch.no_grad():
         #
         # del fea_sem
         # torch.cuda.empty_cache()
-        bad_idx = []
+        # bad_idx = []
         dis_all = 1-squareform(pdist(fea_sem, 'cosine'))
-        for idx in range(len(dis_all)-1):
-            if idx in bad_idx:
-                continue
-            # dis = dis_all[idx,idx+1:]
-            # for idx1 in range(len(dis)):
-            #     dis_one = dis[idx1]
-            #     if dis_one > THRE:
-            #         bad_idx.append(idx1 + idx + 1)
 
-            for idx1 in range(idx+1,len(dis_all)):
-                if dis_all[idx,idx1] > THRE:
-                    bad_idx.append(idx1)
-
+        row,col = np.where(np.triu(dis_all,1) > THRE)
+        bad_idx = list(set(col))
+        # for idx in range(len(dis_all)-1):
+        #     if idx in bad_idx:
+        #         continue
+        #     # dis = dis_all[idx,idx+1:]
+        #     # for idx1 in range(len(dis)):
+        #     #     dis_one = dis[idx1]
+        #     #     if dis_one > THRE:
+        #     #         bad_idx.append(idx1 + idx + 1)
+        #
+        #     for idx1 in range(idx+1,len(dis_all)):
+        #         if dis_all[idx,idx1] > THRE:
+        #             bad_idx.append(idx1)
+        #
+        # if len(bad_idx) >0:
+        #     print(1)
         # del fea_sem
         # torch.cuda.empty_cache()
 
