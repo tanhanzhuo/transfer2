@@ -115,6 +115,9 @@ with torch.no_grad():
             return_special_tokens_mask=False,
             return_token_type_ids=False
         )
+        print(hash_one)
+        print(len(hash_data_one_remove_token['input_ids']))
+        print(len(hash_data_one_remove_token['input_ids'][0]))
 
         outputs = model(input_ids=torch.tensor(hash_data_one_remove_token['input_ids']).cuda(),
                         attention_mask=torch.tensor(hash_data_one_remove_token['attention_mask']).cuda(),
