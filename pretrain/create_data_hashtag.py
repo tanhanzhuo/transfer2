@@ -108,10 +108,13 @@ with torch.no_grad():
             return_token_type_ids=False
         )
 
-        fea_sem = model(input_ids=torch.tensor(hash_data_one_remove_token['input_ids']).cuda(),
+        outputs = model(input_ids=torch.tensor(hash_data_one_remove_token['input_ids']).cuda(),
                         attention_mask=torch.tensor(hash_data_one_remove_token['attention_mask']).cuda(),
                         # token_type_ids=torch.tensor([inputs['token_type_ids']]).cuda(),
-                        output_hidden_states=True, return_dict=True).pooler_output.detach().cpu().numpy()
+                        output_hidden_states=True, return_dict=True)
+        fea_sem = outputs.pooler_output.detach().cpu().numpy()
+        del outputs
+        torch.cuda.empty_cache()
         # fea_sem = torch.cat((fea_sem, outputs), 0)
         # fea_sem = copy.deepcopy(outputs)
 
