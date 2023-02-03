@@ -39,7 +39,7 @@ HASH = re.compile(r"#\S+")
 USER = re.compile(r"@\S+")
 HTTP = re.compile(r"http\S+")
 META = re.compile(r"[http|#|@]\S+")
-filePath = '/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
+filePath = 'twitter_hash_test_clean.txt'#'/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
 
 def process(line):
     hash_tmp = HASH.findall(line)
@@ -101,6 +101,8 @@ with torch.no_grad():
             # if len(text_one.replace(' ','')) > 10:
             if len(re.findall('[a-zA-Z]',text_one)) > 10:
                 # bad_idx.append(idx)
+                if len(text_one.split(' ')) > 50:
+                    text_one = ' '.join(text_one.split(' ')[:50])
                 hash_data_one_remove.append(text_one)
                 hash_data_one_good.append(hash_data_one[idx])
 
