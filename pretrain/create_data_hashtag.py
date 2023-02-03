@@ -11,6 +11,7 @@ from scipy.spatial.distance import pdist, squareform
 parser = argparse.ArgumentParser()
 parser.add_argument('--thre', default=0.95, type=float)
 parser.add_argument('--num', default=1000, type=int)
+parser.add_argument('--name', default='tweet_hash_clean_group.txt', type=str)
 args = parser.parse_args()
 
 # import json
@@ -140,7 +141,7 @@ with torch.no_grad():
         del fea_sem
         torch.cuda.empty_cache()
 
-        with open('tweet_hash_clean_group.txt', 'a', encoding='utf-8') as f:
+        with open(args.name, 'a', encoding='utf-8') as f:
             f.write('TANS_HASH:'+hash_one+'\n')
             num_count = 0
             for idx in range(len(hash_data_one)):
