@@ -105,7 +105,8 @@ with torch.no_grad():
                     text_one = ' '.join(text_one.split(' ')[:50])
                 hash_data_one_remove.append(text_one)
                 hash_data_one_good.append(hash_data_one[idx])
-
+        if len(hash_data_one_remove) < 10:
+            continue
         # with open('record_tweets', 'a', encoding='utf-8') as f:
         #     f.write('TANS_HASH:'+hash_one+'\n')
         #     num_count = 0
