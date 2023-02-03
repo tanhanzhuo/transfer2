@@ -6,6 +6,7 @@ import re
 import string
 import random
 import copy
+from scipy.spatial.distance import pdist, squareform
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--thre', default=0.95, type=float)
@@ -27,7 +28,7 @@ HASH = re.compile(r"#\S+")
 USER = re.compile(r"@\S+")
 HTTP = re.compile(r"http\S+")
 META = re.compile(r"[http|#|@]\S+")
-filePath = '/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
+filePath = 'twitter_hash_test_clean.txt'#'/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
 
 def process(line):
     hash_tmp = HASH.findall(line)
@@ -51,7 +52,7 @@ def process(line):
     return hash_tmp_clean
 
 
-hash_thre_list = list(hash_dic.keys())
+hash_thre_list = list(hash_dic.values())
 hash_data = {}
 for hash_one in hash_thre_list:
     hash_data[hash_one] = set()
@@ -78,8 +79,8 @@ with torch.no_grad():
     for hash_one in tqdm(hash_thre_list):
         hash_data_one = list(hash_data[hash_one])
         random.shuffle(hash_data_one)
-        if len(hash_data_one) > NUM*2:
-            hash_data_one[:NUM*2]
+        if len(hash_data_one) > NUM*1.5:
+            hash_data_one[:int(NUM*1.5)]
         if len(hash_data_one) < 10:
             continue
         hash_data_one_remove = []
@@ -107,14 +108,29 @@ with torch.no_grad():
         fea_sem = model(input_ids=torch.tensor(hash_data_one_remove_token['input_ids']).cuda(),
                         attention_mask=torch.tensor(hash_data_one_remove_token['attention_mask']).cuda(),
                         # token_type_ids=torch.tensor([inputs['token_type_ids']]).cuda(),
-                        output_hidden_states=True, return_dict=True).pooler_output
+                        output_hidden_states=True, return_dict=True).pooler_output.cpu().numpy()
         # fea_sem = torch.cat((fea_sem, outputs), 0)
         # fea_sem = copy.deepcopy(outputs)
+
+        # for idx in range(len(fea_sem)-1):
+        #     if idx in bad_idx:
+        #         continue
+        #     fea_one = fea_sem[idx]
+        #     dis = cos_sim(fea_one, fea_sem[idx+1:])
+        #     for idx1 in range(len(dis)):
+        #         dis_one = dis[idx1]
+        #         if dis_one > THRE:
+        #             bad_idx.append(idx1 + idx + 1)
+        #             fea_sem[idx1 + idx + 1] = fea_sem[idx1 + idx + 1] * 0
+        #
+        # del fea_sem
+        # torch.cuda.empty_cache()
+
+        dis_all = 1-squareform(pdist(fea_sem, 'cosine'))
         for idx in range(len(fea_sem)-1):
             if idx in bad_idx:
                 continue
-            fea_one = fea_sem[idx]
-            dis = cos_sim(fea_one, fea_sem[idx+1:])
+            dis = dis_all[idx,idx+1:]
             for idx1 in range(len(dis)):
                 dis_one = dis[idx1]
                 if dis_one > THRE:
@@ -127,7 +143,7 @@ with torch.no_grad():
         with open('tweet_hash_clean_group.txt', 'a', encoding='utf-8') as f:
             f.write('TANS_HASH:'+hash_one+'\n')
             num_count = 0
-            for idx in range(len(fea_sem)):
+            for idx in range(len(hash_data_one)):
                 if idx not in bad_idx:
                     f.write(hash_data_one[idx])
                     num_count += 1
