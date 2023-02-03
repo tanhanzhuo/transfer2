@@ -147,14 +147,18 @@ with torch.no_grad():
         # torch.cuda.empty_cache()
         bad_idx = []
         dis_all = 1-squareform(pdist(fea_sem, 'cosine'))
-        for idx in range(len(fea_sem)-1):
+        for idx in range(len(dis_all)-1):
             if idx in bad_idx:
                 continue
-            dis = dis_all[idx,idx+1:]
-            for idx1 in range(len(dis)):
-                dis_one = dis[idx1]
-                if dis_one > THRE:
-                    bad_idx.append(idx1 + idx + 1)
+            # dis = dis_all[idx,idx+1:]
+            # for idx1 in range(len(dis)):
+            #     dis_one = dis[idx1]
+            #     if dis_one > THRE:
+            #         bad_idx.append(idx1 + idx + 1)
+
+            for idx1 in range(idx+1,len(dis_all)):
+                if dis_all[idx,idx1] > THRE:
+                    bad_idx.append(idx1)
 
         # del fea_sem
         # torch.cuda.empty_cache()
