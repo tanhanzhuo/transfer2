@@ -39,7 +39,7 @@ HASH = re.compile(r"#\S+")
 USER = re.compile(r"@\S+")
 HTTP = re.compile(r"http\S+")
 META = re.compile(r"[http|#|@]\S+")
-filePath = 'twitter_hash_test_clean.txt'#'/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
+filePath = '/work/data/twitter_hash_clean.txt' #'twitter_hash_test_clean.txt'#
 
 def process(line):
     hash_tmp = HASH.findall(line)
