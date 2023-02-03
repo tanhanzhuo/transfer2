@@ -89,7 +89,8 @@ with torch.no_grad():
         if len(hash_data_one) < 10:
             continue
         hash_data_one_remove = []
-        bad_idx = []
+        hash_data_one_good = []
+
         # fea_sem = torch.tensor([[]]).view(-1, 768).cuda()
         for idx in range(len(hash_data_one)):
             text_one = hash_data_one[idx]
@@ -97,9 +98,11 @@ with torch.no_grad():
             hash_tmp = HASH.findall(text_one)
             for hash_tmp1 in hash_tmp:
                 text_one = text_one.replace(hash_tmp1, '')
-            if len(text_one.replace(' ','')) < 10:
-                bad_idx.append(idx)
-            hash_data_one_remove.append(text_one)
+            # if len(text_one.replace(' ','')) > 10:
+            if len(re.findall('[a-zA-Z]',text_one)) > 10:
+                # bad_idx.append(idx)
+                hash_data_one_remove.append(text_one)
+                hash_data_one_good.append(hash_data_one[idx])
 
         # with open('record_tweets', 'a', encoding='utf-8') as f:
         #     f.write('TANS_HASH:'+hash_one+'\n')
@@ -140,7 +143,7 @@ with torch.no_grad():
         #
         # del fea_sem
         # torch.cuda.empty_cache()
-
+        bad_idx = []
         dis_all = 1-squareform(pdist(fea_sem, 'cosine'))
         for idx in range(len(fea_sem)-1):
             if idx in bad_idx:
@@ -151,15 +154,15 @@ with torch.no_grad():
                 if dis_one > THRE:
                     bad_idx.append(idx1 + idx + 1)
 
-        del fea_sem
-        torch.cuda.empty_cache()
+        # del fea_sem
+        # torch.cuda.empty_cache()
 
         with open(args.name, 'a', encoding='utf-8') as f:
             f.write('TANS_HASH:'+hash_one+'\n')
             num_count = 0
-            for idx in range(len(hash_data_one)):
+            for idx in range(len(hash_data_one_good)):
                 if idx not in bad_idx:
-                    f.write(hash_data_one[idx])
+                    f.write(hash_data_one_good[idx])
                     num_count += 1
                     if num_count > NUM:
                         break
