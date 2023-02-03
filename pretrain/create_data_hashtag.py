@@ -101,6 +101,12 @@ with torch.no_grad():
                 bad_idx.append(idx)
             hash_data_one_remove.append(text_one)
 
+        with open('record_tweets', 'a', encoding='utf-8') as f:
+            f.write('TANS_HASH:'+hash_one+'\n')
+            num_count = 0
+            for idx in range(len(hash_data_one_remove)):
+                f.write(hash_data_one_remove[idx])
+
         hash_data_one_remove_token = tokenizer(
             hash_data_one_remove,
             padding=True,
