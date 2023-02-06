@@ -65,7 +65,7 @@ with open(args.file, 'r', encoding='utf-8') as f:
             continue
         hash_data[cur_hash].append(line)
 
-for hash_one in hash_thre_list:
+for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) < args.num:
         continue
     if args.rep == 0:
