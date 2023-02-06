@@ -23,7 +23,7 @@ for hash_one in list(hash_dic.keys()):
 from hashformers import TransformerWordSegmenter as WordSegmenter
 with torch.no_grad():
     data_seg = []
-    ws = WordSegmenter( segmenter_model_name_or_path="gpt2",reranker_model_name_or_path="bert-base-uncased")
+    ws = WordSegmenter( segmenter_model_name_or_path="gpt2")
 
     with open('hash_seg'+str(args.num)+'.txt', 'a') as f:
         for hash_one in tqdm(hash_dic.keys()):
