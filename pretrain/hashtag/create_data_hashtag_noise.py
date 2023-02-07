@@ -14,10 +14,11 @@ parser.add_argument('--ran1', default=0.333, type=float)
 parser.add_argument('--ran2', default=0.667, type=float)
 parser.add_argument('--max_len', default=512, type=int)
 parser.add_argument('--rep', default=0, type=int)
+parser.add_argument('--root', default='/work/transfer', type=str)
 
 args = parser.parse_args()
 
-with open('../contrastive/hash_his.json', 'r', encoding='utf-8') as f:
+with open(args.root+'/contrastive/hash_his.json', 'r', encoding='utf-8') as f:
     hash_dic = json.load(f)
 for hash_one in list(hash_dic.keys()):
     if hash_dic[hash_one] < args.num:
@@ -25,7 +26,7 @@ for hash_one in list(hash_dic.keys()):
 hash_thre_list = list(hash_dic.keys())
 random.shuffle(hash_thre_list)
 
-with open('../contrastive/hash_seg.txt', 'r', encoding='utf-8') as f:
+with open(args.root+'/contrastive/hash_seg.txt', 'r', encoding='utf-8') as f:
     lines = f.readlines()
 hash_seg = {}
 for line in lines:
