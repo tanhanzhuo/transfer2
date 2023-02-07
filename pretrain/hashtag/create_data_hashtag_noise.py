@@ -69,9 +69,9 @@ for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) < args.num:
         continue
     if args.rep == 0:
-        epoch = 1
+        epoch = 5
     else:
-        epoch = min(1, int( args.rep*1.0/len(hash_data[hash_one]) ) )
+        epoch = min(5, int( args.rep*5.0/len(hash_data[hash_one]) ) )
     for tmp in range(epoch):
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
@@ -95,7 +95,7 @@ for hash_one in tqdm(hash_thre_list):
             hash_data_group = ''
             for idx in range(len(hash_data_one_noise)):
                 hash_data_group += hash_data_one_noise[idx] + ' '
-                if len(hash_data_group) > args.max_len*0.85:
+                if len(hash_data_group) > args.max_len*0.95:
                     f.write(hash_data_group+'\n')
                     hash_data_group = ''
 
