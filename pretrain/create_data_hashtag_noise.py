@@ -77,6 +77,7 @@ for hash_one in tqdm(hash_thre_list):
         random.shuffle(hash_data_one)
         hash_data_one_noise = []
         for data_tmp in hash_data_one:
+            data_tmp = data_tmp.strip()
             hash_tmp = process(data_tmp)
             for hash_two in hash_tmp:
                 ran1 = np.random.random()
@@ -93,8 +94,8 @@ for hash_one in tqdm(hash_thre_list):
         with open(args.name + '_' + str(args.num) + '.txt', 'a', encoding='utf-8') as f:
             hash_data_group = ''
             for idx in range(len(hash_data_one_noise)):
-                hash_data_group += hash_data_one_noise[idx]
+                hash_data_group += hash_data_one_noise[idx] + ' '
                 if len(hash_data_group) > args.max_len*0.85:
-                    f.write(hash_data_group)
+                    f.write(hash_data_group+'\n')
                     hash_data_group = ''
 
