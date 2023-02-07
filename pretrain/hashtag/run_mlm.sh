@@ -5,7 +5,7 @@ accelerate launch mlm.py \
 --tokenizer_name vinai/bertweet-base \
 --output_dir /work/transfer2/pretrain/hashtag/hash_group_111_100/ \
 --max_seq_length 128 \
---preprocessing_num_workers 20 \
+--preprocessing_num_workers 30 \
 --per_device_train_batch_size 64 \
 --per_device_eval_batch_size 32 \
 --gradient_accumulation_steps 8 \

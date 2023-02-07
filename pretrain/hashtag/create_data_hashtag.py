@@ -17,14 +17,14 @@ args = parser.parse_args()
 
 # import json
 if args.hash != 100:
-    with open('../contrastive/hash_his.json','r',encoding='utf-8') as f:
+    with open('/work/transfer2/contrastive/hash_his.json','r',encoding='utf-8') as f:
         hash_dic = json.load(f)
     for hash_one in list(hash_dic.keys()):
         if hash_dic[hash_one] < args.hash:
             hash_dic.pop(hash_one)
     hash_thre_list = list(hash_dic.keys())
 else:
-    f = open('../contrastive_full/thre100_index.json', 'r', encoding='utf-8')
+    f = open('/work/transfer2/contrastive_full/thre100_index.json', 'r', encoding='utf-8')
     hash_dic = json.load(f)
     f.close()
     hash_thre_list = list(hash_dic.values())
