@@ -14,7 +14,7 @@ parser.add_argument('--ran1', default=0.333, type=float)
 parser.add_argument('--ran2', default=0.667, type=float)
 parser.add_argument('--max_len', default=512, type=int)
 parser.add_argument('--rep', default=0, type=int)
-parser.add_argument('--root', default='/work/transfer', type=str)
+parser.add_argument('--root', default='/work/transfer2', type=str)
 
 args = parser.parse_args()
 
