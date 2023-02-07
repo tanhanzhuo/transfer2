@@ -12,6 +12,9 @@ accelerate launch mlm.py \
 --num_train_epoch 10 \
 --learning_rate 5e-5 \
 --weight_decay 0.0 \
---gradient_accumulation_steps 1 \
+--gradient_accumulation_steps 8 \
 --num_warmup_steps 5000 \
---line_by_line True
+--line_by_line True \
+--with_tracking \
+--report_to wandb \
+--save_step 20000
