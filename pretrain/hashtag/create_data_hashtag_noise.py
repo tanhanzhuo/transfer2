@@ -16,6 +16,7 @@ parser.add_argument('--max_len', default=512, type=int)
 parser.add_argument('--rep', default=5, type=int)
 parser.add_argument('--balance', default=0, type=int)
 parser.add_argument('--root', default='/work/transfer2', type=str)
+parser.add_argument('--sep', default=0, type=int)
 
 args = parser.parse_args()
 
@@ -96,7 +97,10 @@ for hash_one in tqdm(hash_thre_list):
         with open(args.name + '_' + str(args.num) + '.txt', 'a', encoding='utf-8') as f:
             hash_data_group = ''
             for idx in range(len(hash_data_one_noise)):
-                hash_data_group += hash_data_one_noise[idx] + ' '
+                if args.sep == 0:
+                    hash_data_group += hash_data_one_noise[idx] + ' '
+                else:
+                    hash_data_group += hash_data_one_noise[idx] + ' </s> '
                 if len(hash_data_group) > args.max_len*0.95:
                     f.write(hash_data_group+'\n')
                     hash_data_group = ''
