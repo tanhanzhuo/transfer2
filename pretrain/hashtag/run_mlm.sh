@@ -1,0 +1,15 @@
+CUDA_VISIBLE_DEVICES=0 accelerate launch mlm.py \
+--train_file /work/test/sep/2013_sep0.txt \
+--model_name_or_path nghuyong/ernie-2.0-en \
+--tokenizer_name nghuyong/ernie-2.0-en \
+--output_dir /work/test/hf/collator/hf/sep/ \
+--max_seq_length 128 \
+--preprocessing_num_workers 10 \
+--per_device_train_batch_size 128 \
+--gradient_accumulation_steps 8 \
+--max_seq_length 128 \
+--save_step 5000 \
+--num_train_epoch 6 \
+--learning_rate 1e-4 \
+--weight_decay 1e-2 \
+--num_warmup_steps 5000
