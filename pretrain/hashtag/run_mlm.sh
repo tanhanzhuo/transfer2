@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=0 accelerate launch mlm.py \
+accelerate launch mlm.py \
 --train_file /work/transfer2/pretrain/tweet_hash_clean_group_111_100_shuf.txt \
 --validation_split_percentage 1 \
 --model_name_or_path vinai/bertweet-base \
