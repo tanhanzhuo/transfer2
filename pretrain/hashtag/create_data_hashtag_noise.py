@@ -13,7 +13,8 @@ parser.add_argument('--name',default='tweet_hash_clean_group_raw',type=str)
 parser.add_argument('--ran1', default=0.333, type=float)
 parser.add_argument('--ran2', default=0.667, type=float)
 parser.add_argument('--max_len', default=512, type=int)
-parser.add_argument('--rep', default=0, type=int)
+parser.add_argument('--rep', default=5, type=int)
+parser.add_argument('--balance', default=0, type=int)
 parser.add_argument('--root', default='/work/transfer2', type=str)
 
 args = parser.parse_args()
@@ -69,10 +70,10 @@ with open(args.file, 'r', encoding='utf-8') as f:
 for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) < args.num:
         continue
-    if args.rep == 0:
-        epoch = 5
+    if args.balance == 0:
+        epoch = args.rep
     else:
-        epoch = min(5, int( args.rep*5.0/len(hash_data[hash_one]) ) )
+        epoch = min(args.rep, int( args.balance*args.rep*1.0/len(hash_data[hash_one]) ) )
     for tmp in range(epoch):
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
