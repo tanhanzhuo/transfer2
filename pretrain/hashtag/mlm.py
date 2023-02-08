@@ -652,42 +652,42 @@ def main():
             if completed_steps >= args.max_train_steps:
                 break
             if (completed_steps + 1)% args.save_step == 0:
-                model.eval()
-                losses = []
-                for step, batch in enumerate(eval_dataloader):
-                    with torch.no_grad():
-                        outputs = model(**batch)
+                # model.eval()
+                # losses = []
+                # for step, batch in enumerate(eval_dataloader):
+                #     with torch.no_grad():
+                #         outputs = model(**batch)
+                #
+                #     loss = outputs.loss
+                #     losses.append(accelerator.gather_for_metrics(loss.repeat(args.per_device_eval_batch_size)))
+                # model.train()
+                # losses = torch.cat(losses)
+                # try:
+                #     eval_loss = torch.mean(losses)
+                #     perplexity = math.exp(eval_loss)
+                # except OverflowError:
+                #     perplexity = float("inf")
+                #
+                # logger.info(f"epoch {epoch}: perplexity: {perplexity}")
 
-                    loss = outputs.loss
-                    losses.append(accelerator.gather_for_metrics(loss.repeat(args.per_device_eval_batch_size)))
-                model.train()
-                losses = torch.cat(losses)
-                try:
-                    eval_loss = torch.mean(losses)
-                    perplexity = math.exp(eval_loss)
-                except OverflowError:
-                    perplexity = float("inf")
-
-                logger.info(f"epoch {epoch}: perplexity: {perplexity}")
-
-                if args.with_tracking:
-                    accelerator.log(
-                        {
-                            "perplexity": perplexity,
-                            "eval_loss": eval_loss,
-                            "train_loss": total_loss.item() / len(train_dataloader),
-                            "epoch": epoch,
-                            "step": completed_steps,
-                        },
-                        step=completed_steps,
-                    )
-
-
-                if args.checkpointing_steps == "epoch":
-                    output_dir = f"epoch_{epoch}"
-                    if args.output_dir is not None:
-                        output_dir = os.path.join(args.output_dir, output_dir)
-                    accelerator.save_state(output_dir)
+                # if args.with_tracking:
+                #     accelerator.log(
+                #         {
+                #             "perplexity": perplexity,
+                #             "eval_loss": eval_loss,
+                #             "train_loss": total_loss.item() / len(train_dataloader),
+                #             "epoch": epoch,
+                #             "step": completed_steps,
+                #         },
+                #         step=completed_steps,
+                #     )
+                #
+                #
+                # if args.checkpointing_steps == "epoch":
+                #     output_dir = f"epoch_{epoch}"
+                #     if args.output_dir is not None:
+                #         output_dir = os.path.join(args.output_dir, output_dir)
+                #     accelerator.save_state(output_dir)
 
                 if args.output_dir is not None:
                     accelerator.wait_for_everyone()
@@ -696,8 +696,10 @@ def main():
                         args.output_dir+str(completed_steps), is_main_process=accelerator.is_main_process, save_function=accelerator.save
                     )
                     if accelerator.is_main_process:
-                        with open(os.path.join(args.output_dir+str(completed_steps), "all_results.json"), "w") as f:
-                            json.dump({"perplexity": perplexity}, f)
+                        tokenizer.save_pretrained(args.output_dir)
+                    # if accelerator.is_main_process:
+                    #     with open(os.path.join(args.output_dir+str(completed_steps), "all_results.json"), "w") as f:
+                    #         json.dump({"perplexity": perplexity}, f)
 
     if args.with_tracking:
         accelerator.end_training()
