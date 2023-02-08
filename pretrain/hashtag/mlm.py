@@ -670,17 +670,18 @@ def main():
                 #
                 # logger.info(f"epoch {epoch}: perplexity: {perplexity}")
 
-                # if args.with_tracking:
-                #     accelerator.log(
-                #         {
-                #             "perplexity": perplexity,
-                #             "eval_loss": eval_loss,
-                #             "train_loss": total_loss.item() / len(train_dataloader),
-                #             "epoch": epoch,
-                #             "step": completed_steps,
-                #         },
-                #         step=completed_steps,
-                #     )
+                if args.with_tracking:
+                    accelerator.log(
+                        {
+                            # "perplexity": perplexity,
+                            # "eval_loss": eval_loss,
+                            "train_loss": total_loss.item() / args.save_step,
+                            # "epoch": epoch,
+                            "step": completed_steps,
+                        },
+                        step=completed_steps,
+                    )
+                total_loss = 0
                 #
                 #
                 # if args.checkpointing_steps == "epoch":
