@@ -697,7 +697,7 @@ def main():
                             args.output_dir+str(completed_steps), is_main_process=accelerator.is_main_process, save_function=accelerator.save
                         )
                         if accelerator.is_main_process:
-                            tokenizer.save_pretrained(args.output_dir)
+                            tokenizer.save_pretrained(args.output_dir+str(completed_steps))
                         # if accelerator.is_main_process:
                         #     with open(os.path.join(args.output_dir+str(completed_steps), "all_results.json"), "w") as f:
                         #         json.dump({"perplexity": perplexity}, f)
