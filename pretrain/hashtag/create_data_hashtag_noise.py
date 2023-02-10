@@ -22,9 +22,9 @@ args = parser.parse_args()
 
 with open(args.root+'/contrastive/hash_his.json', 'r', encoding='utf-8') as f:
     hash_dic = json.load(f)
-for hash_one in list(hash_dic.keys()):
-    if hash_dic[hash_one] < args.num:
-        hash_dic.pop(hash_one)
+# for hash_one in list(hash_dic.keys()):
+#     if hash_dic[hash_one] < args.num:
+#         hash_dic.pop(hash_one)
 hash_thre_list = list(hash_dic.keys())
 random.shuffle(hash_thre_list)
 
