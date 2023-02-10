@@ -99,7 +99,7 @@ with torch.no_grad():
             for hash_tmp1 in hash_tmp:
                 text_one = text_one.replace(hash_tmp1, '')
             # if len(text_one.replace(' ','')) > 10:
-            if len(re.findall('[a-zA-Z]',text_one)) > 10:
+            if len(re.findall('[a-zA-Z]',text_one)) > 10 and len(text_one.split(' ')) > 2:
                 # bad_idx.append(idx)
                 if len(text_one.split(' ')) > 50:
                     text_one = ' '.join(text_one.split(' ')[:50])
@@ -168,7 +168,8 @@ with torch.no_grad():
         #     print(1)
         # del fea_sem
         # torch.cuda.empty_cache()
-
+        with open(args.name.split('.')[0]+'_change.txt', 'a', encoding='utf-8') as f:
+            f.write('{},{},{},{}\n'.format(hash_one,len(hash_data_one),len(hash_data_one_good),len(hash_data_one_good)-len(bad_idx)))
         with open(args.name, 'a', encoding='utf-8') as f:
             f.write('TANS_HASH:'+hash_one+'\n')
             num_count = 0
