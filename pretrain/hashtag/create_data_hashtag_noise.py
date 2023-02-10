@@ -7,15 +7,15 @@ import re
 import string
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='tweet_hash_clean_group.txt',type=str)
-parser.add_argument('--num',default=100,type=int)
+parser.add_argument('--file',default='tweet_hash_clean_group_all.txt',type=str)
+parser.add_argument('--num',default=20,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_raw',type=str)
 parser.add_argument('--ran1', default=0.333, type=float)
 parser.add_argument('--ran2', default=0.667, type=float)
 parser.add_argument('--max_len', default=512, type=int)
 parser.add_argument('--rep', default=5, type=int)
 parser.add_argument('--balance', default=0, type=int)
-parser.add_argument('--root', default='/work/transfer2', type=str)
+parser.add_argument('--root', default='../../', type=str)
 parser.add_argument('--sep', default=0, type=int)
 
 args = parser.parse_args()
@@ -80,7 +80,7 @@ for hash_one in tqdm(hash_thre_list):
         random.shuffle(hash_data_one)
         hash_data_one_noise = []
         for data_tmp in hash_data_one:
-            data_tmp = data_tmp.strip()
+            data_tmp = data_tmp.strip().replace('\n', ' ')
             hash_tmp = process(data_tmp)
             for hash_two in hash_tmp:
                 ran1 = np.random.random()
