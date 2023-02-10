@@ -32,6 +32,7 @@ with open(args.root+'/contrastive/hash_seg10.txt', 'r', encoding='utf-8') as f:
     lines = f.readlines()
 hash_seg = {}
 for line in lines:
+    line = line.strip()
     hash_seg[line.split('\t')[0]] = line.split('\t')[1]
 
 HASH = re.compile(r"#\S+")
@@ -80,7 +81,7 @@ for hash_one in tqdm(hash_thre_list):
         random.shuffle(hash_data_one)
         hash_data_one_noise = []
         for data_tmp in hash_data_one:
-            data_tmp = data_tmp.strip().replace('\n', ' ')
+            data_tmp = data_tmp.strip()
             hash_tmp = process(data_tmp)
             for hash_two in hash_tmp:
                 ran1 = np.random.random()
