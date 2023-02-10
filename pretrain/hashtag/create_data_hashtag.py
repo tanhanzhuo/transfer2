@@ -30,7 +30,7 @@ else:
     f.close()
     hash_thre_list = list(hash_dic.values())
 
-
+random.shuffle(hash_thre_list)
 hash_data = {}
 for hash_one in hash_thre_list:
     hash_data[hash_one] = set()
