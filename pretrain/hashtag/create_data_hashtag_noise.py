@@ -28,7 +28,7 @@ for hash_one in list(hash_dic.keys()):
 hash_thre_list = list(hash_dic.keys())
 random.shuffle(hash_thre_list)
 
-with open(args.root+'/contrastive/hash_seg.txt', 'r', encoding='utf-8') as f:
+with open(args.root+'/contrastive/hash_seg10.txt', 'r', encoding='utf-8') as f:
     lines = f.readlines()
 hash_seg = {}
 for line in lines:
