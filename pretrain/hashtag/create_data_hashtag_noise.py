@@ -103,9 +103,6 @@ for hash_one in tqdm(hash_thre_list):
                 else:
                     hash_data_group += hash_data_one_noise[idx] + ' </s> '
                 if len(hash_data_group) > args.max_len*0.95:
-                    print(len(hash_data_group))
-                    print(args.max_len*0.95)
-                    print(hash_data_group)
                     f.write(hash_data_group+'\n')
                     hash_data_group = ''
 
