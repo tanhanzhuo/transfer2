@@ -11,6 +11,7 @@ from scipy.spatial.distance import pdist, squareform
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash', default=100, type=int)
 parser.add_argument('--thre', default=0.95, type=float)
+parser.add_argument('--min', default=20, type=int)
 parser.add_argument('--num', default=1000, type=int)
 parser.add_argument('--name', default='tweet_hash_clean_group.txt', type=str)
 args = parser.parse_args()
@@ -105,7 +106,7 @@ with torch.no_grad():
                     text_one = ' '.join(text_one.split(' ')[:50])
                 hash_data_one_remove.append(text_one)
                 hash_data_one_good.append(hash_data_one[idx])
-        if len(hash_data_one_remove) < 10:
+        if len(hash_data_one_remove) < args.min:
             continue
         # with open('record_tweets', 'a', encoding='utf-8') as f:
         #     f.write('TANS_HASH:'+hash_one+'\n')
