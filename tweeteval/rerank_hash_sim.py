@@ -17,7 +17,7 @@ cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 parser = argparse.ArgumentParser()
 parser.add_argument('--tasks',default='eval-stance_clean,eval-emotion_clean,eval-irony_clean,eval-offensive_clean,eval-hate_clean,sem21-task7-humor_clean,sem22-task6-sarcasm_clean',type=str)
 parser.add_argument('--target',default='_clean',type=str)
-parser.add_argument('--method',default='_modelT100N100M_fileT100N100S_num10_cluster_top20_textfirst',type=str)#'_fulldata_simcse_top20_textfirst'
+parser.add_argument('--method',default='_fuldata_bt_hashseg_top20_textfirst',type=str)#'_fulldata_simcse_top20_textfirst'
 args = parser.parse_args()
 
 def write_json(data, fileName):
