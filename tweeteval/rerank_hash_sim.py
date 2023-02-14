@@ -28,9 +28,8 @@ def write_json(data, fileName):
 
 for task in args.tasks.split(','):
     print(task)
-    data_source = []
-    data_source_text = []
     for sp in ['train', 'dev', 'test']:
+        data_source = []
         with open('../finetune/data/' + task + '/' + sp + args.method + '.json', 'r', encoding='utf-8') as f:
             lines = f.readlines()
             for line in tqdm(lines):
