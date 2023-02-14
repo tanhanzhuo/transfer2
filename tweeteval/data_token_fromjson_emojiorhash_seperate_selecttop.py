@@ -17,6 +17,7 @@ parser.add_argument("--tokenizer_name", default='vinai/bertweet-base', type=str,
 parser.add_argument("--max_seq_length", default=128, type=int, help="The maximum total input sequence length after tokenization. Sequences longer than this will be truncated, sequences shorter will be padded.")
 parser.add_argument("--preprocessing_num_workers", default=1, type=int, help="multi-processing number.")
 parser.add_argument("--overwrite_cache", type=bool, default=False, help="Overwrite the cached training and evaluation sets")
+parser.add_argument('--name',default='',type=str)
 
 def preprocess(text):
     preprocessed_text = []
@@ -135,4 +136,4 @@ if __name__ == "__main__":
 
             save_hash = args_tmp.method_hash.split('top')[0]
             tokenized_datasets.save_to_disk(args_tmp.dataset_path + args_tmp.task_name + '/hash_' \
-                                            + save_hash + 'top_'+str(args_tmp.top))
+                                            + save_hash + 'top_'+str(args_tmp.top)+args_tmp.name)
