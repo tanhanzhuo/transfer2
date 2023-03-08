@@ -58,7 +58,7 @@ def process(line):
     return hash_tmp_clean
 
 def write_json(fileName, data):
-    with open(fileName + '.json', 'w', encoding='utf-8') as f:
+    with open(fileName + '.json', 'a', encoding='utf-8') as f:
         for one in tqdm(data):
             tmp = json.dumps(one, ensure_ascii=False)
             f.write(tmp + '\n')
