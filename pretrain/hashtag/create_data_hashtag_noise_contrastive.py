@@ -110,7 +110,7 @@ for hash_one in tqdm(hash_thre_list):
             else:
                 hash_data_group += hash_data_one_noise[idx] + ' </s> '
             if len(hash_data_group) > args.max_len*0.95:
-                rand_idx = int(random.rand() * len(hash_data_one_noise))
+                rand_idx = int(np.random.random() * len(hash_data_one_noise))
                 hash_pair.append({'text1': hash_data_group, 'text2': hash_data_one_noise[rand_idx], 'label':hash_idx})
                 hash_data_group = ''
     hash_idx += 1
