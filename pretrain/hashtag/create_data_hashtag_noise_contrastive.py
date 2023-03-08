@@ -113,8 +113,10 @@ for hash_one in tqdm(hash_thre_list):
                 rand_idx = int(np.random.random() * len(hash_data_one_noise))
                 hash_pair.append({'text1': hash_data_group, 'text2': hash_data_one_noise[rand_idx], 'label':hash_idx})
                 hash_data_group = ''
-    hash_idx += 1
 
+    write_json(args.name + '_' + str(args.num), hash_pair)
+    hash_pair = []
+    hash_idx += 1
 
         # with open(args.name + '_' + str(args.num) + '.txt', 'a', encoding='utf-8') as f:
         #     hash_data_group = ''
@@ -126,4 +128,4 @@ for hash_one in tqdm(hash_thre_list):
         #         if len(hash_data_group) > args.max_len*0.95:
         #             f.write(hash_data_group+'\n')
         #             hash_data_group = ''
-write_json(args.name + '_' + str(args.num), hash_pair)
+
