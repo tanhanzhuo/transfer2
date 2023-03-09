@@ -17,7 +17,7 @@ parser.add_argument('--rep', default=5, type=int)
 parser.add_argument('--balance', default=0, type=int)
 parser.add_argument('--root', default='../../', type=str)
 parser.add_argument('--sep', default=0, type=int)
-parser.add_argument('--con_len', default=1, type=int)
+parser.add_argument('--con_len', default=5, type=int)
 
 args = parser.parse_args()
 
