@@ -95,7 +95,7 @@ for hash_one in tqdm(hash_thre_list):
             data_tmp_clean = data_tmp.strip()
             hash_tmp = process(data_tmp)
             for hash_two in hash_tmp:
-                data_tmp_clean = data_tmp.replace(hash_two, '')
+                data_tmp_clean = data_tmp_clean.replace(hash_two, '')
                 ran1 = np.random.random()
                 if ran1 < args.ran1:
                     data_tmp = data_tmp.replace(hash_two, '')
