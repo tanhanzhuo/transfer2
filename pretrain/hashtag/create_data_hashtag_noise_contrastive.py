@@ -17,6 +17,7 @@ parser.add_argument('--rep', default=5, type=int)
 parser.add_argument('--balance', default=0, type=int)
 parser.add_argument('--root', default='../../', type=str)
 parser.add_argument('--sep', default=0, type=int)
+parser.add_argument('--con_len', default=1, type=int)
 
 args = parser.parse_args()
 
@@ -88,10 +89,13 @@ for hash_one in tqdm(hash_thre_list):
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
         hash_data_one_noise = []
+        hash_data_one_clean = []
         for data_tmp in hash_data_one:
             data_tmp = data_tmp.strip()
+            data_tmp_clean = data_tmp.strip()
             hash_tmp = process(data_tmp)
             for hash_two in hash_tmp:
+                data_tmp_clean = data_tmp.replace(hash_two, '')
                 ran1 = np.random.random()
                 if ran1 < args.ran1:
                     data_tmp = data_tmp.replace(hash_two, '')
@@ -101,7 +105,7 @@ for hash_one in tqdm(hash_thre_list):
                         data_tmp = data_tmp.replace(hash_two, tmp2)
                     else:
                         data_tmp = data_tmp.replace(hash_two, hash_two[1:])
-
+            hash_data_one_clean.append(data_tmp_clean)
             hash_data_one_noise.append(data_tmp)
         hash_data_group = ''
         for idx in range(len(hash_data_one_noise)):
@@ -110,8 +114,12 @@ for hash_one in tqdm(hash_thre_list):
             else:
                 hash_data_group += hash_data_one_noise[idx] + ' </s> '
             if len(hash_data_group) > args.max_len*0.95:
-                rand_idx = int(np.random.random() * len(hash_data_one_noise))
-                hash_pair.append({'text1': hash_data_group, 'text2': hash_data_one_noise[rand_idx], 'label':hash_idx})
+                rand_one = random.random()
+                if rand_one > 0.5:
+                    text2 = ' '.join(random.sample(hash_data_one_clean,args.con_len))
+                else:
+                    text2 = ' '.join(random.sample(hash_data_one_clean, 1))
+                hash_pair.append({'text1': hash_data_group, 'text2':text2 , 'label':hash_idx})
                 hash_data_group = ''
 
     write_json(args.name + '_' + str(args.num), hash_pair)
