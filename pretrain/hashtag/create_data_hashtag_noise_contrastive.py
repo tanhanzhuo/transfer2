@@ -12,6 +12,7 @@ parser.add_argument('--num',default=20,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_raw',type=str)
 parser.add_argument('--ran1', default=0.333, type=float)
 parser.add_argument('--ran2', default=0.667, type=float)
+parser.add_argument('--ran3', default=0.5, type=float)
 parser.add_argument('--max_len', default=512, type=int)
 parser.add_argument('--rep', default=5, type=int)
 parser.add_argument('--balance', default=0, type=int)
@@ -115,7 +116,7 @@ for hash_one in tqdm(hash_thre_list):
                 hash_data_group += hash_data_one_noise[idx] + ' </s> '
             if len(hash_data_group) > args.max_len*0.95:
                 rand_one = random.random()
-                if rand_one > 0.5:
+                if rand_one > args.ran3:
                     text2 = ' '.join(random.sample(hash_data_one_clean,args.con_len))
                 else:
                     text2 = ' '.join(random.sample(hash_data_one_clean, 1))
