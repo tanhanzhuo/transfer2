@@ -452,7 +452,7 @@ def do_train(args):
         if 'bertweet' in args.model_name_or_path:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
         else:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
