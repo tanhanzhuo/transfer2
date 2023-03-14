@@ -74,6 +74,7 @@ for hash_one in hash_thre_list[0:100]:
     hash_data_one = hash_data[hash_one]
     if len(hash_data_one) < 100:
         continue
+    random.shuffle(hash_data_one)
     hash_data_two = []
     for data_tmp in hash_data_one:
         hash_tmp = process(data_tmp)
@@ -87,9 +88,9 @@ for hash_one in hash_thre_list[0:100]:
                         attention_mask=torch.tensor(inputs['attention_mask']).cuda(),
                         # token_type_ids=torch.tensor([inputs['token_type_ids']]).cuda(),
                         output_hidden_states=True, return_dict=True).pooler_output
-        dis = cos_sim(outputs[-1], outputs[:-1])
+        dis = cos_sim(outputs[0], outputs)
         val, best_idx = dis.topk(len(dis))
     with open(hash_one+'.txt', 'w', encoding='utf-8') as f:
-        f.write(hash_data_one[-1])
+        # f.write(hash_data_one[-1])
         for idx in best_idx:
             f.write(hash_data_one[idx])
