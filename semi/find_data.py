@@ -10,6 +10,7 @@ import os
 import copy
 import random
 import re
+import string
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
 tokenizer = AutoTokenizer.from_pretrained('princeton-nlp/sup-simcse-roberta-base')
 model = AutoModel.from_pretrained('princeton-nlp/sup-simcse-roberta-base').cuda()
