@@ -72,7 +72,7 @@ with open(args.file, 'r', encoding='utf-8') as f:
 
 for hash_one in hash_thre_list[0:100]:
     hash_data_one = hash_data[hash_one]
-    if hash_data_one < 100:
+    if len(hash_data_one) < 100:
         continue
     hash_data_two = []
     for data_tmp in hash_data_one:
