@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
 parser.add_argument('--num',default=100,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_subgroup',type=str)
-parser.add_argument('--split',default=6,type=int)
+parser.add_argument('--split',default=4,type=int)
 parser.add_argument('--split_cur',default=0,type=int)
 
 args = parser.parse_args()
@@ -76,11 +76,10 @@ topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 hash_data1 = {}
 for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) >= args.num:
-        hash_data1[hash_one] = hash_data[hash_one]
-        # hash_data.pop(hash_one)
+        hash_data1[hash_one] = hash_data.pop(hash_one)
+del hash_data
 hash_data = hash_data1
 hash_thre_list = list(hash_data.keys())
-
 split_num = int(len(hash_thre_list)/args.split)
 split_s = split_num * args.split_cur
 if args.split_cur == args.split -1:
@@ -89,15 +88,9 @@ else:
     split_e = split_num * (args.split_cur + 1)
 hash_data_group = []
 hash_thre_list_split = hash_thre_list[split_s:split_e]
-
-hash_data1 = {}
-for hash_one in tqdm(hash_thre_list):
-    if hash_one in hash_thre_list_split:
-        hash_data1[hash_one] = hash_data[hash_one]
-        # hash_data1.pop(hash_one)
-hash_data = hash_data1
-
 for hash_one in tqdm(hash_thre_list_split):
+    if len(hash_data[hash_one]) < args.num:
+        continue
     hash_data_one = hash_data[hash_one]
     random.shuffle(hash_data_one)
 
