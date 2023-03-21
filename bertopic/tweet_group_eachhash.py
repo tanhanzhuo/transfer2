@@ -75,7 +75,7 @@ topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 
 hash_data1 = {}
 for hash_one in tqdm(hash_thre_list):
-    if len(hash_data[hash_one]) < args.num:
+    if len(hash_data[hash_one]) >= args.num:
         hash_data1[hash_one] = hash_data[hash_one]
         # hash_data.pop(hash_one)
 hash_data = hash_data1
