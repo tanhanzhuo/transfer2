@@ -10,7 +10,7 @@ from transformers.pipelines import pipeline
 from sentence_transformers import SentenceTransformer
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='tweet_hash_clean_group_all_test.txt',type=str)
+parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
 parser.add_argument('--num',default=100,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_raw',type=str)
 
