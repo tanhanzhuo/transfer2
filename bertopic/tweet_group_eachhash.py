@@ -1,6 +1,8 @@
 import argparse
 import json
 import random
+
+import torch
 from tqdm import tqdm,trange
 import numpy as np
 import re
@@ -72,7 +74,7 @@ for hash_one in tqdm(hash_thre_list):
         hash_data.pop(hash_one)
 
 hash_data_group = []
-for hash_one in tqdm(hash_thre_list):
+for hash_one in tqdm(hash_data.keys()):
     if len(hash_data[hash_one]) < args.num:
         continue
     hash_data_one = hash_data[hash_one]
@@ -85,8 +87,8 @@ for hash_one in tqdm(hash_thre_list):
         for hash_two in hash_tmp:
             data_tmp = data_tmp.replace(hash_two, '')
         hash_data_two.append(data_tmp)
-
-    topics, probs = topic_model.fit_transform(hash_data_two)
+    with torch.no_grad():
+        topics, probs = topic_model.fit_transform(hash_data_two)
     hash_data_one_group = {'hashtag':hash_one}
     for idx in range(len(hash_data_one)):
         if topics[idx] + 1 in hash_data_one_group.keys():
