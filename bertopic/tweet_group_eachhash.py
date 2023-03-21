@@ -61,7 +61,7 @@ with open(args.file, 'r', encoding='utf-8') as f:
         hash_data[cur_hash].append(line)
 
 # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
-embedding_model = SentenceTransformer("all-mpnet-base-v2").cuda()
+embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
 # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
 topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 
