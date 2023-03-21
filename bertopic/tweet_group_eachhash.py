@@ -45,6 +45,7 @@ def write_json(fileName, data):
 
 with open('../contrastive/hash_his.json', 'r', encoding='utf-8') as f:
     hash_dic = json.load(f)
+
 hash_thre_list = list(hash_dic.keys())
 # random.shuffle(hash_thre_list)
 
@@ -64,6 +65,11 @@ with open(args.file, 'r', encoding='utf-8') as f:
 embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
 # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
 topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
+
+
+for hash_one in tqdm(hash_thre_list):
+    if len(hash_data[hash_one]) < args.num:
+        hash_data.pop(hash_one)
 
 hash_data_group = []
 for hash_one in tqdm(hash_thre_list):
@@ -91,5 +97,6 @@ for hash_one in tqdm(hash_thre_list):
     hash_data_group.append(hash_data_one_group)
     if len(hash_data_group) > 100:
         write_json(args.name + '_' + str(args.num), hash_data_group)
+        hash_data_group = []
 
 
