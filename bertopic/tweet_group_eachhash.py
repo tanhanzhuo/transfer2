@@ -86,9 +86,12 @@ else:
     split_e = split_num * (args.split_cur + 1)
 hash_data_group = []
 hash_thre_list_split = hash_thre_list[split_s:split_e]
+
+for hash_one in tqdm(hash_thre_list):
+    if hash_one not in hash_thre_list_split:
+        hash_data.pop(hash_one)
+
 for hash_one in tqdm(hash_thre_list_split):
-    if len(hash_data[hash_one]) < args.num:
-        continue
     hash_data_one = hash_data[hash_one]
     random.shuffle(hash_data_one)
 
