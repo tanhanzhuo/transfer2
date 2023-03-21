@@ -73,9 +73,9 @@ embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
 # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
 topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 
-# for hash_one in tqdm(hash_thre_list):
-#     if len(hash_data[hash_one]) < args.num:
-#         hash_data.pop(hash_one)
+for hash_one in tqdm(hash_thre_list):
+    if len(hash_data[hash_one]) < args.num:
+        hash_data.pop(hash_one)
 
 split_num = int(len(hash_thre_list)/args.split)
 split_s = split_num * args.split_cur
@@ -84,7 +84,8 @@ if args.split_cur == args.split -1:
 else:
     split_e = split_num * (args.split_cur + 1)
 hash_data_group = []
-for hash_one in tqdm(hash_thre_list[split_s:split_e]):
+hash_thre_list_split = hash_thre_list[split_s:split_e]
+for hash_one in tqdm(hash_thre_list_split):
     if len(hash_data[hash_one]) < args.num:
         continue
     hash_data_one = hash_data[hash_one]
