@@ -14,7 +14,9 @@ from sentence_transformers import SentenceTransformer
 parser = argparse.ArgumentParser()
 parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
 parser.add_argument('--num',default=100,type=int)
-parser.add_argument('--name',default='tweet_hash_clean_group_raw',type=str)
+parser.add_argument('--name',default='tweet_hash_clean_group_subgroup',type=str)
+parser.add_argument('--split',default=6,type=int)
+parser.add_argument('--split_cur',default=0,type=int)
 
 args = parser.parse_args()
 
@@ -45,36 +47,44 @@ def write_json(fileName, data):
             tmp = json.dumps(one, ensure_ascii=False)
             f.write(tmp + '\n')
 
-with open('../contrastive/hash_his.json', 'r', encoding='utf-8') as f:
-    hash_dic = json.load(f)
-
-hash_thre_list = list(hash_dic.keys())
+# with open('../contrastive/hash_his.json', 'r', encoding='utf-8') as f:
+#     hash_dic = json.load(f)
+#
+# hash_thre_list = list(hash_dic.keys())
 # random.shuffle(hash_thre_list)
 
 hash_data = {}
-for hash_one in hash_thre_list:
-    hash_data[hash_one] = []
+# for hash_one in hash_thre_list:
+#     hash_data[hash_one] = []
+
 with open(args.file, 'r', encoding='utf-8') as f:
     cur_hash = ''
     # lines = f.readlines()
     for line in tqdm(f):
         if line[:10] == 'TANS_HASH:':
             cur_hash = line.strip().split(':')[-1]
+            hash_data[cur_hash] = []
             continue
         hash_data[cur_hash].append(line)
+hash_thre_list = list(hash_data.keys())
 
 # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
 embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
 # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
 topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 
+# for hash_one in tqdm(hash_thre_list):
+#     if len(hash_data[hash_one]) < args.num:
+#         hash_data.pop(hash_one)
 
-for hash_one in tqdm(hash_thre_list):
-    if len(hash_data[hash_one]) < args.num:
-        hash_data.pop(hash_one)
-
+split_num = int(len(hash_thre_list)/args.split)
+split_s = split_num * args.split_cur
+if args.split_cur == args.split -1:
+    split_e = len(hash_thre_list)
+else:
+    split_e = split_num * (args.split_cur + 1)
 hash_data_group = []
-for hash_one in tqdm(hash_data.keys()):
+for hash_one in tqdm(hash_thre_list[split_s:split_e]):
     if len(hash_data[hash_one]) < args.num:
         continue
     hash_data_one = hash_data[hash_one]
@@ -97,8 +107,8 @@ for hash_one in tqdm(hash_data.keys()):
             hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
 
     hash_data_group.append(hash_data_one_group)
-    if len(hash_data_group) > 100:
-        write_json(args.name + '_' + str(args.num), hash_data_group)
+    if len(hash_data_group) > 1000:
+        write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
         hash_data_group = []
 
-
+write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
