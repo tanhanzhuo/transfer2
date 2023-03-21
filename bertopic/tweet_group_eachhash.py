@@ -76,6 +76,7 @@ topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) < args.num:
         hash_data.pop(hash_one)
+hash_thre_list = list(hash_data.keys())
 
 split_num = int(len(hash_thre_list)/args.split)
 split_s = split_num * args.split_cur
