@@ -89,14 +89,6 @@ else:
     split_e = split_num * (args.split_cur + 1)
 hash_data_group = []
 hash_thre_list_split = hash_thre_list[split_s:split_e]
-print(split_e,split_s)
-hash_data1 = {}
-for hash_one in tqdm(hash_thre_list):
-    if hash_one in hash_thre_list_split:
-        print(hash_one)
-        hash_data1[hash_one] = hash_data.pop(hash_one)
-del hash_data
-hash_data = hash_data1
 
 for hash_one in tqdm(hash_thre_list_split):
     hash_data_one = hash_data[hash_one]
