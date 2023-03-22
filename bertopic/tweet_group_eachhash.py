@@ -114,6 +114,7 @@ for hash_one in tqdm(hash_thre_list_split):
             data_tmp = data_tmp.replace(hash_two, '')
         hash_data_two.append(data_tmp)
     print(3)
+    print(hash_data_two)
     with torch.no_grad():
         topics, probs = topic_model.fit_transform(hash_data_two)
     print(4)
