@@ -114,5 +114,10 @@ for hash_one in tqdm(hash_thre_list_split):
     if len(hash_data_group) > 1000:
         write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
         hash_data_group = []
+        del embedding_model
+        del topic_model
+        embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
+        # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
+        topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 
 write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
