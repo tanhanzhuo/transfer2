@@ -109,9 +109,7 @@ for hash_one in tqdm(hash_thre_list_split):
             hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
         else:
             hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
-    del embedding_model
     del topic_model
-    embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
     # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
     topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
     hash_data_group.append(hash_data_one_group)
