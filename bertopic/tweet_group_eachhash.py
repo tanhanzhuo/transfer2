@@ -74,13 +74,20 @@ embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
 # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
 topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 
+# hash_data1 = {}
+# for hash_one in tqdm(hash_thre_list):
+#     if len(hash_data[hash_one]) >= args.num:
+#         hash_data1[hash_one] = hash_data.pop(hash_one)
+# del hash_data
+# hash_data = hash_data1
+# hash_thre_list = list(hash_data.keys())
+
 hash_data1 = {}
 for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) >= args.num:
         hash_data1[hash_one] = hash_data.pop(hash_one)
 del hash_data
-hash_data = hash_data1
-hash_thre_list = list(hash_data.keys())
+hash_thre_list = list(hash_data1.keys())
 
 split_num = int(len(hash_thre_list)/args.split)
 split_s = split_num * args.split_cur
@@ -91,18 +98,19 @@ else:
 hash_data_group = []
 hash_thre_list_split = hash_thre_list[split_s:split_e]
 
-# hash_thre_list_split_dic = {}
-# for hash_one in hash_thre_list_split:
-#     hash_thre_list_split_dic[hash_one] = 0
-# hash_data2 = {}
-# for hash_one in tqdm(hash_thre_list):
-#     tmp = hash_thre_list_split_dic.get(hash_one, None)
-#     if tmp != None:
-#         hash_data2[hash_one] = hash_data.pop(hash_one)
-# del hash_data, hash_data1
+hash_thre_list_split_dic = {}
+for hash_one in hash_thre_list_split:
+    hash_thre_list_split_dic[hash_one] = 0
+hash_data2 = {}
+for hash_one in tqdm(hash_thre_list):
+    tmp = hash_thre_list_split_dic.get(hash_one, None)
+    if tmp != None:
+        hash_data2[hash_one] = hash_data1.pop(hash_one)
+del hash_data1
 # hash_data = hash_data2
+
 for hash_one in tqdm(hash_thre_list_split):
-    hash_data_one = hash_data[hash_one]
+    hash_data_one = hash_data2[hash_one]
     random.shuffle(hash_data_one)
     hash_data_two = []
     for data_tmp in hash_data_one:
@@ -113,7 +121,6 @@ for hash_one in tqdm(hash_thre_list_split):
         hash_data_two.append(data_tmp)
     with torch.no_grad():
         topics, probs = topic_model.fit_transform(hash_data_two)
-    print(4)
     hash_data_one_group = {'hashtag':hash_one}
     for idx in range(len(hash_data_one)):
         if topics[idx] + 1 in hash_data_one_group.keys():
@@ -126,6 +133,7 @@ for hash_one in tqdm(hash_thre_list_split):
     hash_data_group.append(hash_data_one_group)
     if len(hash_data_group) > 1000:
         write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
+        del hash_data_group,hash_data_one_group,hash_data_one,hash_data_two,topics, probs
         hash_data_group = []
 
 
