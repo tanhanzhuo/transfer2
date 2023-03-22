@@ -66,6 +66,7 @@ with open(args.file, 'r', encoding='utf-8') as f:
             hash_data[cur_hash] = []
             continue
         hash_data[cur_hash].append(line)
+        # hash_data[cur_hash].append('')
 hash_thre_list = list(hash_data.keys())
 
 # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
@@ -100,11 +101,11 @@ for hash_one in tqdm(hash_thre_list):
         hash_data2[hash_one] = hash_data.pop(hash_one)
 del hash_data, hash_data1
 hash_data = hash_data2
-
+print(1)
 for hash_one in tqdm(hash_thre_list_split):
     hash_data_one = hash_data[hash_one]
     random.shuffle(hash_data_one)
-
+    print(2)
     hash_data_two = []
     for data_tmp in hash_data_one:
         data_tmp = data_tmp.replace('@USER','').replace('https','')
@@ -112,14 +113,17 @@ for hash_one in tqdm(hash_thre_list_split):
         for hash_two in hash_tmp:
             data_tmp = data_tmp.replace(hash_two, '')
         hash_data_two.append(data_tmp)
+    print(3)
     with torch.no_grad():
         topics, probs = topic_model.fit_transform(hash_data_two)
+    print(4)
     hash_data_one_group = {'hashtag':hash_one}
     for idx in range(len(hash_data_one)):
         if topics[idx] + 1 in hash_data_one_group.keys():
             hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
         else:
             hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
+    print(5)
     del topic_model
     # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
     topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
