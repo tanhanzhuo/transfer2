@@ -92,6 +92,10 @@ for hash_one in tqdm(hash_thre_list):
         hash_thre_list_refine.append(hash_one)
 hash_thre_list = hash_thre_list_refine
 
+with open('hash_thre_list.txt', 'w', encoding='utf-8') as f:
+    for hash_one in hash_thre_list:
+        f.write(hash_one+'\n')
+
 split_num = int(len(hash_thre_list)/args.split)
 split_s = split_num * args.split_cur
 if args.split_cur == args.split -1:
