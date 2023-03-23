@@ -69,10 +69,7 @@ with open(args.file, 'r', encoding='utf-8') as f:
         # hash_data[cur_hash].append('')
 hash_thre_list = list(hash_data.keys())
 
-# embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
-embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
-# embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
-topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
+
 
 # hash_data1 = {}
 # for hash_one in tqdm(hash_thre_list):
@@ -134,6 +131,10 @@ del hash_data
 hash_data = hash_data2
 
 for hash_one in tqdm(hash_thre_list_split):
+    # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
+    embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
+    # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
+    topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
     hash_data_one = hash_data2[hash_one]
     random.shuffle(hash_data_one)
     hash_data_two = []
@@ -151,9 +152,9 @@ for hash_one in tqdm(hash_thre_list_split):
             hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
         else:
             hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
-    del topic_model
+    del embedding_model, topic_model
     # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
-    topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
+    # topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
     hash_data_group.append(hash_data_one_group)
     if len(hash_data_group) > 1000:
         write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
