@@ -1,7 +1,7 @@
 import argparse
 import json
 import random
-
+import copy
 import torch
 from tqdm import tqdm,trange
 import numpy as np
@@ -105,9 +105,9 @@ hash_data2 = {}
 for hash_one in tqdm(hash_thre_list):
     tmp = hash_thre_list_split_dic.get(hash_one, None)
     if tmp != None:
-        hash_data2[hash_one] = hash_data1.pop(hash_one)
+        hash_data2[hash_one] = copy.deepcopy(hash_data1.pop(hash_one))
 del hash_data1
-hash_data = hash_data2
+# hash_data = hash_data2
 
 for hash_one in tqdm(hash_thre_list_split):
     hash_data_one = hash_data2[hash_one]
