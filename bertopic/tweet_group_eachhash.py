@@ -12,7 +12,7 @@ from transformers.pipelines import pipeline
 from sentence_transformers import SentenceTransformer
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
+parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group.txt',type=str)
 parser.add_argument('--num',default=100,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_subgroup',type=str)
 parser.add_argument('--split',default=4,type=int)
@@ -98,19 +98,19 @@ else:
 hash_data_group = []
 hash_thre_list_split = hash_thre_list[split_s:split_e]
 
-# hash_thre_list_split_dic = {}
-# for hash_one in hash_thre_list_split:
-#     hash_thre_list_split_dic[hash_one] = 0
-# hash_data2 = {}
-# for hash_one in tqdm(hash_thre_list):
-#     tmp = hash_thre_list_split_dic.get(hash_one, None)
-#     if tmp != None:
-#         hash_data2[hash_one] = hash_data1.pop(hash_one)
-# del hash_data1
-# hash_data = hash_data2
+hash_thre_list_split_dic = {}
+for hash_one in hash_thre_list_split:
+    hash_thre_list_split_dic[hash_one] = 0
+hash_data2 = {}
+for hash_one in tqdm(hash_thre_list):
+    tmp = hash_thre_list_split_dic.get(hash_one, None)
+    if tmp != None:
+        hash_data2[hash_one] = hash_data1.pop(hash_one)
+del hash_data1
+hash_data = hash_data2
 
 for hash_one in tqdm(hash_thre_list_split):
-    hash_data_one = hash_data1[hash_one]
+    hash_data_one = hash_data2[hash_one]
     random.shuffle(hash_data_one)
     hash_data_two = []
     for data_tmp in hash_data_one:
