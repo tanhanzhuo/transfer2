@@ -119,8 +119,8 @@ for hash_one in tqdm(hash_thre_list_split):
         for hash_two in hash_tmp:
             data_tmp = data_tmp.replace(hash_two, '')
         hash_data_two.append(data_tmp)
-    with torch.no_grad():
-        topics, probs = topic_model.fit_transform(hash_data_two)
+    print(hash_data_two)
+    topics, probs = topic_model.fit_transform(hash_data_two)
     hash_data_one_group = {'hashtag':hash_one}
     for idx in range(len(hash_data_one)):
         if topics[idx] + 1 in hash_data_one_group.keys():
