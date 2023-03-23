@@ -82,12 +82,18 @@ topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 # hash_data = hash_data1
 # hash_thre_list = list(hash_data.keys())
 
-hash_data1 = {}
+# hash_data1 = {}
+# for hash_one in tqdm(hash_thre_list):
+#     if len(hash_data[hash_one]) >= args.num:
+#         hash_data1[hash_one] = hash_data.pop(hash_one)
+# del hash_data
+# hash_thre_list = list(hash_data1.keys())
+
+hash_thre_list_refine = []
 for hash_one in tqdm(hash_thre_list):
     if len(hash_data[hash_one]) >= args.num:
-        hash_data1[hash_one] = hash_data.pop(hash_one)
-del hash_data
-hash_thre_list = list(hash_data1.keys())
+        hash_thre_list_refine.append(hash_one)
+hash_thre_list = hash_thre_list_refine
 
 split_num = int(len(hash_thre_list)/args.split)
 split_s = split_num * args.split_cur
@@ -105,8 +111,8 @@ hash_data2 = {}
 for hash_one in tqdm(hash_thre_list):
     tmp = hash_thre_list_split_dic.get(hash_one, None)
     if tmp != None:
-        hash_data2[hash_one] = copy.deepcopy(hash_data1.pop(hash_one))
-del hash_data1
+        hash_data2[hash_one] = hash_data.pop(hash_one)
+del hash_data
 # hash_data = hash_data2
 
 for hash_one in tqdm(hash_thre_list_split):
