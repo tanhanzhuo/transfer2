@@ -108,30 +108,30 @@ hash_thre_list_split_dic = {}
 for hash_one in hash_thre_list_split:
     hash_thre_list_split_dic[hash_one] = 0
 
-del hash_data
-hash_data2 = {}
-with open(args.file, 'r', encoding='utf-8') as f:
-    cur_hash = ''
-    # lines = f.readlines()
-    for line in tqdm(f):
-        if line[:10] == 'TANS_HASH:':
-            cur_hash = line.strip().split(':')[-1]
-            tmp = hash_thre_list_split_dic.get(cur_hash, None)
-            if tmp == 0:
-                hash_data2[cur_hash] = []
-            else:
-                cur_hash = ''
-            continue
-        if cur_hash != '':
-            hash_data2[cur_hash].append(line)
-
-# hash_data2 = {}
-# for hash_one in tqdm(hash_thre_list):
-#     tmp = hash_thre_list_split_dic.get(hash_one, None)
-#     if tmp != None:
-#         hash_data2[hash_one] = hash_data.pop(hash_one)
 # del hash_data
-# hash_data = hash_data2
+# hash_data2 = {}
+# with open(args.file, 'r', encoding='utf-8') as f:
+#     cur_hash = ''
+#     # lines = f.readlines()
+#     for line in tqdm(f):
+#         if line[:10] == 'TANS_HASH:':
+#             cur_hash = line.strip().split(':')[-1]
+#             tmp = hash_thre_list_split_dic.get(cur_hash, None)
+#             if tmp == 0:
+#                 hash_data2[cur_hash] = []
+#             else:
+#                 cur_hash = ''
+#             continue
+#         if cur_hash != '':
+#             hash_data2[cur_hash].append(line)
+
+hash_data2 = {}
+for hash_one in tqdm(hash_thre_list):
+    tmp = hash_thre_list_split_dic.get(hash_one, None)
+    if tmp != None:
+        hash_data2[hash_one] = hash_data.pop(hash_one)
+del hash_data
+hash_data = hash_data2
 
 for hash_one in tqdm(hash_thre_list_split):
     hash_data_one = hash_data2[hash_one]
@@ -144,7 +144,7 @@ for hash_one in tqdm(hash_thre_list_split):
             data_tmp = data_tmp.replace(hash_two, '')
         hash_data_two.append(data_tmp)
     print(hash_data_two)
-    topics, probs = topic_model.fit_transform(hash_data_one)
+    topics, probs = topic_model.fit_transform(hash_data_two)
     hash_data_one_group = {'hashtag':hash_one}
     for idx in range(len(hash_data_one)):
         if topics[idx] + 1 in hash_data_one_group.keys():
