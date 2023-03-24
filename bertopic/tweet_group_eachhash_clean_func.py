@@ -114,9 +114,9 @@ def group_one(hash_data_one, hash_one):
         hash_data_one_group['text'][topics[idx] + 1].append(hash_data_one[idx])
     for idx in range(num_topic):
         hash_data_one_group['emb'].append(topic_model.topic_embeddings_[idx])
+    print(num_topic, len(topic_model.topic_embeddings_))
     return hash_data_one_group
-    print(num_topic,len(topic_model.topic_embeddings_))
-    return hash_data_one_group
+
     # del embedding_model, topic_model
 
 def main(args, hash_data, hash_thre_list_split):
