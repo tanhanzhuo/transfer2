@@ -87,7 +87,7 @@ def read_data(args):
 def main(args):
     hash_data, hash_thre_list_split = read_data(args)
 
-    hash_thre_list_split = hash_thre_list_split[:201]
+    hash_thre_list_split = hash_thre_list_split[:101]
 
     for hash_one in tqdm(hash_thre_list_split):
         # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
@@ -115,7 +115,7 @@ def main(args):
         # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
         # topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
         hash_data_group.append(hash_data_one_group)
-        if len(hash_data_group) > 100:
+        if len(hash_data_group) > 20:
             write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
             del hash_data_group,hash_data_one_group,hash_data_one,hash_data_two,topics, probs
             hash_data_group = []
@@ -123,4 +123,4 @@ def main(args):
     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
 
 if __name__ == '__main__':
-    main()
+    main(args)
