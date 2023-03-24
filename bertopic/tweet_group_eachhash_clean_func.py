@@ -115,7 +115,7 @@ def group_one(hash_data_one, hash_one):
     for idx in range(num_topic):
         hash_data_one_group['emb'].append(topic_model.topic_embeddings_[idx])
     return hash_data_one_group
-
+    print(num_topic,len(topic_model.topic_embeddings_))
     return hash_data_one_group
     # del embedding_model, topic_model
 
