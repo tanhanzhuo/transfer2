@@ -11,6 +11,7 @@ from bertopic import BERTopic
 from transformers.pipelines import pipeline
 from sentence_transformers import SentenceTransformer
 # from memory_profiler import profile
+import gc
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
@@ -104,7 +105,7 @@ def group_one(hash_data_one, hash_one):
     topics_c = topics[:]
     topic_embeddings_ = topic_model.topic_embeddings_[:]
     del topics, probs, embedding_model, topic_model
-
+    gc.collect()
 
     text_list = []
     for i in range(num_topic):
@@ -130,6 +131,7 @@ def main(args, hash_data, hash_thre_list_split):
         if len(hash_data_group) > 1000:
             write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
             del hash_data_group,hash_data_one_group,hash_data_one
+            gc.collect()
             hash_data_group = []
 
     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
