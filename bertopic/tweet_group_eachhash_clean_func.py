@@ -13,7 +13,7 @@ from sentence_transformers import SentenceTransformer
 from memory_profiler import profile
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group.txt',type=str)
+parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
 parser.add_argument('--num',default=100,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_subgroup',type=str)
 parser.add_argument('--split',default=4,type=int)
