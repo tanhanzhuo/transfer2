@@ -106,8 +106,10 @@ def group_one(hash_data_one, hash_one):
     #         hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
     #     else:
     #         hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
-
-    hash_data_one_group = {'hashtag': hash_one, 'text':[[]]*num_topic, 'emb':[]}
+    text_list = []
+    for i in range(num_topic):
+        text_list.append([])
+    hash_data_one_group = {'hashtag': hash_one, 'text':text_list, 'emb':[]}
     for idx in range(len(hash_data_one)):
         hash_data_one_group['text'][topics[idx] + 1].append(hash_data_one[idx])
     for idx in range(num_topic):
