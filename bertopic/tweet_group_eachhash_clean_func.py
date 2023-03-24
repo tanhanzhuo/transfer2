@@ -84,8 +84,8 @@ def read_data(args):
     return hash_data, hash_thre_list_split
 
 @profile
-def main(args):
-    hash_data, hash_thre_list_split = read_data(args)
+def main(args, hash_data, hash_thre_list_split):
+    # hash_data, hash_thre_list_split = read_data(args)
 
     hash_thre_list_split = hash_thre_list_split[:101]
 
@@ -123,4 +123,5 @@ def main(args):
     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
 
 if __name__ == '__main__':
-    main(args)
+    hash_data, hash_thre_list_split = read_data(args)
+    main(args, hash_data, hash_thre_list_split)
