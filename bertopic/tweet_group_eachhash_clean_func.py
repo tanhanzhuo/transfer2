@@ -100,21 +100,21 @@ def group_one(hash_data_one, hash_one):
     # print(hash_data_two)
     topics, probs = topic_model.fit_transform(hash_data_two)
     num_topic = max(topics) + 2
-        # hash_data_one_group = {'hashtag': hash_one, 'text':[[]]*num_topic, 'emb':[]}
-    # for idx in range(len(hash_data_one)):
-    #     if topics[idx] + 1 in hash_data_one_group.keys():
-    #         hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
-    #     else:
-    #         hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
+
+    topics_c = topics[:]
+    topic_embeddings_ = topic_model.topic_embeddings_[:]
+    del topics, probs, embedding_model, topic_model
+
+
     text_list = []
     for i in range(num_topic):
         text_list.append([])
     hash_data_one_group = {'hashtag': hash_one, 'text':text_list, 'emb':[]}
     for idx in range(len(hash_data_one)):
-        hash_data_one_group['text'][topics[idx] + 1].append(hash_data_one[idx])
-    if num_topic == len(topic_model.topic_embeddings_):
+        hash_data_one_group['text'][topics_c[idx] + 1].append(hash_data_one[idx])
+    if num_topic == len(topic_embeddings_):
         for idx in range(num_topic):
-            hash_data_one_group['emb'].append(list(topic_model.topic_embeddings_[idx]))
+            hash_data_one_group['emb'].append(list(topic_embeddings_[idx]))
     return hash_data_one_group
 
     # del embedding_model, topic_model
@@ -126,11 +126,11 @@ def main(args, hash_data, hash_thre_list_split):
         random.shuffle(hash_data_one)
         hash_data_one_group = group_one(hash_data_one, hash_one)
 
-        # hash_data_group.append(hash_data_one_group)
-        # if len(hash_data_group) > 1000:
-        #     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
-        #     del hash_data_group,hash_data_one_group,hash_data_one
-        #     hash_data_group = []
+        hash_data_group.append(hash_data_one_group)
+        if len(hash_data_group) > 1000:
+            write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
+            del hash_data_group,hash_data_one_group,hash_data_one
+            hash_data_group = []
 
     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
 
