@@ -99,12 +99,21 @@ def group_one(hash_data_one, hash_one):
         hash_data_two.append(data_tmp)
     # print(hash_data_two)
     topics, probs = topic_model.fit_transform(hash_data_two)
-    hash_data_one_group = {'hashtag': hash_one}
+    num_topic = max(topics) + 2
+    # hash_data_one_group = {'hashtag': hash_one, 'text':[[]]*num_topic, 'emb':[]}
+    # for idx in range(len(hash_data_one)):
+    #     if topics[idx] + 1 in hash_data_one_group.keys():
+    #         hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
+    #     else:
+    #         hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
+
+    hash_data_one_group = {'hashtag': hash_one, 'text':[[]]*num_topic, 'emb':[]}
     for idx in range(len(hash_data_one)):
-        if topics[idx] + 1 in hash_data_one_group.keys():
-            hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
-        else:
-            hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
+        hash_data_one_group['text'][topics[idx] + 1].append(hash_data_one[idx])
+    for idx in range(num_topic):
+        hash_data_one_group['emb'].append(topic_model.topic_embeddings_[idx])
+    return hash_data_one_group
+
     return hash_data_one_group
     # del embedding_model, topic_model
 
