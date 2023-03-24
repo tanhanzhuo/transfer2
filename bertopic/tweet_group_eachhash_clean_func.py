@@ -60,7 +60,6 @@ def read_data(args):
         split_e = len(hash_thre_list)
     else:
         split_e = split_num * (args.split_cur + 1)
-    hash_data_group = []
     hash_thre_list_split = hash_thre_list[split_s:split_e]
 
     hash_thre_list_split_dic = {}
@@ -88,7 +87,7 @@ def main(args, hash_data, hash_thre_list_split):
     # hash_data, hash_thre_list_split = read_data(args)
 
     hash_thre_list_split = hash_thre_list_split[:101]
-
+    hash_data_group = []
     for hash_one in tqdm(hash_thre_list_split):
         # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
         embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
