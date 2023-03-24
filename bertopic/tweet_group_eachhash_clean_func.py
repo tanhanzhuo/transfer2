@@ -14,6 +14,7 @@ from memory_profiler import profile
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
+parser.add_argument('--hash_list',default='hash_thre_list.txt',type=str)
 parser.add_argument('--num',default=100,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_subgroup',type=str)
 parser.add_argument('--split',default=4,type=int)
@@ -50,7 +51,7 @@ def write_json(fileName, data):
 
 def read_data(args):
     hash_thre_list = []
-    with open('hash_thre_list.txt', 'r', encoding='utf-8') as f:
+    with open(args.hash_list, 'r', encoding='utf-8') as f:
         for line in f:
             hash_thre_list.append(line.strip())
 
