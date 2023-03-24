@@ -82,41 +82,43 @@ def read_data(args):
                 hash_data[cur_hash].append(line)
     return hash_data, hash_thre_list_split
 
-@profile
-def main(args, hash_data, hash_thre_list_split):
-    # hash_data, hash_thre_list_split = read_data(args)
+def group_one(hash_data_one):
+    # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
+    embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
+    # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
+    topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
 
-    hash_thre_list_split = hash_thre_list_split[:101]
+    hash_data_two = []
+    for data_tmp in hash_data_one:
+        data_tmp = data_tmp.replace('@USER', '').replace('https', '')
+        hash_tmp = process(data_tmp)
+        for hash_two in hash_tmp:
+            data_tmp = data_tmp.replace(hash_two, '')
+        hash_data_two.append(data_tmp)
+    # print(hash_data_two)
+    topics, probs = topic_model.fit_transform(hash_data_two)
+    hash_data_one_group = {}
+    for idx in range(len(hash_data_one)):
+        if topics[idx] + 1 in hash_data_one_group.keys():
+            hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
+        else:
+            hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
+    return hash_data_one_group
+    # del embedding_model, topic_model
+
+def main(args, hash_data, hash_thre_list_split):
     hash_data_group = []
     for hash_one in tqdm(hash_thre_list_split):
-        # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
-        embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
-        # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
-        topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
-        hash_data_two = []
-        for data_tmp in hash_data_one:
-            data_tmp = data_tmp.replace('@USER','').replace('https','')
-            hash_tmp = process(data_tmp)
-            for hash_two in hash_tmp:
-                data_tmp = data_tmp.replace(hash_two, '')
-            hash_data_two.append(data_tmp)
-        # print(hash_data_two)
-        topics, probs = topic_model.fit_transform(hash_data_two)
-        hash_data_one_group = {'hashtag':hash_one}
-        for idx in range(len(hash_data_one)):
-            if topics[idx] + 1 in hash_data_one_group.keys():
-                hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
-            else:
-                hash_data_one_group[topics[idx] + 1] = [hash_data_one[idx]]
-        del embedding_model, topic_model
+        hash_data_one_group = group_one(hash_data_one)
+        hash_data_one_group['hashtag'] = hash_one
         # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
         # topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
         hash_data_group.append(hash_data_one_group)
-        if len(hash_data_group) > 20:
+        if len(hash_data_group) > 1000:
             write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
-            del hash_data_group,hash_data_one_group,hash_data_one,hash_data_two,topics, probs
+            del hash_data_group,hash_data_one_group,hash_data_one
             hash_data_group = []
 
     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
