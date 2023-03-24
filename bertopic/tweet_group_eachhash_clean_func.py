@@ -124,16 +124,14 @@ def main(args, hash_data, hash_thre_list_split):
     for hash_one in tqdm(hash_thre_list_split):
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
-        hash_data_one_group = 'bad'
-        while hash_data_one_group == 'bad':
-            hash_data_one_group = group_one(hash_data_one, hash_one)
+        hash_data_one_group = group_one(hash_data_one, hash_one)
         # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
         # topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
         hash_data_group.append(hash_data_one_group)
-        if len(hash_data_group) > 1000:
-            write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
-            del hash_data_group,hash_data_one_group,hash_data_one
-            hash_data_group = []
+        # if len(hash_data_group) > 1000:
+        #     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
+        #     del hash_data_group,hash_data_one_group,hash_data_one
+        #     hash_data_group = []
 
     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
 
