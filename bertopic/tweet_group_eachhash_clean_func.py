@@ -100,12 +100,8 @@ def group_one(hash_data_one, hash_one):
     # print(hash_data_two)
     topics, probs = topic_model.fit_transform(hash_data_two)
     num_topic = max(topics) + 2
-    while( num_topic != len(topic_model.topic_embeddings_) ):
-        del embedding_model, topic_model
-        embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
-        topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
-        topics, probs = topic_model.fit_transform(hash_data_two)
-        num_topic = max(topics) + 2
+    if num_topic != len(topic_model.topic_embeddings_):
+        return 'bad'
         # hash_data_one_group = {'hashtag': hash_one, 'text':[[]]*num_topic, 'emb':[]}
     # for idx in range(len(hash_data_one)):
     #     if topics[idx] + 1 in hash_data_one_group.keys():
@@ -129,7 +125,9 @@ def main(args, hash_data, hash_thre_list_split):
     for hash_one in tqdm(hash_thre_list_split):
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
-        hash_data_one_group = group_one(hash_data_one, hash_one)
+        hash_data_one_group = 'bad'
+        while hash_data_one_group == 'bad':
+            hash_data_one_group = group_one(hash_data_one, hash_one)
         # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
         # topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
         hash_data_group.append(hash_data_one_group)
