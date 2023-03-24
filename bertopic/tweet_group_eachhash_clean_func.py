@@ -79,10 +79,10 @@ def read_data(args):
                     cur_hash = ''
                 continue
             if cur_hash != '':
-                hash_data[cur_hash].append(line)
+                hash_data[cur_hash].append(line.strip())
     return hash_data, hash_thre_list_split
 
-def group_one(hash_data_one):
+def group_one(hash_data_one, hash_one):
     # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
     embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
     # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
@@ -93,11 +93,12 @@ def group_one(hash_data_one):
         data_tmp = data_tmp.replace('@USER', '').replace('https', '')
         hash_tmp = process(data_tmp)
         for hash_two in hash_tmp:
-            data_tmp = data_tmp.replace(hash_two, '')
+            if hash_two.lower() == hash_one:
+                data_tmp = data_tmp.replace(hash_two, '')
         hash_data_two.append(data_tmp)
     # print(hash_data_two)
     topics, probs = topic_model.fit_transform(hash_data_two)
-    hash_data_one_group = {}
+    hash_data_one_group = {'hashtag': hash_one}
     for idx in range(len(hash_data_one)):
         if topics[idx] + 1 in hash_data_one_group.keys():
             hash_data_one_group[topics[idx] + 1].append(hash_data_one[idx])
@@ -111,8 +112,7 @@ def main(args, hash_data, hash_thre_list_split):
     for hash_one in tqdm(hash_thre_list_split):
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
-        hash_data_one_group = group_one(hash_data_one)
-        hash_data_one_group['hashtag'] = hash_one
+        hash_data_one_group = group_one(hash_data_one, hash_one)
         # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
         # topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
         hash_data_group.append(hash_data_one_group)
