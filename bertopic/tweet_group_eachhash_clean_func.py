@@ -12,6 +12,7 @@ from transformers.pipelines import pipeline
 from sentence_transformers import SentenceTransformer
 # from memory_profiler import profile
 import gc
+from bertopic.dimensionality import BaseDimensionalityReduction
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
@@ -88,7 +89,8 @@ def group_one(hash_data_one, hash_one):
     # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
     embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
     # embedding_model = SentenceTransformer("all-MiniLM-L6-v2").cuda()
-    topic_model = BERTopic(embedding_model=embedding_model, verbose=False)
+    empty_dimensionality_model = BaseDimensionalityReduction()
+    topic_model = BERTopic(embedding_model=embedding_model, verbose=False, umap_model=empty_dimensionality_model)
 
     hash_data_two = []
     for data_tmp in hash_data_one:
@@ -104,8 +106,8 @@ def group_one(hash_data_one, hash_one):
 
     topics_c = topics[:]
     topic_embeddings_ = topic_model.topic_embeddings_[:]
-    del topics, probs, embedding_model, topic_model
-    gc.collect()
+    # del topics, probs, embedding_model, topic_model
+    # gc.collect()
 
     text_list = []
     for i in range(num_topic):
@@ -130,8 +132,8 @@ def main(args, hash_data, hash_thre_list_split):
         hash_data_group.append(hash_data_one_group)
         if len(hash_data_group) > 1000:
             write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
-            del hash_data_group,hash_data_one_group,hash_data_one
-            gc.collect()
+            # del hash_data_group,hash_data_one_group,hash_data_one
+            # gc.collect()
             hash_data_group = []
 
     write_json(args.name + '_' + str(args.num) + '_' + str(args.split_cur), hash_data_group)
