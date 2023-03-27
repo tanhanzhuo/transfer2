@@ -119,6 +119,13 @@ def group_one(hash_data_one, hash_one):
     if num_topic == len(topic_embeddings_):
         for idx in range(num_topic):
             hash_data_one_group['emb'].append(list(topic_embeddings_[idx]))
+    else:
+        if len(hash_data_one_group['text'][0]) == 0:
+            hash_data_one_group['text'].pop(0)
+        else:
+            print('error!!!!,emb:{},topic:{}'.format(len(topic_embeddings_),num_topic))
+        for idx in range(num_topic):
+            hash_data_one_group['emb'].append(list(topic_embeddings_[idx]))
     return hash_data_one_group
 
     # del embedding_model, topic_model
