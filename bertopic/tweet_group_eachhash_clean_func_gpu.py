@@ -22,6 +22,8 @@ parser.add_argument('--num',default=100,type=int)
 parser.add_argument('--name',default='tweet_hash_clean_group_subgroup',type=str)
 parser.add_argument('--split',default=4,type=int)
 parser.add_argument('--split_cur',default=0,type=int)
+parser.add_argument('--emb_model',default='all-mpnet-base-v2',type=str)
+
 
 args = parser.parse_args()
 
@@ -86,9 +88,9 @@ def read_data(args):
                 hash_data[cur_hash].append(line.strip())
     return hash_data, hash_thre_list_split
 
-def group_one(hash_data_one, hash_one):
+def group_one(hash_data_one, hash_one, args):
     # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
-    embedding_model = SentenceTransformer("all-mpnet-base-v2", device='cuda')
+    embedding_model = SentenceTransformer(args.emb_model, device='cuda')
     umap_model = UMAP(n_components=5, n_neighbors=15, min_dist=0.0)
     hdbscan_model = HDBSCAN(min_samples=10, gen_min_span_tree=True, prediction_data=True)
     topic_model = BERTopic(embedding_model=embedding_model, verbose=False, umap_model=umap_model, hdbscan_model=hdbscan_model)
@@ -124,7 +126,7 @@ def group_one(hash_data_one, hash_one):
             hash_data_one_group['text'].pop(0)
         else:
             print('error!!!!,emb:{},topic:{}'.format(len(topic_embeddings_),num_topic))
-        for idx in range(num_topic):
+        for idx in range(topic_embeddings_):
             hash_data_one_group['emb'].append(list(topic_embeddings_[idx]))
     return hash_data_one_group
 
@@ -135,7 +137,7 @@ def main(args, hash_data, hash_thre_list_split):
     for hash_one in tqdm(hash_thre_list_split):
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
-        hash_data_one_group = group_one(hash_data_one, hash_one)
+        hash_data_one_group = group_one(hash_data_one, hash_one, args)
 
         hash_data_group.append(hash_data_one_group)
         if len(hash_data_group) > 1000:
