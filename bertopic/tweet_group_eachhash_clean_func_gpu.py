@@ -126,7 +126,7 @@ def group_one(hash_data_one, hash_one, args):
             hash_data_one_group['text'].pop(0)
         else:
             print('error!!!!,emb:{},topic:{}'.format(len(topic_embeddings_),num_topic))
-        for idx in range(topic_embeddings_):
+        for idx in range(len(topic_embeddings_)):
             hash_data_one_group['emb'].append(list(topic_embeddings_[idx]))
     return hash_data_one_group
 
