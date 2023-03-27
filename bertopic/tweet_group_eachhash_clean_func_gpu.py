@@ -2,7 +2,7 @@ import argparse
 import json
 import random
 import copy
-import torch
+# import torch
 from tqdm import tqdm,trange
 import numpy as np
 import re
