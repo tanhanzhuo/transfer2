@@ -92,7 +92,7 @@ def group_one(hash_data_one, hash_one, args):
     # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
     embedding_model = SentenceTransformer(args.emb_model, device='cuda')
     umap_model = UMAP(n_components=5, n_neighbors=15, min_dist=0.0, metric='cosine')
-    hdbscan_model = HDBSCAN(min_samples=10, gen_min_span_tree=True, prediction_data=True)
+    hdbscan_model = HDBSCAN(min_samples=10, gen_min_span_tree=True, prediction_data=True, metric='cosine')
     topic_model = BERTopic(embedding_model=embedding_model, verbose=False, umap_model=umap_model, hdbscan_model=hdbscan_model)
 
     hash_data_two = []
