@@ -357,7 +357,7 @@ class BERTopic:
         umap_embeddings = normalize(umap_embeddings)
         # Cluster reduced embeddings
         documents, probabilities = self._cluster_embeddings(umap_embeddings, documents, y=y)
-
+        print(umap_embeddings.shape)
         # Sort and Map Topic IDs by their frequency
         if not self.nr_topics:
             documents = self._sort_mappings_by_frequency(documents)
