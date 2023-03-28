@@ -16,6 +16,7 @@ from sentence_transformers import SentenceTransformer
 import gc
 from cuml.manifold import UMAP
 from cuml.cluster import HDBSCAN
+from bertopic.dimensionality import BaseDimensionalityReduction
 # from hdbscan import HDBSCAN
 parser = argparse.ArgumentParser()
 parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
@@ -25,7 +26,7 @@ parser.add_argument('--name',default='tweet_hash_clean_group_subgroup',type=str)
 parser.add_argument('--split',default=4,type=int)
 parser.add_argument('--split_cur',default=0,type=int)
 parser.add_argument('--emb_model',default='all-mpnet-base-v2',type=str)
-
+parser.add_argument('--reduce_model',default='umap',type=str)
 
 args = parser.parse_args()
 
@@ -93,7 +94,10 @@ def read_data(args):
 def group_one(hash_data_one, hash_one, args):
     # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
     embedding_model = SentenceTransformer(args.emb_model, device='cuda')
-    umap_model = UMAP(n_components=5, n_neighbors=15, min_dist=0.0)
+    if args.reduce_model == 'umap':
+        umap_model = UMAP(n_components=5, n_neighbors=15, min_dist=0.0)
+    else:
+        umap_model = BaseDimensionalityReduction()
     hdbscan_model = HDBSCAN(min_samples=10, gen_min_span_tree=True, prediction_data=True)
     # hdbscan_model = HDBSCAN(min_cluster_size=10, metric='cosine', cluster_selection_method='eom',
     #                         prediction_data=True)
@@ -108,31 +112,18 @@ def group_one(hash_data_one, hash_one, args):
                 data_tmp = data_tmp.replace(hash_two, '')
         hash_data_two.append(data_tmp)
     # print(hash_data_two)
-    topics, probs = topic_model.fit_transform(hash_data_two)
-
-    num_topic = max(topics) + 2
-
-    topics_c = topics[:]
-    topic_embeddings_ = topic_model.topic_embeddings_[:]
-    # del topics, probs, embedding_model, topic_model
-    # gc.collect()
-
-    text_list = []
-    for i in range(num_topic):
-        text_list.append([])
-    hash_data_one_group = {'hashtag': hash_one, 'text':text_list, 'emb':[]}
-    for idx in range(len(hash_data_one)):
-        hash_data_one_group['text'][topics_c[idx] + 1].append(hash_data_one[idx])
-    if num_topic == len(topic_embeddings_):
-        for idx in range(num_topic):
-            hash_data_one_group['emb'].append(list(topic_embeddings_[idx]))
+    topics, probs, embs = topic_model.fit_transform(hash_data_two)
+    if min(topics) == -1:
+        off_set = 1
     else:
-        if len(hash_data_one_group['text'][0]) == 0:
-            hash_data_one_group['text'].pop(0)
-        else:
-            print('error!!!!,emb:{},topic:{}'.format(len(topic_embeddings_),num_topic))
-        for idx in range(len(topic_embeddings_)):
-            hash_data_one_group['emb'].append(list(topic_embeddings_[idx]))
+        off_set = 0
+    text_list = []
+    for i in range(max(topics)+off_set+1):
+        text_list.append([])
+    hash_data_one_group = {'hashtag': hash_one, 'text':text_list, 'emb':embs}
+    for idx in range(len(hash_data_one)):
+        hash_data_one_group['text'][topics[idx] + off_set].append(hash_data_one[idx])
+
     return hash_data_one_group
 
     # del embedding_model, topic_model
