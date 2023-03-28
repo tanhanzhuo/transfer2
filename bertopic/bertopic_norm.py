@@ -7,7 +7,7 @@ try:
     yaml._warnings_enabled["YAMLLoadWarning"] = False
 except (KeyError, AttributeError, TypeError) as e:
     pass
-
+from cuml.preprocessing import normalize
 import re
 import math
 import joblib
@@ -349,12 +349,12 @@ class BERTopic:
             if self.embedding_model is not None:
                 self.embedding_model = select_backend(self.embedding_model,
                                                       language=self.language)
-
+        embeddings = normalize(embeddings)
         # Reduce dimensionality
         if self.seed_topic_list is not None and self.embedding_model is not None:
             y, embeddings = self._guided_topic_modeling(embeddings)
         umap_embeddings = self._reduce_dimensionality(embeddings, y)
-
+        umap_embeddings = normalize(umap_embeddings)
         # Cluster reduced embeddings
         documents, probabilities = self._cluster_embeddings(umap_embeddings, documents, y=y)
 
