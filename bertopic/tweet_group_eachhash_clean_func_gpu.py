@@ -8,7 +8,8 @@ from tqdm import tqdm,trange
 import numpy as np
 import re
 import string
-from bertopic import BERTopic
+# from bertopic import BERTopic
+from bertopic_norm import BERTopic
 from transformers.pipelines import pipeline
 from sentence_transformers import SentenceTransformer
 # from memory_profiler import profile
