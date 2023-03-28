@@ -376,7 +376,20 @@ class BERTopic:
         self.probabilities_ = self._map_probabilities(probabilities, original_topics=True)
         predictions = documents.Topic.to_list()
 
-        return predictions, self.probabilities_
+        if min(predictions) == -1:
+            off_set = 1
+        else:
+            off_set = 0
+        emb_group = []
+        for idx in range(max(predictions)+off_set+1):
+            emb_group.append([])
+        for idx in range(len(predictions)):
+            emb_group[predictions[idx] + off_set].append(umap_embeddings[idx])
+        emb_cen = []
+        for idx in range(max(predictions) + off_set + 1):
+            center = np.mean(np.array(emb_group[idx]), axis=0)
+            emb_cen.append(list(center))
+        return predictions, self.probabilities_, emb_cen
 
     def transform(self,
                   documents: Union[str, List[str]],
