@@ -13,8 +13,8 @@ from sentence_transformers import SentenceTransformer
 # from memory_profiler import profile
 import gc
 from cuml.manifold import UMAP
-from cuml.cluster import HDBSCAN
-
+# from cuml.cluster import HDBSCAN
+from hdbscan import HDBSCAN
 parser = argparse.ArgumentParser()
 parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group_all.txt',type=str)
 parser.add_argument('--hash_list',default='hash_thre_list.txt',type=str)
@@ -92,7 +92,9 @@ def group_one(hash_data_one, hash_one, args):
     # embedding_model = pipeline("feature-extraction", model="princeton-nlp/sup-simcse-roberta-base", device=0)
     embedding_model = SentenceTransformer(args.emb_model, device='cuda')
     umap_model = UMAP(n_components=5, n_neighbors=15, min_dist=0.0, metric='cosine')
-    hdbscan_model = HDBSCAN(min_samples=10, gen_min_span_tree=True, prediction_data=True, metric='cosine')
+    # hdbscan_model = HDBSCAN(min_samples=10, gen_min_span_tree=True, prediction_data=True, metric='cosine')
+    hdbscan_model = HDBSCAN(min_cluster_size=10, metric='cosine', cluster_selection_method='eom',
+                            prediction_data=True)
     topic_model = BERTopic(embedding_model=embedding_model, verbose=False, umap_model=umap_model, hdbscan_model=hdbscan_model)
 
     hash_data_two = []
