@@ -98,6 +98,7 @@ def group_one(hash_data_one, hash_one, args):
         umap_model = UMAP(n_components=5, n_neighbors=15, min_dist=0.0)
     else:
         umap_model = BaseDimensionalityReduction()
+        print('no')
     hdbscan_model = HDBSCAN(min_samples=10, gen_min_span_tree=True, prediction_data=True)
     # hdbscan_model = HDBSCAN(min_cluster_size=10, metric='cosine', cluster_selection_method='eom',
     #                         prediction_data=True)
