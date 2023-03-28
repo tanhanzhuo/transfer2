@@ -386,7 +386,7 @@ class BERTopic:
         for idx in range(len(predictions)):
             emb_group[predictions[idx] + off_set].append(embeddings[idx])
         emb_cen = []
-        for idx in range(emb_group):
+        for idx in range(len(emb_group)):
             center = np.mean(np.array(emb_group[idx]), axis=0)
             emb_cen.append(list(center))
         return predictions, self.probabilities_, emb_cen
