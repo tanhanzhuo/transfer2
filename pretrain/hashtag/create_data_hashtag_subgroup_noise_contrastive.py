@@ -79,7 +79,7 @@ def cal_sim(hash_data):
                 convert_idx[len(hash_emb) - 1] = [hash_idx, idx_tmp]
     hash_emb = torch.tensor(hash_emb).cuda()
     sim_idx = {}
-    for hash_idx in range(len(hash_emb)):
+    for hash_idx in trange(len(hash_emb)):
         dis = cos_sim(hash_emb[hash_idx:hash_idx+1], hash_emb)
         val, best_idx = dis.topk(30)
         sim_tmp = []
