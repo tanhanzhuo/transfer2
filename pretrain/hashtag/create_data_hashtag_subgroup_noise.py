@@ -68,7 +68,7 @@ for hash_idx in trange(len(hash_data)):
     if args.balance == 0:
         epoch = args.rep
     else:
-        epoch = min(args.rep, int( args.balance*args.rep*1.0/ sum([len(i) for i in hash_data[hash_idx].values()]) ) )
+        epoch = min(args.rep, int( args.balance*args.rep*1.0/ sum([len(i) for i in hash_data[hash_idx]['text']]) ) )
     for tmp in range(epoch):
         hash_data_hash = hash_data[hash_idx]
         hash_data_text = hash_data_hash['text']
