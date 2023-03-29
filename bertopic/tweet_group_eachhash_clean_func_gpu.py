@@ -131,6 +131,8 @@ def group_one(hash_data_one, hash_one, args):
 def main(args, hash_data, hash_thre_list_split):
     hash_data_group = []
     for hash_one in tqdm(hash_thre_list_split):
+        # if hash_one == '#cencem':
+        #     continue
         hash_data_one = hash_data[hash_one]
         random.shuffle(hash_data_one)
         hash_data_one_group = group_one(hash_data_one, hash_one, args)
