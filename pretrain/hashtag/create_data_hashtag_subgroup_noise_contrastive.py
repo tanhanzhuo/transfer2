@@ -126,17 +126,17 @@ def main(args, hash_data, sim_idx):
                     hash_data_one_noise.append(data_tmp)
                     hash_data_one_clean.append(data_tmp_clean)
                 hash_data_group = ''
-                for idx in range(len(hash_data_one_noise)):
+                for idx in range(len(hash_data_one_clean)):
                     if args.sep == 0:
-                        hash_data_group += hash_data_one_noise[idx] + ' '
+                        hash_data_group += hash_data_one_clean[idx] + ' '
                     else:
-                        hash_data_group += hash_data_one_noise[idx] + ' </s> '
+                        hash_data_group += hash_data_one_clean[idx] + ' </s> '
                     if len(hash_data_group) > args.max_len * 0.95:
                         rand_one = random.random()
                         if rand_one > args.ran3:
-                            text2 = ' '.join(random.sample(hash_data_one_clean, args.con_len))
+                            text2 = ' '.join(random.sample(hash_data_one_noise, args.con_len))
                         else:
-                            text2 = ' '.join(random.sample(hash_data_one_clean, 1))
+                            text2 = ' '.join(random.sample(hash_data_one_noise, 1))
 
                         hard_neg_idx = random.sample( sim_idx[str(hash_idx)+':'+str(idx_tmp)] , 1)[0]
                         hash_data_two = hash_data[hard_neg_idx[0]]['text'][hard_neg_idx[1]]
