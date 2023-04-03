@@ -134,7 +134,7 @@ def main(args, hash_data, sim_idx):
                     if len(hash_data_group) > args.max_len * 0.95:
                         rand_one = random.random()
                         if rand_one > args.ran3:
-                            text2 = ' '.join(random.sample(hash_data_one_noise, args.con_len))
+                            text2 = ' '.join(random.sample(hash_data_one_noise, min(len(hash_data_one_noise),args.con_len)))
                         else:
                             text2 = ' '.join(random.sample(hash_data_one_noise, 1))
 
