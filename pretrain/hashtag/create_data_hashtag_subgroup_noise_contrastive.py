@@ -21,7 +21,7 @@ parser.add_argument('--balance', default=0, type=int)
 parser.add_argument('--root', default='../../', type=str)
 parser.add_argument('--sep', default=0, type=int)
 parser.add_argument('--sim_idx',default='tweet_hash_clean_group_subgroup_sim.json',type=str)
-
+parser.add_argument('--con_len', default=5, type=int)
 args = parser.parse_args()
 
 with open(args.root+'contrastive/hash_seg10.txt', 'r', encoding='utf-8') as f:
