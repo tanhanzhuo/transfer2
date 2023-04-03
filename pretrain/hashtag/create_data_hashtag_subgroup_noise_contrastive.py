@@ -90,6 +90,11 @@ def cal_sim(hash_data):
         sim_idx[idx_str] = sim_tmp[:10]
     return sim_idx
 
+def write_json(fileName, data):
+    with open(fileName + '.json', 'a', encoding='utf-8') as f:
+        for one in tqdm(data):
+            tmp = json.dumps(one, ensure_ascii=False)
+            f.write(tmp + '\n')
 
 def main(args, hash_data, sim_idx):
     hash_pair = []
@@ -154,6 +159,8 @@ def main(args, hash_data, sim_idx):
 
                         hash_pair.append({'text1': hash_data_group, 'text2': text2, 'text3': text3, 'label': hash_idx})
                         hash_data_group = ''
+        write_json(args.name + '_' + str(args.num), hash_pair)
+        hash_pair = []
 
 if __name__ == '__main__':
     hash_data = read_data(args)
