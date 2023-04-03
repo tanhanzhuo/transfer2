@@ -165,4 +165,4 @@ if __name__ == '__main__':
         with open(args.sim_idx, 'w', encoding='utf-8') as f:
             tmp = json.dumps(sim_idx, ensure_ascii=False)
             f.write(tmp)
-    # main(args, hash_data, sim_idx)
+    main(args, hash_data, sim_idx)
