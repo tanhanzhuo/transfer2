@@ -21,7 +21,7 @@ parser.add_argument('--balance', default=0, type=int)
 parser.add_argument('--root', default='../../', type=str)
 parser.add_argument('--sep', default=0, type=int)
 parser.add_argument('--sim_idx',default='tweet_hash_clean_group_subgroup_sim.json',type=str)
-parser.add_argument('--con_len', default=5, type=int)
+parser.add_argument('--con_len', default=8, type=int)
 args = parser.parse_args()
 
 with open(args.root+'contrastive/hash_seg10.txt', 'r', encoding='utf-8') as f:
@@ -92,7 +92,7 @@ def cal_sim(hash_data):
 
 def write_json(fileName, data):
     with open(fileName + '.json', 'a', encoding='utf-8') as f:
-        for one in tqdm(data):
+        for one in data:
             tmp = json.dumps(one, ensure_ascii=False)
             f.write(tmp + '\n')
 
