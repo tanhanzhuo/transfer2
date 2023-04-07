@@ -107,6 +107,9 @@ def main(args, hash_data, sim_idx):
             hash_data_hash = hash_data[hash_idx]
             hash_data_text = hash_data_hash['text']
             for idx_tmp in range(len(hash_data_text)):
+                if len(sim_idx[str(hash_idx) + ':' + str(idx_tmp)]) < 1:
+                    print(hash_data_hash['hashtag'])
+                    continue
                 hash_data_one = hash_data_text[idx_tmp]
                 random.shuffle(hash_data_one)
                 hash_data_one_noise = []
@@ -143,9 +146,6 @@ def main(args, hash_data, sim_idx):
                         else:
                             text2 = ' '.join(random.sample(hash_data_one_noise, 1))
 
-                        if len(sim_idx[str(hash_idx)+':'+str(idx_tmp)]) < 1:
-                            print(hash_data_hash['hashtag'])
-                            continue
                         hard_neg_idx = random.sample( sim_idx[str(hash_idx)+':'+str(idx_tmp)] , 1)[0]
                         hash_data_two = hash_data[hard_neg_idx[0]]['text'][hard_neg_idx[1]]
                         hash_data_two = random.sample(hash_data_two, min(len(hash_data_two),args.con_len))
