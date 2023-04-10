@@ -81,7 +81,7 @@ model.eval()
 cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 
 for dataset_one in args.dataset.split(','):
-    print('loading data')
+    print('loading data:{}'.format(dataset_one))
     data_sem = {}
     for sp in ['train', 'dev', 'test']:
         data_sem[sp] = []
