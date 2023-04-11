@@ -496,7 +496,7 @@ def do_train(args):
             if args.demo:
                 text_demo = data['text']
                 for idx in range(len(data.keys())-1):
-                    text_demo = data['text'+str(idx)] + TEMPLATE[args.task].replace('{"mask"}', WORDS[args.task][str(idx)]) + text_demo
+                    text_demo = data['text'+str(idx)] + TEMPLATE[args.task].replace('{"mask"}', WORDS[args.task][idx]) + text_demo
                 input_example = InputExample(text_a=text_demo, label=int(label2idx[data['labels']]))
             else:
                 input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
