@@ -354,6 +354,13 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+def read_data(fileName):
+    data_dic = []
+    with open(fileName, 'r') as f:
+        for line in f:
+            data_dic.append(json.loads(line))
+    return data_dic
+
 @torch.no_grad()
 def evaluate(model, data_loader, task='eval-emoji',write_result=''):
     model.eval()
