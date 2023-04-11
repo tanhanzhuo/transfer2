@@ -57,6 +57,7 @@ from openprompt.prompts import ManualTemplate
 from openprompt import PromptDataLoader
 from openprompt import PromptForClassification
 from openprompt.prompts import SoftVerbalizer
+from openprompt.prompts import ManualVerbalizer
 
 CONVERT = {
     'eval-emotion':{'0':0,'1':1,'2':2,'3':3},
@@ -512,7 +513,7 @@ def do_train(args):
     for lr in learning_rate:
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length)
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
