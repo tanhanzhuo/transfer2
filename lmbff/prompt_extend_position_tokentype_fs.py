@@ -44,6 +44,7 @@ from transformers import (
     set_seed,
     get_linear_schedule_with_warmup
 )
+from transformers.modeling_outputs import MaskedLMOutput
 from accelerate import Accelerator
 from tqdm import trange,tqdm
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, classification_report
@@ -133,9 +134,9 @@ class RobertaForMulti(RobertaPreTrainedModel):
         new_position.weight.data[:num_old, :] = self.roberta.embeddings.position_embeddings.weight.data[:num_old, :]
         self.roberta.embeddings.position_embeddings = new_position
 
-        self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
-        self.register_buffer(
-            "token_type_ids", torch.zeros(self.position_ids.size(), dtype=torch.long), persistent=False
+        self.roberta.embeddings.register_buffer("position_ids", torch.arange(self.roberta.config.max_position_embeddings).expand((1, -1)))
+        self.roberta.embeddings.register_buffer(
+            "token_type_ids", torch.zeros([1,self.roberta.config.max_position_embeddings], dtype=torch.long), persistent=False
         )
         # with torch.no_grad():
         #     # self.roberta.embeddings.position_embeddings.weight[:num_old,:] = nn.Parameter(
@@ -167,7 +168,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
             position_ids=position_ids,
-            return_dict=return_dict,
+            #return_dict=return_dict,
         )
 
         sequence_output = outputs[0]
