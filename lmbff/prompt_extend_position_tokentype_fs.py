@@ -173,7 +173,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
 
         sequence_output = outputs[0]
         prediction_scores = self.lm_head(sequence_output)
-
+        masked_lm_loss = None
         return MaskedLMOutput(
             loss=masked_lm_loss,
             logits=prediction_scores,
