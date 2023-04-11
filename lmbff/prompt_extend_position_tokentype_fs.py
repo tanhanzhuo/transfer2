@@ -346,7 +346,7 @@ def parse_args():
     parser.add_argument(
         "--write_result", default='', type=str, help="weighted loss")
     parser.add_argument(
-        "--demo", default=True, type=bool, help="weighted loss")
+        "--demo", default=1, type=int, help="weighted loss")
     args = parser.parse_args()
     return args
 
@@ -486,7 +486,7 @@ def do_train(args):
         data_all = read_data(args.input_dir+split+args.method+'.json')
         random.shuffle(data_all)
         for data in data_all:
-            if args.demo:
+            if args.demo == 1:
                 text_demo = data['text']
                 for idx in range(len(label2idx.keys())):
                     text_demo = data['text'+str(idx)] + TEMPLATE[args.task].replace('{"mask"}', WORDS[args.task][idx][0]) + text_demo
