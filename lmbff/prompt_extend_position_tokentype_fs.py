@@ -49,7 +49,7 @@ from tqdm import trange,tqdm
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, classification_report
 import torch.nn as nn
 # import paddle.nn.functional as F
-from transformers.models.roberta.modeling_roberta import RobertaModel, RobertaPreTrainedModel
+from transformers.models.roberta.modeling_roberta import RobertaModel, RobertaPreTrainedModel, RobertaLMHead
 from openprompt.data_utils import InputExample
 from openprompt.data_utils.data_sampler import FewShotSampler
 from openprompt.plms.mlm import MLMTokenizerWrapper
@@ -94,27 +94,6 @@ TEMPLATE = {
     'sem21-task7-humor':' It was {"mask"}. '
 }
 
-class RobertaClassificationHead(nn.Module):
-    """Head for sentence-level classification tasks."""
-
-    def __init__(self, config):
-        super().__init__()
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
-        classifier_dropout = (
-            config.classifier_dropout if config.classifier_dropout is not None else config.hidden_dropout_prob
-        )
-        self.dropout = nn.Dropout(classifier_dropout)
-        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
-
-    def forward(self, features, **kwargs):
-        x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
-        x = self.dropout(x)
-        x = self.dense(x)
-        x = torch.tanh(x)
-        x = self.dropout(x)
-        x = self.out_proj(x)
-        return x
-
 
 class RobertaForMulti(RobertaPreTrainedModel):
 
@@ -122,7 +101,7 @@ class RobertaForMulti(RobertaPreTrainedModel):
         super().__init__(config)
         self.roberta = RobertaModel(config, add_pooling_layer=False)
         # self.resize_position_embeddings(max_position)
-        self.classifier = RobertaClassificationHead(config)
+        self.lm_head = RobertaLMHead(config)
 
         self.post_init()
     def _init_weights(self, module: nn.Module):
@@ -186,9 +165,11 @@ class RobertaForMulti(RobertaPreTrainedModel):
         )
 
         sequence_output = outputs[0]
-        # sequence_cls = sequence_cls.sum(dim=1)
-        logits = self.classifier(sequence_output)
-        return logits
+        prediction_scores = self.lm_head(sequence_output)
+        output = (prediction_scores,) + outputs[2:]
+        
+        return output
+
 
 from dataclasses import dataclass
 from typing import Optional, Union, List, Dict, Tuple
@@ -539,7 +520,7 @@ def do_train(args):
                                            batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                            predict_eos_token=False, truncate_method="head")
 
-        myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx),
+        myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                         label_words=WORDS[args.task])
         model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
         model = model.cuda()
