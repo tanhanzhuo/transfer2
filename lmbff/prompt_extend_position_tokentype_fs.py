@@ -83,14 +83,14 @@ WORDS = {
 }
 
 TEMPLATE = {
-    'eval-emotion':' It was {"mask"}.',
-    'eval-hate':' It was {"mask"}.',
-    'eval-irony':' It was {"mask"}.',
-    'eval-offensive':' It was {"mask"}.',
-    'eval-stance':' It was {"mask"}.',
-    'stance':' It was {"mask"}.',
-    'sem22-task6-sarcasm':' It was {"mask"}.',
-    'sem21-task7-humor':' It was {"mask"}.'
+    'eval-emotion':' It was {"mask"}. ',
+    'eval-hate':' It was {"mask"}. ',
+    'eval-irony':' It was {"mask"}. ',
+    'eval-offensive':' It was {"mask"}. ',
+    'eval-stance':' It was {"mask"}. ',
+    'stance':' It was {"mask"}. ',
+    'sem22-task6-sarcasm':' It was {"mask"}. ',
+    'sem21-task7-humor':' It was {"mask"}. '
 }
 
 class RobertaClassificationHead(nn.Module):
@@ -496,7 +496,7 @@ def do_train(args):
             if args.demo:
                 text_demo = data['text']
                 for idx in range(len(data.keys())-1):
-                    text_demo = data['text'+str(idx)] + TEMPLATE[args.task].replace('{"mask"}', WORDS[args.task][idx]) + text_demo
+                    text_demo = data['text'+str(idx)] + TEMPLATE[args.task].replace('{"mask"}', WORDS[args.task][idx][0ß]) + text_demo
                 input_example = InputExample(text_a=text_demo, label=int(label2idx[data['labels']]))
             else:
                 input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
