@@ -132,6 +132,11 @@ class RobertaForMulti(RobertaPreTrainedModel):
         # self._init_weights(new_position)
         new_position.weight.data[:num_old, :] = self.roberta.embeddings.position_embeddings.weight.data[:num_old, :]
         self.roberta.embeddings.position_embeddings = new_position
+
+        self.register_buffer("position_ids", torch.arange(config.max_position_embeddings).expand((1, -1)))
+        self.register_buffer(
+            "token_type_ids", torch.zeros(self.position_ids.size(), dtype=torch.long), persistent=False
+        )
         # with torch.no_grad():
         #     # self.roberta.embeddings.position_embeddings.weight[:num_old,:] = nn.Parameter(
         #     #     old_position_embeddings_weight)
@@ -153,8 +158,9 @@ class RobertaForMulti(RobertaPreTrainedModel):
                 input_ids,
                 token_type_ids=None,
                 position_ids=None,
-                attention_mask=None):
-        return_dict = False
+                attention_mask=None,
+                output_hidden_states=None):
+
 
         outputs = self.roberta(
             input_ids,
@@ -166,9 +172,13 @@ class RobertaForMulti(RobertaPreTrainedModel):
 
         sequence_output = outputs[0]
         prediction_scores = self.lm_head(sequence_output)
-        output = (prediction_scores,) + outputs[2:]
 
-        return output
+        return MaskedLMOutput(
+            loss=masked_lm_loss,
+            logits=prediction_scores,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+        )
 
 
 from dataclasses import dataclass
@@ -494,7 +504,7 @@ def do_train(args):
     for lr in learning_rate:
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
-        # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length)
+        # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length,return_token_type_ids=True)
         # tokenizer._pad_token_type_id = args.token_type - 1
         # config = AutoConfig.from_pretrained(args.model_name_or_path)
         # plm = RobertaForMulti.from_pretrained(
