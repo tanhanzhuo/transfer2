@@ -502,8 +502,8 @@ def do_train(args):
                 input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
             dataset[split].append(input_example)
     ##################few shot
-    if args.shot:
-        sampler = FewShotSampler(num_examples_per_label=args.shot)
+    if args.shot != 'full':
+        sampler = FewShotSampler(num_examples_per_label=int(args.shot))
         dataset['train'] = sampler(dataset['train'])
 
     learning_rate = args.learning_rate.split(',')
