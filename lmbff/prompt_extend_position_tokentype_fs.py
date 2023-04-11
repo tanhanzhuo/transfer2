@@ -505,7 +505,8 @@ def do_train(args):
     for lr in learning_rate:
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length,return_token_type_ids=True)
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length)
+        tokenizer.model_max_length = args.max_seq_length
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path)
         plm = RobertaForMulti.from_pretrained(
