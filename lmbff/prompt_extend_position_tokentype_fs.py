@@ -366,7 +366,7 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
         # input_ids, segment_ids, labels = batch
         # logits = model(input_ids.cuda(), segment_ids.cuda())
         logits = model(batch.cuda())
-        labels = batch['labels']
+        labels = batch['label']
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
@@ -586,7 +586,7 @@ def do_train(args):
                 # logits = model(input_ids.cuda(), segment_ids.cuda())
                 # loss = loss_fct(logits, labels.cuda().view(-1))
                 logits = model(batch.cuda())
-                loss = loss_fct(logits, batch['labels'].cuda().view(-1))
+                loss = loss_fct(logits, batch['label'].cuda().view(-1))
                 # print(step)
                 loss.backward()
                 optimizer.step()
