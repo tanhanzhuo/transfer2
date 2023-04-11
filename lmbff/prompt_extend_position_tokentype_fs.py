@@ -505,16 +505,16 @@ def do_train(args):
     for lr in learning_rate:
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
-        # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length,return_token_type_ids=True)
-        # tokenizer._pad_token_type_id = args.token_type - 1
-        # config = AutoConfig.from_pretrained(args.model_name_or_path)
-        # plm = RobertaForMulti.from_pretrained(
-        #     args.model_name_or_path, config=config).cuda()
-        # plm.resize_position_embeddings(args.max_seq_length)
-        # plm.resize_type_embeddings(args.token_type)
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length,return_token_type_ids=True)
+        tokenizer._pad_token_type_id = args.token_type - 1
+        config = AutoConfig.from_pretrained(args.model_name_or_path)
+        plm = RobertaForMulti.from_pretrained(
+            args.model_name_or_path, config=config).cuda()
+        plm.resize_position_embeddings(args.max_seq_length)
+        plm.resize_type_embeddings(args.token_type)
 
-        from openprompt.plms import load_plm
-        plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
+        # from openprompt.plms import load_plm
+        # plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
         wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=args.max_seq_length, tokenizer=tokenizer, truncate_method="head")
 
         template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
