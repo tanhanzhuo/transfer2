@@ -352,6 +352,8 @@ def parse_args():
         "--weight", default=0, type=int, help="weighted loss")
     parser.add_argument(
         "--write_result", default='', type=str, help="weighted loss")
+    parser.add_argument(
+        "--demo", default=True, type=bool, help="weighted loss")
     args = parser.parse_args()
     return args
 
