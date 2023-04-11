@@ -292,11 +292,11 @@ def parse_args():
              "than this will be truncated, sequences shorter will be padded.", )
     parser.add_argument(
         "--token_type",
-        default=2,
+        default=1,
         type=int)
     parser.add_argument(
         "--learning_rate",
-        default='1e-3,1e-4,1e-5,1e-6',
+        default='1e-5',#'1e-3,1e-4,1e-5,1e-6',
         type=str,
         help="The initial learning rate for Adam.")
     parser.add_argument(
@@ -343,11 +343,12 @@ def parse_args():
     parser.add_argument(
         "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
     parser.add_argument(
-        "--shot", default='10,20,40,80,160,320,640,1280,full', type=str, help="random seed for initialization")
+        "--shot", default='full',#'10,20,40,80,160,320,640,1280,full',
+        type=str, help="random seed for initialization")
     parser.add_argument(
         "--stop", default=5, type=int, help="early stop")
     parser.add_argument(
-        "--weight", default=1, type=int, help="weighted loss")
+        "--weight", default=0, type=int, help="weighted loss")
     parser.add_argument(
         "--write_result", default='', type=str, help="weighted loss")
     args = parser.parse_args()
