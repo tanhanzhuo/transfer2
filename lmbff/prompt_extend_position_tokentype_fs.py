@@ -368,7 +368,7 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
         logits = model(batch.cuda())
         labels = batch['label']
         preds = logits.argmax(axis=1)
-        label_all += [tmp for tmp in labels.numpy()]
+        label_all += [tmp for tmp in labels.cpu().numpy()]
         pred_all += [tmp for tmp in preds.cpu().numpy()]
     if len(write_result) > 0:
         with open(write_result, 'a', encoding='utf-8') as f:
