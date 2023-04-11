@@ -520,21 +520,21 @@ def do_train(args):
             args.model_name_or_path, config=config).cuda()
         plm.resize_position_embeddings(args.max_seq_length)
         plm.resize_type_embeddings(args.token_type)
-        wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=128, tokenizer=tokenizer, truncate_method="head")
+        wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=args.max_seq_length, tokenizer=tokenizer, truncate_method="head")
 
         template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
         mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
 
         train_data_loader = PromptDataLoader(dataset=dataset["train"], template=mytemplate, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length,
                                             batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                             predict_eos_token=False, truncate_method="head")
         dev_data_loader = PromptDataLoader(dataset=dataset["dev"], template=mytemplate, tokenizer=tokenizer,
-                                          tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                          tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length,
                                           batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                           predict_eos_token=False, truncate_method="head")
         test_data_loader = PromptDataLoader(dataset=dataset["test"], template=mytemplate, tokenizer=tokenizer,
-                                           tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                           tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length,
                                            batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                            predict_eos_token=False, truncate_method="head")
 
