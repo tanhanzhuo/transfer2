@@ -505,8 +505,8 @@ def do_train(args):
     for lr in learning_rate:
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length)
-        tokenizer.model_max_length = args.max_seq_length
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length-2)
+        tokenizer.model_max_length = args.max_seq_length-2
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path)
         plm = RobertaForMulti.from_pretrained(
@@ -516,21 +516,21 @@ def do_train(args):
 
         # from openprompt.plms import load_plm
         # plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
-        wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=args.max_seq_length, tokenizer=tokenizer, truncate_method="head")
+        wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=args.max_seq_length-2, tokenizer=tokenizer, truncate_method="head")
 
         template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
         mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
 
         train_data_loader = PromptDataLoader(dataset=dataset["train"], template=mytemplate, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length-2,
                                             batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                             predict_eos_token=False, truncate_method="head")
         dev_data_loader = PromptDataLoader(dataset=dataset["dev"], template=mytemplate, tokenizer=tokenizer,
-                                          tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length,
+                                          tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length-2,
                                           batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                           predict_eos_token=False, truncate_method="head")
         test_data_loader = PromptDataLoader(dataset=dataset["test"], template=mytemplate, tokenizer=tokenizer,
-                                           tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length,
+                                           tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length-2,
                                            batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                            predict_eos_token=False, truncate_method="head")
 
