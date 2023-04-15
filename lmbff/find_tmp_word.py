@@ -338,7 +338,7 @@ def do_train(args):
             best_metrics = score
             best_template_text = template_text
     # use the best template
-    template = ManualTemplateWithoutParse(tokenizer, text=best_template_text)
+    template = ManualTemplate(tokenizer, text=best_template_text)
     print("final best template:", best_template_text)
     # print("wrapped example:", template.wrap_one_example(dataset["train"][0]))
 
