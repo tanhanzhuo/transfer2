@@ -355,7 +355,7 @@ def do_train(args):
     # to improve performance , try larger numbers
 
     dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper,
-                                  batch_size=32)
+                                  batch_size=args.batch_size, max_seq_length=128)
     for data in dataloader:
         data = data.cuda()
         verbalizer_generator.register_buffer(data)
