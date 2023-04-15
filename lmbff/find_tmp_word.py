@@ -317,7 +317,7 @@ def do_train(args):
         print(f"current template: {template_text}, wrapped example: {template.wrap_one_example(dataset['train'][0])}")
 
         train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True)
-        valid_dataloader = PromptDataLoader(dataset['validation'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper)
+        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper)
 
         model = PromptForClassification(copy.deepcopy(plm), template, verbalizer)
 
@@ -370,7 +370,7 @@ def do_train(args):
         current_verbalizer.label_words = label_words
         train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
                                             tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True)
-        valid_dataloader = PromptDataLoader(dataset['validation'], template, tokenizer=tokenizer,
+        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
                                             tokenizer_wrapper_class=MLMTokenizerWrapper)
 
         model = PromptForClassification(copy.deepcopy(plm), template, current_verbalizer)
