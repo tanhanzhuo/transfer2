@@ -316,8 +316,8 @@ def do_train(args):
         template = ManualTemplateWithoutParse(tokenizer, template_text)
         print(f"current template: {template_text}, wrapped example: {template.wrap_one_example(dataset['train'][0])}")
 
-        train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True)
-        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper)
+        train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
+        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128, batch_size=args.batch_size)
 
         model = PromptForClassification(copy.deepcopy(plm), template, verbalizer)
 
@@ -369,9 +369,9 @@ def do_train(args):
     for label_words in tqdm(label_words_list):
         current_verbalizer.label_words = label_words
         train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True)
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
         valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper)
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128, batch_size=args.batch_size)
 
         model = PromptForClassification(copy.deepcopy(plm), template, current_verbalizer)
 
