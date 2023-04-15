@@ -165,7 +165,8 @@ def parse_args():
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
         "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
-
+    parser.add_argument(
+        "--temp_size", default=5, type=int, help="template search size")
     args = parser.parse_args()
     return args
 
