@@ -164,9 +164,11 @@ def parse_args():
         type=int,
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
-        "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
+        "--seed", default='0', type=str, help="random seed for initialization")
     parser.add_argument(
-        "--temp_size", default=5, type=int, help="template search size")
+        "--generate_tmp", default=0, type=int, help="template generation")
+    parser.add_argument(
+        "--generate_word", default=0, type=int, help="label word generation")
     args = parser.parse_args()
     return args
 
@@ -251,7 +253,7 @@ def train_epoch(model, train_dataloader, loss_func, optimizer):
 
 def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
     best_score = 0.0
-    for epoch in range(5):
+    for epoch in range(10):
         train_loss = train_epoch(model, train_dataloader, loss_func, optimizer)
         score = evaluate(model, val_dataloader, task)
         if score > best_score:
@@ -259,6 +261,32 @@ def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
         print(f"Epoch {epoch+1}: Train loss={train_loss}, Eval score={score}")
     return best_score
 
+
+def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
+    template = ManualTemplate(tokenizer, template_text)
+    train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
+                                        tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128,
+                                        batch_size=args.batch_size)
+    valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
+                                        tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                        batch_size=args.batch_size)
+
+    model = PromptForClassification(copy.deepcopy(plm), template, verbalizer)
+
+    loss_func = torch.nn.CrossEntropyLoss()
+    no_decay = ['bias', 'LayerNorm.weight']
+    # it's always good practice to set no decay to biase and LayerNorm parameters
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+         'weight_decay': 0.01},
+        {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+    ]
+
+    optimizer = AdamW(optimizer_grouped_parameters, lr=1e-5)
+    model = model.cuda()
+    score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
+
+    return score
 
 def do_train(args):
     print(args)
@@ -278,121 +306,126 @@ def do_train(args):
     config = AutoConfig.from_pretrained(args.model_name_or_path)
     plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
     wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
-    template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
-        't5', 't5-large')
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                   label_words=WORDS[args.task])
-    # template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
-    template = LMBFFTemplateGenerationTemplate(tokenizer=template_generate_tokenizer, verbalizer=verbalizer, text='{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"}.')
-    # wrapped_example = template.wrap_one_example(dataset['train'][0])
-    # print(wrapped_example)
 
-    #################generate template
-    print('performing auto_t...')
-    template_generate_model = template_generate_model.cuda()
-    template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
-                                             template_tokenizer_wrapper, verbalizer, beam_width=5)
-    dataloader = PromptDataLoader(dataset['train'], template, tokenizer=template_generate_tokenizer,
-                                  tokenizer_wrapper_class=template_tokenizer_wrapper, batch_size=len(dataset['train']),
-                                  decoder_max_length=128, max_seq_length=128, shuffle=False, teacher_forcing=False)
-    for data in dataloader:
-        data = data.cuda()
-        template_generator._register_buffer(data)
-    template_generate_model.eval()
-    # print('generating...')
-    template_texts = template_generator._get_templates()
-    original_template = template.text
-    template_texts = [template_generator.convert_template(template_text, original_template) for template_text in
-                      template_texts]
-    # template_generator._show_template()
-    template_generator.release_memory()
-    # generate a number of candidate template text
+    if args.generate_tmp == 1:
+        template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
+            't5', 't5-large')
+        template = LMBFFTemplateGenerationTemplate(tokenizer=template_generate_tokenizer, verbalizer=verbalizer, text='{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"}.')
+        # wrapped_example = template.wrap_one_example(dataset['train'][0])
+        # print(wrapped_example)
+
+        #################generate template
+        print('performing auto_t...')
+        template_generate_model = template_generate_model.cuda()
+        template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
+                                                 template_tokenizer_wrapper, verbalizer, beam_width=5)
+        dataloader = PromptDataLoader(dataset['train'], template, tokenizer=template_generate_tokenizer,
+                                      tokenizer_wrapper_class=template_tokenizer_wrapper, batch_size=len(dataset['train']),
+                                      decoder_max_length=128, max_seq_length=128, shuffle=False, teacher_forcing=False)
+        for data in dataloader:
+            data = data.cuda()
+            template_generator._register_buffer(data)
+        template_generate_model.eval()
+        # print('generating...')
+        template_texts = template_generator._get_templates()
+        original_template = template.text
+        template_texts = [template_generator.convert_template(template_text, original_template) for template_text in
+                          template_texts]
+        # template_generator._show_template()
+        template_generator.release_memory()
+
+    else:
+        template_texts = ['{"placeholder":"text_a"}' + TEMPLATE[args.task]]
+    print('all the templates:')
     print(template_texts)
 
     #####################evaluate template
-    best_metrics = 0.0
-    best_template_text = None
-    for template_text in tqdm(template_texts):
-        template = ManualTemplate(tokenizer, template_text)
-        # print(f"current template: {template_text}, wrapped example: {template.wrap_one_example(dataset['train'][0])}")
+    if len(template_texts) > 1:
+        best_metrics = 0.0
+        best_template_text = None
+        for template_text in tqdm(template_texts):
+            # template = ManualTemplate(tokenizer, template_text)
+            # train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
+            # valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128, batch_size=args.batch_size)
+            # model = PromptForClassification(copy.deepcopy(plm), template, verbalizer)
+            # loss_func = torch.nn.CrossEntropyLoss()
+            # no_decay = ['bias', 'LayerNorm.weight']
+            # # it's always good practice to set no decay to biase and LayerNorm parameters
+            # optimizer_grouped_parameters = [
+            #     {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
+            #     {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+            # ]
+            # optimizer = AdamW(optimizer_grouped_parameters, lr=2e-5)
+            # model = model.cuda()
+            # score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
 
-        train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
-        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128, batch_size=args.batch_size)
-
-        model = PromptForClassification(copy.deepcopy(plm), template, verbalizer)
-
-        loss_func = torch.nn.CrossEntropyLoss()
-        no_decay = ['bias', 'LayerNorm.weight']
-        # it's always good practice to set no decay to biase and LayerNorm parameters
-        optimizer_grouped_parameters = [
-            {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
-            {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        ]
-
-        optimizer = AdamW(optimizer_grouped_parameters, lr=2e-5)
-        model = model.cuda()
-        score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
-
-        if score > best_metrics:
-            print('current best score:', score)
-            best_metrics = score
-            best_template_text = template_text
+            score = evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm)
+            if score > best_metrics:
+                print('current best score:', score)
+                best_metrics = score
+                best_template_text = template_text
+    else:
+        best_template_text = template_texts[0]
     # use the best template
     template = ManualTemplate(tokenizer, text=best_template_text)
-    print("final best template:", best_template_text)
+    print("final best template:")
+    print(best_template_text)
     # print("wrapped example:", template.wrap_one_example(dataset["train"][0]))
 
 
-
-
-
     ###########################verberlizer
-    print('performing auto_v...')
     # load generation model for template generation
-    plm = plm.cuda()
-    verbalizer_generator = RobertaVerbalizerGenerator(model=plm, tokenizer=tokenizer, candidate_num=20,
-                                                      label_word_num_per_class=20)
-    # to improve performance , try larger numbers
-
-    dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper,
-                                  batch_size=args.batch_size, max_seq_length=128)
-    for data in dataloader:
-        data = data.cuda()
-        verbalizer_generator.register_buffer(data)
-    label_words_list = verbalizer_generator.generate()
-    verbalizer_generator.release_memory()
+    if args.generate_word == 1:
+        verbalizer_generator = RobertaVerbalizerGenerator(model=plm, tokenizer=tokenizer, candidate_num=20,
+                                                          label_word_num_per_class=20)
+        dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper,
+                                      batch_size=args.batch_size, max_seq_length=128)
+        for data in dataloader:
+            data = data.cuda()
+            verbalizer_generator.register_buffer(data)
+        label_words_list = verbalizer_generator.generate()
+        verbalizer_generator.release_memory()
+    else:
+        label_words_list = [WORDS[args.task]]
+    print('label word list:')
+    print(label_words_list)
 
     # iterate over each candidate and select the best one
+
     current_verbalizer = copy.deepcopy(verbalizer)
-    best_metrics = 0.0
-    best_label_words = None
-    for label_words in tqdm(label_words_list):
-        current_verbalizer.label_words = label_words
-        train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
-        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128, batch_size=args.batch_size)
+    if len(label_words_list) > 1:
+        best_metrics = 0.0
+        best_label_words = None
+        for label_words in tqdm(label_words_list):
+            current_verbalizer.label_words = label_words
+            # train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
+            #                                     tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
+            # valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
+            #                                     tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128, batch_size=args.batch_size)
+            # model = PromptForClassification(copy.deepcopy(plm), template, current_verbalizer)
+            # loss_func = torch.nn.CrossEntropyLoss()
+            # no_decay = ['bias', 'LayerNorm.weight']
+            # # it's always good practice to set no decay to biase and LayerNorm parameters
+            # optimizer_grouped_parameters = [
+            #     {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+            #      'weight_decay': 0.01},
+            #     {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+            # ]
+            # optimizer = AdamW(optimizer_grouped_parameters, lr=1e-5)
+            # model = model.cuda()
+            # score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
 
-        model = PromptForClassification(copy.deepcopy(plm), template, current_verbalizer)
-
-        loss_func = torch.nn.CrossEntropyLoss()
-        no_decay = ['bias', 'LayerNorm.weight']
-        # it's always good practice to set no decay to biase and LayerNorm parameters
-        optimizer_grouped_parameters = [
-            {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-             'weight_decay': 0.01},
-            {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        ]
-
-        optimizer = AdamW(optimizer_grouped_parameters, lr=2e-5)
-        model = model.cuda()
-        score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
-
-        if score > best_metrics:
-            best_metrics = score
-            best_label_words = label_words
+            score = evaluate_tmp_word(tokenizer, best_template_text, current_verbalizer, args, dataset, plm)
+            if score > best_metrics:
+                best_metrics = score
+                best_label_words = label_words
+    else:
+        best_label_words = label_words_list[0]
     # use the best verbalizer
-    print("final best label words:", best_label_words)
+    print("final best label words:")
+    print(best_label_words)
     verbalizer = ManualVerbalizer(tokenizer, num_classes=2, label_words=best_label_words)
 
 if __name__ == "__main__":
