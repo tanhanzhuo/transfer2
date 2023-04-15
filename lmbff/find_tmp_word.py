@@ -273,9 +273,9 @@ def do_train(args):
             dataset[split].append(input_example)
     ##################load models
 
-    tokenizer = AutoTokenizer.from_pretrained('bertweet-base', normalization=True)
-    config = AutoConfig.from_pretrained('bertweet-base')
-    plm = RobertaForMaskedLM.from_pretrained('bertweet-base', config=config).cuda()
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+    config = AutoConfig.from_pretrained(args.model_name_or_path)
+    plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
     wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head")
     template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
         't5', 't5-large')
