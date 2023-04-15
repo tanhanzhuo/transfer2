@@ -231,7 +231,7 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
     elif 'humor' in task:
         tweeteval_result = results['1']['f1-score']
 
-    print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (tweeteval_result, tweeteval_result, tweeteval_result))
+    # print("aveRec:%.5f, f1PN:%.5f, acc: %.5f " % (tweeteval_result, tweeteval_result, tweeteval_result))
     return tweeteval_result
 
 def train_epoch(model, train_dataloader, loss_func, optimizer):
@@ -284,8 +284,8 @@ def do_train(args):
                                   label_words=WORDS[args.task])
     # template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
     template = LMBFFTemplateGenerationTemplate(tokenizer=template_generate_tokenizer, verbalizer=verbalizer, text='{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"}.')
-    wrapped_example = template.wrap_one_example(dataset['train'][0])
-    print(wrapped_example)
+    # wrapped_example = template.wrap_one_example(dataset['train'][0])
+    # print(wrapped_example)
 
     #################generate template
     print('performing auto_t...')
@@ -299,7 +299,7 @@ def do_train(args):
             data = data.cuda()
     template_generator._register_buffer(data)
     template_generate_model.eval()
-    print('generating...')
+    # print('generating...')
     template_texts = template_generator._get_templates()
     template_texts = template_generator._get_templates()
     original_template = template.text
@@ -315,7 +315,7 @@ def do_train(args):
     best_template_text = None
     for template_text in tqdm(template_texts):
         template = ManualTemplateWithoutParse(tokenizer, template_text)
-        print(f"current template: {template_text}, wrapped example: {template.wrap_one_example(dataset['train'][0])}")
+        # print(f"current template: {template_text}, wrapped example: {template.wrap_one_example(dataset['train'][0])}")
 
         train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
         valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128, batch_size=args.batch_size)
@@ -341,7 +341,7 @@ def do_train(args):
     # use the best template
     template = ManualTemplateWithoutParse(tokenizer, text=best_template_text)
     print("final best template:", best_template_text)
-    print("wrapped example:", template.wrap_one_example(dataset["train"][0]))
+    # print("wrapped example:", template.wrap_one_example(dataset["train"][0]))
 
 
 
