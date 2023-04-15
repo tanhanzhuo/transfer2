@@ -276,7 +276,7 @@ def do_train(args):
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
     config = AutoConfig.from_pretrained(args.model_name_or_path)
     plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
-    wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head")
+    wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
     template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
         't5', 't5-large')
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
