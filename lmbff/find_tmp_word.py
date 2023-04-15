@@ -302,7 +302,10 @@ def do_train(args):
             dataset[split].append(input_example)
     ##################load models
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+    if 'roberta' in args.model_name_or_path:
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, return_special_tokens_mask=True)
+    else:
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
     config = AutoConfig.from_pretrained(args.model_name_or_path)
     plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
     wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
