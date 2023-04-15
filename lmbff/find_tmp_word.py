@@ -313,7 +313,7 @@ def do_train(args):
     best_metrics = 0.0
     best_template_text = None
     for template_text in tqdm(template_texts):
-        template = ManualTemplateWithoutParse(tokenizer, template_text)
+        template = ManualTemplate(tokenizer, template_text)
         # print(f"current template: {template_text}, wrapped example: {template.wrap_one_example(dataset['train'][0])}")
 
         train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128, batch_size=args.batch_size)
