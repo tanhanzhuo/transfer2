@@ -303,12 +303,13 @@ def do_train(args):
     ##################load models
 
     if 'roberta' in args.model_name_or_path:
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, return_special_tokens_mask=True)
+        plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
+        plm = plm.cuda()
     else:
         tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
-    config = AutoConfig.from_pretrained(args.model_name_or_path)
-    plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
-    wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
+        config = AutoConfig.from_pretrained(args.model_name_or_path)
+        plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
+        wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                   label_words=WORDS[args.task])
 
