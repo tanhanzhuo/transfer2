@@ -296,11 +296,10 @@ def do_train(args):
                                   tokenizer_wrapper_class=template_tokenizer_wrapper, batch_size=len(dataset['train']),
                                   decoder_max_length=128, max_seq_length=128, shuffle=False, teacher_forcing=False)
     for data in dataloader:
-            data = data.cuda()
-    template_generator._register_buffer(data)
+        data = data.cuda()
+        template_generator._register_buffer(data)
     template_generate_model.eval()
     # print('generating...')
-    template_texts = template_generator._get_templates()
     template_texts = template_generator._get_templates()
     original_template = template.text
     template_texts = [template_generator.convert_template(template_text, original_template) for template_text in
