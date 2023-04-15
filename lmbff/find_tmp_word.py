@@ -296,7 +296,7 @@ def do_train(args):
                                   decoder_max_length=128, max_seq_length=128, shuffle=False, teacher_forcing=False)
     for data in dataloader:
             data = data.cuda()
-        template_generator._register_buffer(data)
+    template_generator._register_buffer(data)
     template_generate_model.eval()
     print('generating...')
     template_texts = template_generator._get_templates()
