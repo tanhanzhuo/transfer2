@@ -6,7 +6,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--output_dir", default='../finetune/data/', type=str, required=False, help="The output directory where the model predictions and checkpoints will be written.")
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
-parser.add_argument('--method',default='_modelT100N100R_fileT100N100R_num10_top20_textfirst',type=str)
+parser.add_argument('--method',default='_modelT100N100M_fileT100N100S_num10_cluster_top20_textfirst',type=str)
+#_simcse_fileT100N100S_num10_cluster_top20_textfirst
 parser.add_argument('--top',default=1,type=int)
 parser.add_argument('--name',default='',type=str)
 
