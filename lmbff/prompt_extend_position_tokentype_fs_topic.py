@@ -42,7 +42,8 @@ from transformers import (
     default_data_collator,
     get_scheduler,
     set_seed,
-    get_linear_schedule_with_warmup
+    get_linear_schedule_with_warmup,
+    RobertaForMaskedLM
 )
 from transformers.modeling_outputs import MaskedLMOutput
 from accelerate import Accelerator
@@ -511,10 +512,12 @@ def do_train(args):
         tokenizer.model_max_length = args.max_seq_length-2
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path)
-        plm = RobertaForMulti.from_pretrained(
+        # plm = RobertaForMulti.from_pretrained(
+        #     args.model_name_or_path, config=config).cuda()
+        plm = RobertaForMaskedLM.from_pretrained(
             args.model_name_or_path, config=config).cuda()
-        plm.resize_position_embeddings(args.max_seq_length)
-        plm.resize_type_embeddings(args.token_type)
+        # plm.resize_position_embeddings(args.max_seq_length)
+        # plm.resize_type_embeddings(args.token_type)
 
         # from openprompt.plms import load_plm
         # plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
