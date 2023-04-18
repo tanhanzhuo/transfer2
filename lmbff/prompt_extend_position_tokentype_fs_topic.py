@@ -240,7 +240,7 @@ def parse_args():
         "--task",
         # default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
         #default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm,stance',
-        default='eval-stance_demo,eval-emotion_demo,eval-irony_demo,eval-offensive_demo,eval-hate_demo,sem21-task7-humor_demo,sem22-task6-sarcasm_demo',
+        default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
@@ -266,7 +266,7 @@ def parse_args():
     )
     parser.add_argument(
         "--method",
-        default='',
+        default='_modelT100N100M_fileT100N100S_num10_cluster_top20_textfirst_sp',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -346,7 +346,9 @@ def parse_args():
     parser.add_argument(
         "--write_result", default='', type=str, help="weighted loss")
     parser.add_argument(
-        "--demo", default=1, type=int, help="weighted loss")
+        "--demo", default=1, type=int, help="with demo")
+    parser.add_argument(
+        "--soft", default=1, type=int, help="soft verberlizer")
     args = parser.parse_args()
     return args
 
@@ -486,10 +488,10 @@ def do_train(args):
         data_all = read_data(args.input_dir+split+args.method+'.json')
         random.shuffle(data_all)
         for data in data_all:
-            if args.demo == 1:
+            if args.demo > 0:
                 text_demo = data['text']
-                for idx in range(len(label2idx.keys())):
-                    text_demo = data['text'+str(idx)] + TEMPLATE[args.task].replace('{"mask"}', WORDS[args.task][idx][0]) + text_demo
+                for idx in range(args.demo):
+                    text_demo = data['text'+str(idx)] + text_demo
                 input_example = InputExample(text_a=text_demo, label=int(label2idx[data['labels']]))
             else:
                 input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
@@ -533,8 +535,10 @@ def do_train(args):
                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length-2,
                                            batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
                                            predict_eos_token=False, truncate_method="head")
-
-        myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
+        if args.soft == 1:
+            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()))
+        else:
+            myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                         label_words=WORDS[args.task])
         model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
         model = model.cuda()
