@@ -30,5 +30,5 @@ if __name__ == "__main__":
                         one['text'+str(idx)] = text_sp[idx].strip()
                     one['text'] = text_sp[-2].strip()
                     data.append(one)
-            write_json(data, args.dataset_path+task+'/'+sp + args.method + '_sp.json')
+            write_json(data, args.dataset_path+task+'/'+sp + args.method + '_sp')
 
