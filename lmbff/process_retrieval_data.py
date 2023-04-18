@@ -25,9 +25,9 @@ if __name__ == "__main__":
                 for line in f:
                     one = json.loads(line)
                     text_sp = one['text'].split(' \n ')
-                    for idx in range(len(text_sp)-1):
+                    for idx in range(len(text_sp)-2):
                         one['text'+str(idx)] = text_sp[idx]
-                    one['text'] = text_sp[-1]
+                    one['text'] = text_sp[-2]
                     data.append(one)
             write_json(data, args.dataset_path+task+'/'+sp + args.method + '_sp.json')
 
