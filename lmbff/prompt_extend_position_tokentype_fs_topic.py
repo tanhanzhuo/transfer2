@@ -97,31 +97,93 @@ TEMPLATE = {
 }
 
 
-class RobertaForMulti(RobertaPreTrainedModel):
+# class RobertaForMulti(RobertaPreTrainedModel):
+#
+#     def __init__(self, config):
+#         super().__init__(config)
+#         self.roberta = RobertaModel(config, add_pooling_layer=False)
+#         # self.resize_position_embeddings(max_position)
+#         self.lm_head = RobertaLMHead(config)
+#
+#         self.post_init()
+#     def _init_weights(self, module: nn.Module):
+#         """Initialize the weights."""
+#         if isinstance(module, nn.Linear):
+#             # Slightly different from the TF version which uses truncated_normal for initialization
+#             # cf https://github.com/pytorch/pytorch/pull/5617
+#             module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+#             if module.bias is not None:
+#                 module.bias.data.zero_()
+#         elif isinstance(module, nn.Embedding):
+#             module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+#             if module.padding_idx is not None:
+#                 module.weight.data[module.padding_idx].zero_()
+#         elif isinstance(module, nn.LayerNorm):
+#             module.bias.data.zero_()
+#             module.weight.data.fill_(1.0)
+#     ##resize position embedding
+#     def resize_position_embeddings(self, new_num_position_embeddings: int):
+#         num_old = self.roberta.config.max_position_embeddings
+#         if num_old == new_num_position_embeddings:
+#             return
+#         self.roberta.config.max_position_embeddings = new_num_position_embeddings
+#         # old_position_embeddings_weight = self.roberta.embeddings.position_embeddings.weight.clone()
+#         new_position = nn.Embedding(self.roberta.config.max_position_embeddings, self.roberta.config.hidden_size)
+#         new_position.to(self.roberta.embeddings.position_embeddings.weight.device,
+#                         dtype=self.roberta.embeddings.position_embeddings.weight.dtype)
+#         # self._init_weights(new_position)
+#         new_position.weight.data[:num_old, :] = self.roberta.embeddings.position_embeddings.weight.data[:num_old, :]
+#         self.roberta.embeddings.position_embeddings = new_position
+#
+#         self.roberta.embeddings.register_buffer("position_ids", torch.arange(self.roberta.config.max_position_embeddings).expand((1, -1)))
+#         self.roberta.embeddings.register_buffer(
+#             "token_type_ids", torch.zeros([1,self.roberta.config.max_position_embeddings], dtype=torch.long), persistent=False
+#         )
+#         # with torch.no_grad():
+#         #     # self.roberta.embeddings.position_embeddings.weight[:num_old,:] = nn.Parameter(
+#         #     #     old_position_embeddings_weight)
+#
+#     def resize_type_embeddings(self, new_type_embeddings: int):
+#         num_old = self.roberta.config.type_vocab_size
+#         if num_old == new_type_embeddings:
+#             return
+#         self.roberta.config.type_vocab_size = new_type_embeddings
+#         # old_position_embeddings_weight = self.roberta.embeddings.position_embeddings.weight.clone()
+#         new_type = nn.Embedding(self.roberta.config.type_vocab_size, self.roberta.config.hidden_size)
+#         new_type.to(self.roberta.embeddings.token_type_embeddings.weight.device,
+#                         dtype=self.roberta.embeddings.token_type_embeddings.weight.dtype)
+#         # self._init_weights(new_position)
+#         new_type.weight.data[:num_old, :] = self.roberta.embeddings.token_type_embeddings.weight.data[:num_old, :]
+#         self.roberta.embeddings.token_type_embeddings = new_type
+#
+#     def forward(self,
+#                 input_ids,
+#                 token_type_ids=None,
+#                 position_ids=None,
+#                 attention_mask=None,
+#                 output_hidden_states=None):
+#
+#
+#         outputs = self.roberta(
+#             input_ids,
+#             attention_mask=attention_mask,
+#             token_type_ids=token_type_ids,
+#             position_ids=position_ids,
+#             #return_dict=return_dict,
+#         )
+#
+#         sequence_output = outputs[0]
+#         prediction_scores = self.lm_head(sequence_output)
+#         masked_lm_loss = None
+#         return MaskedLMOutput(
+#             loss=masked_lm_loss,
+#             logits=prediction_scores,
+#             hidden_states=outputs.hidden_states,
+#             attentions=outputs.attentions,
+#         )
 
-    def __init__(self, config):
-        super().__init__(config)
-        self.roberta = RobertaModel(config, add_pooling_layer=False)
-        # self.resize_position_embeddings(max_position)
-        self.lm_head = RobertaLMHead(config)
 
-        self.post_init()
-    def _init_weights(self, module: nn.Module):
-        """Initialize the weights."""
-        if isinstance(module, nn.Linear):
-            # Slightly different from the TF version which uses truncated_normal for initialization
-            # cf https://github.com/pytorch/pytorch/pull/5617
-            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-            if module.bias is not None:
-                module.bias.data.zero_()
-        elif isinstance(module, nn.Embedding):
-            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-            if module.padding_idx is not None:
-                module.weight.data[module.padding_idx].zero_()
-        elif isinstance(module, nn.LayerNorm):
-            module.bias.data.zero_()
-            module.weight.data.fill_(1.0)
-    ##resize position embedding
+class RobertaForMulti(RobertaForMaskedLM):
     def resize_position_embeddings(self, new_num_position_embeddings: int):
         num_old = self.roberta.config.max_position_embeddings
         if num_old == new_num_position_embeddings:
@@ -155,32 +217,6 @@ class RobertaForMulti(RobertaPreTrainedModel):
         # self._init_weights(new_position)
         new_type.weight.data[:num_old, :] = self.roberta.embeddings.token_type_embeddings.weight.data[:num_old, :]
         self.roberta.embeddings.token_type_embeddings = new_type
-
-    def forward(self,
-                input_ids,
-                token_type_ids=None,
-                position_ids=None,
-                attention_mask=None,
-                output_hidden_states=None):
-
-
-        outputs = self.roberta(
-            input_ids,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-            position_ids=position_ids,
-            #return_dict=return_dict,
-        )
-
-        sequence_output = outputs[0]
-        prediction_scores = self.lm_head(sequence_output)
-        masked_lm_loss = None
-        return MaskedLMOutput(
-            loss=masked_lm_loss,
-            logits=prediction_scores,
-            hidden_states=outputs.hidden_states,
-            attentions=outputs.attentions,
-        )
 
 
 from dataclasses import dataclass
@@ -512,12 +548,12 @@ def do_train(args):
         tokenizer.model_max_length = args.max_seq_length-2
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path)
-        # plm = RobertaForMulti.from_pretrained(
+        # plm = RobertaForMaskedLM.from_pretrained(
         #     args.model_name_or_path, config=config).cuda()
-        plm = RobertaForMaskedLM.from_pretrained(
+        plm = RobertaForMulti.from_pretrained(
             args.model_name_or_path, config=config).cuda()
-        # plm.resize_position_embeddings(args.max_seq_length)
-        # plm.resize_type_embeddings(args.token_type)
+        plm.resize_position_embeddings(args.max_seq_length)
+        plm.resize_type_embeddings(args.token_type)
 
         # from openprompt.plms import load_plm
         # plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
