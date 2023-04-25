@@ -451,7 +451,7 @@ def do_train(args):
                                      label_words=WORDS[args.task])
         model = PromptForClassification(plm=plm.cuda(), template=mytemplate, verbalizer=hard_verb, freeze_plm=False)
         model = model.cuda()
-        optimizer = AdamW([{'params': model.plm.roberta.embeddings.word_embeddings.parameters()}], lr=lr,
+        optimizer = AdamW([{'params': model.plm.roberta.embeddings.word_embeddings.parameters()}], lr=float(lr),
                           correct_bias=False)
         num_update_steps_per_epoch = len(train_data_loader)
         args.max_train_steps = args.num_train_epochs * num_update_steps_per_epoch
