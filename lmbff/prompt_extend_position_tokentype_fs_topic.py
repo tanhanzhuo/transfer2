@@ -563,7 +563,7 @@ def do_train(args):
         # plm = RobertaForMaskedLM.from_pretrained(
         #     args.model_name_or_path, config=config).cuda()
         plm = RobertaForMulti.from_pretrained(
-            args.model_name_or_path, config=config).cuda()
+            args.model_name_or_path, config=config)
         plm.resize_position_embeddings(args.max_seq_length)
         plm.resize_type_embeddings(args.token_type)
 
@@ -589,11 +589,11 @@ def do_train(args):
         if args.soft == 1:
             myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()))
         elif args.soft == 2:
-            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()), label_words=WORDS[args.task]).cuda()
+            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()), label_words=WORDS[args.task])
         else:
             myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                         label_words=WORDS[args.task])
-        model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
+        model = PromptForClassification(plm=plm.cuda(), template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
         model = model.cuda()
 
         no_decay = ["bias", "LayerNorm.weight"]
