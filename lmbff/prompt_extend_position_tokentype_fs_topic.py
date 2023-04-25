@@ -73,16 +73,28 @@ CONVERT = {
 }
 
 
+# WORDS = {
+#     # 'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
+#     'eval-emotion': [["angerous"], ["joyful"], ["optimistic"],["sad"]],
+#     'eval-hate': [["neutral"], ["hateful"]],
+#     'eval-irony': [["neutral"], ["ironic"]],
+#     'eval-offensive': [["neutral"], ["offensive"]],
+#     'eval-stance': [["neutral"], ["against"],["favor"]],
+#     'stance': [["neutral"], ["favor"],["against"]],
+#     'sem22-task6-sarcasm': [["neutral"], ["sarcastic"]],
+#     'sem21-task7-humor': [["neutral"], ["humorous"]]
+# }
+
 WORDS = {
     # 'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
-    'eval-emotion': [["angerous"], ["joyful"], ["optimistic"],["sad"]],
-    'eval-hate': [["neutral"], ["hateful"]],
-    'eval-irony': [["neutral"], ["ironic"]],
-    'eval-offensive': [["neutral"], ["offensive"]],
-    'eval-stance': [["neutral"], ["against"],["favor"]],
-    'stance': [["neutral"], ["favor"],["against"]],
-    'sem22-task6-sarcasm': [["neutral"], ["sarcastic"]],
-    'sem21-task7-humor': [["neutral"], ["humorous"]]
+    'eval-emotion': ["angerous", "joyful", "optimistic","sad"],
+    'eval-hate': ["neutral", "hateful"],
+    'eval-irony': ["neutral", "ironic"],
+    'eval-offensive': ["neutral", "offensive"],
+    'eval-stance': ["neutral", "against","favor"],
+    'stance': ["neutral", "favor","against"],
+    'sem22-task6-sarcasm': ["neutral", "sarcastic"],
+    'sem21-task7-humor': ["neutral", "humorous"]
 }
 
 TEMPLATE = {
