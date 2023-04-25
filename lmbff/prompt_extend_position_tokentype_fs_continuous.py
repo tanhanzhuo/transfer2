@@ -255,8 +255,8 @@ def assign_embedding(tokenizer, model, new_token, token):
     id_a = tokenizer.convert_tokens_to_ids([new_token])[0]
     id_b = tokenizer.convert_tokens_to_ids([token])[0]
     with torch.no_grad():
-        model.embeddings.word_embeddings.weight[id_a] = \
-        model.embeddings.word_embeddings.weight[id_b].detach().clone()
+        model.roberta.embeddings.word_embeddings.weight[id_a] = \
+        model.roberta.embeddings.word_embeddings.weight[id_b].detach().clone()
 
 def get_new_token(vid):
     assert(vid >= 0 and vid < MAX_NUM_VECTORS)
@@ -451,7 +451,7 @@ def do_train(args):
                                      label_words=WORDS[args.task])
         model = PromptForClassification(plm=plm.cuda(), template=mytemplate, verbalizer=hard_verb, freeze_plm=False)
         model = model.cuda()
-        optimizer = AdamW([{'params': model.plm.embeddings.word_embeddings.parameters()}], lr=lr,
+        optimizer = AdamW([{'params': model.plm.roberta.embeddings.word_embeddings.parameters()}], lr=lr,
                           correct_bias=False)
         num_update_steps_per_epoch = len(train_data_loader)
         args.max_train_steps = args.num_train_epochs * num_update_steps_per_epoch
@@ -474,7 +474,7 @@ def do_train(args):
                 loss = loss_fct(logits, batch['label'].cuda().view(-1))
                 loss.backward()
 
-                for p in model.plm.embeddings.word_embeddings.parameters():
+                for p in model.plm.roberta.embeddings.word_embeddings.parameters():
                     # only update new tokens
                     p.grad[:original_vocab_size, :] = 0.0
 
