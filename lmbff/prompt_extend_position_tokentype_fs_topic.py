@@ -576,6 +576,8 @@ def do_train(args):
                                            predict_eos_token=False, truncate_method="head")
         if args.soft == 1:
             myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()))
+        elif args.soft == 2:
+            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()), label_words=WORDS[args.task])
         else:
             myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                         label_words=WORDS[args.task])
