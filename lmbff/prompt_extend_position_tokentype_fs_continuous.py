@@ -390,7 +390,7 @@ def do_train(args):
     new_tokens = [get_new_token(i) for i in range(MAX_NUM_VECTORS)]
     tokenizer.add_tokens(new_tokens)
 
-    template = get_template_text(args.template.strip(), tokenizer)
+    template = get_template_text(args.temp.strip(), tokenizer)
     dataset = {}
     SPLITS = ['train', 'dev', 'test']
     for split in SPLITS:
@@ -446,7 +446,7 @@ def do_train(args):
         plm.resize_position_embeddings(args.max_seq_length)
         plm.resize_type_embeddings(args.token_type)
         plm.resize_token_embeddings(len(tokenizer))
-        convert_manual_to_dense(args.template.strip(), plm, tokenizer)
+        convert_manual_to_dense(args.temp.strip(), plm, tokenizer)
         hard_verb = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                      label_words=WORDS[args.task])
         model = PromptForClassification(plm=plm.cuda(), template=mytemplate, verbalizer=hard_verb, freeze_plm=False)
