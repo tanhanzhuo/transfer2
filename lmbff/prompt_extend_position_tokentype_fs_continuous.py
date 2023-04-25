@@ -168,7 +168,7 @@ def parse_args():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=514,
+        default=200,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
              "than this will be truncated, sequences shorter will be padded.", )
@@ -198,7 +198,7 @@ def parse_args():
         help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--batch_size",
-        default=32,
+        default=16,
         type=int,
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
@@ -223,7 +223,7 @@ def parse_args():
         help="If > 0: set total number of training steps to perform. Override num_train_epochs.",
     )
     parser.add_argument(
-        "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
+        "--seed", default='0,1,2,3,4,5,6,7,8,9', type=str, help="random seed for initialization")
     parser.add_argument(
         "--shot", default='full',#'10,20,40,80,160,320,640,1280,full',
         type=str, help="random seed for initialization")
