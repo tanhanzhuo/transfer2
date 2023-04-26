@@ -169,6 +169,8 @@ def parse_args():
         "--generate_tmp", default=0, type=int, help="template generation")
     parser.add_argument(
         "--generate_word", default=0, type=int, help="label word generation")
+    parser.add_argument(
+        "--name", default='roberta', type=str, help="write name")
     args = parser.parse_args()
     return args
 
@@ -345,7 +347,9 @@ def do_train(args):
         template_texts = ['{"placeholder":"text_a"}' + TEMPLATE[args.task]]
     print('all the templates:')
     print(template_texts)
-
+    with open(args.name, 'a', encoding='utf-8') as f:
+        for tmp in template_texts:
+            f.write(tmp + '\n')
     #####################evaluate template
     if len(template_texts) > 1:
         best_metrics = 0.0
@@ -378,7 +382,8 @@ def do_train(args):
     print("final best template:")
     print(best_template_text)
     # print("wrapped example:", template.wrap_one_example(dataset["train"][0]))
-
+    with open(args.name, 'a', encoding='utf-8') as f:
+        f.write(best_template_text + '\n')
 
     ###########################verberlizer
     # load generation model for template generation
@@ -397,7 +402,9 @@ def do_train(args):
         label_words_list = [WORDS[args.task]]
     print('label word list:')
     print(label_words_list)
-
+    with open(args.name, 'a', encoding='utf-8') as f:
+        for tmp in label_words_list:
+            f.write(' '.join(tmp) + '\n')
     # iterate over each candidate and select the best one
 
     current_verbalizer = copy.deepcopy(verbalizer)
@@ -432,6 +439,9 @@ def do_train(args):
     # use the best verbalizer
     print("final best label words:")
     print(best_label_words)
+
+    with open(args.name, 'a', encoding='utf-8') as f:
+        f.write(' '.join(best_label_words) + '\n')
     verbalizer = ManualVerbalizer(tokenizer, num_classes=2, label_words=best_label_words)
 
 if __name__ == "__main__":
