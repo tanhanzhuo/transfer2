@@ -175,6 +175,8 @@ def parse_args():
     parser.add_argument(
         "--generate_word", default=0, type=int, help="label word generation")
     parser.add_argument(
+        "--beam", default=10, type=int, help="label word generation")
+    parser.add_argument(
         "--name", default='roberta', type=str, help="write name")
     args = parser.parse_args()
     return args
@@ -343,7 +345,8 @@ def do_train(args):
             print('performing auto_t...')
             template_generate_model = template_generate_model.cuda()
             template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
-                                                     template_tokenizer_wrapper, verbalizer, beam_width=5, target_number=tmp_txt.count('{"mask"}'))
+                                                     template_tokenizer_wrapper, verbalizer, beam_width=args.beam,
+                                                     target_number=tmp_txt.count('{"mask"}'))
             dataloader = PromptDataLoader(dataset['train'], template, tokenizer=template_generate_tokenizer,
                                           tokenizer_wrapper_class=template_tokenizer_wrapper, batch_size=args.batch_size,
                                           decoder_max_length=128, max_seq_length=128, shuffle=False, teacher_forcing=False)
