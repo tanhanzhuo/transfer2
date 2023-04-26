@@ -329,11 +329,16 @@ def do_train(args):
 
     if args.generate_tmp == 1:
         template_texts_all = []
-        for tmp_txt in ['{"placeholder":"text_a"} {"mask"} {"mask"} {"mask"} {"meta":"labelword"}.',\
-                        '{"placeholder":"text_a"} {"mask"} {"mask"} {"meta":"labelword"} {"mask"}.',\
-                        '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"} {"mask"}.',\
-                        '{"placeholder":"text_a"} {"mask"} {"mask"} {"meta":"labelword"}.',\
-                        '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"}.',\
+        # for tmp_txt in ['{"placeholder":"text_a"} {"mask"} {"mask"} {"mask"} {"meta":"labelword"}.',\
+        #                 '{"placeholder":"text_a"} {"mask"} {"mask"} {"meta":"labelword"} {"mask"}.',\
+        #                 '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"} {"mask"}.',\
+        #                 '{"placeholder":"text_a"} {"mask"} {"mask"} {"meta":"labelword"}.',\
+        #                 '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"}.',\
+        #                 '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"}.']:
+        for tmp_txt in ['{"placeholder":"text_a"} {"mask"} {"mask"} {"meta":"labelword"} {"mask"}.', \
+                        '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"} {"mask"}.', \
+                        '{"placeholder":"text_a"} {"mask"} {"mask"} {"meta":"labelword"}.', \
+                        '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"}.', \
                         '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"}.']:
             template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
                 't5', 't5-large')
