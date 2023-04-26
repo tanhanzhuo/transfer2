@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+def warn(*args, **kwargs):
+    pass
+import warnings
+warnings.warn = warn
+
 import argparse
 import logging
 # from transformers.utils import logging
@@ -257,6 +262,8 @@ def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
     best_score = 0.0
     for epoch in range(10):
         train_loss = train_epoch(model, train_dataloader, loss_func, optimizer)
+        if train_loss > 0.5:
+            continue
         score = evaluate(model, val_dataloader, task)
         if score > best_score:
             best_score = score
