@@ -87,14 +87,14 @@ CONVERT = {
 
 WORDS = {
     # 'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
-    'eval-emotion': [["angerous"], ["joyful"], ["optimistic"],["sad"]],
-    'eval-hate': [["neutral"], ["hateful"]],
-    'eval-irony': [["neutral"], ["ironic"]],
-    'eval-offensive': [["neutral"], ["offensive"]],
-    'eval-stance': [["neutral"], ["against"],["favor"]],
-    'stance': [["neutral"], ["favor"],["against"]],
-    'sem22-task6-sarcasm': [["neutral"], ["sarcastic"]],
-    'sem21-task7-humor': [["neutral"], ["humorous"]]
+    'eval-emotion': ["angerous", "joyful", "optimistic","sad"],
+    'eval-hate': ["neutral", "hateful"],
+    'eval-irony': ["neutral", "ironic"],
+    'eval-offensive': ["neutral", "offensive"],
+    'eval-stance': ["neutral", "against","favor"],
+    'stance': ["neutral", "favor","against"],
+    'sem22-task6-sarcasm': ["neutral", "sarcastic"],
+    'sem21-task7-humor': ["neutral", "humorous"]
 }
 
 TEMPLATE = {
@@ -337,6 +337,7 @@ def do_train(args):
         original_template = template.text
         template_texts = [template_generator.convert_template(template_text, original_template) for template_text in
                           template_texts]
+        template_texts.append('{"placeholder":"text_a"}' + TEMPLATE[args.task])
         # template_generator._show_template()
         template_generator.release_memory()
 
@@ -390,6 +391,7 @@ def do_train(args):
             data = data.cuda()
             verbalizer_generator.register_buffer(data)
         label_words_list = verbalizer_generator.generate()
+        label_words_list.append(WORDS[args.task])
         verbalizer_generator.release_memory()
     else:
         label_words_list = [WORDS[args.task]]
