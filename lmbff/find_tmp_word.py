@@ -351,7 +351,7 @@ def do_train(args):
             template_generate_model = template_generate_model.cuda()
             template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
                                                      template_tokenizer_wrapper, verbalizer, beam_width=args.beam,
-                                                     target_number=tmp_txt.count('{"mask"}'), max_length=100)
+                                                     target_number=tmp_txt.count('{"mask"}'), max_length=50)
             dataloader = PromptDataLoader(dataset['train'], template, tokenizer=template_generate_tokenizer,
                                           tokenizer_wrapper_class=template_tokenizer_wrapper, batch_size=args.batch_size,
                                           decoder_max_length=128, max_seq_length=128, shuffle=False, teacher_forcing=False)
@@ -360,10 +360,16 @@ def do_train(args):
                 template_generator._register_buffer(data)
             template_generate_model.eval()
             # print('generating...')
-            template_texts = template_generator._get_templates()
+            template_texts_format = template_generator._get_templates()
             original_template = template.text
-            template_texts = [template_generator.convert_template(template_text, original_template) for template_text in
-                              template_texts]
+            template_texts = []
+            for template_text in template_texts_format:
+                try:
+                    template_text1 = template_generator.convert_template(template_text, original_template)
+                    template_texts.append(template_text1)
+                except:
+                    print(template_text)
+
             # template_generator._show_template()
             template_generator.release_memory()
             template_texts_all.extend(template_texts)
