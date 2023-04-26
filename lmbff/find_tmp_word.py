@@ -328,7 +328,7 @@ def do_train(args):
         template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
                                                  template_tokenizer_wrapper, verbalizer, beam_width=5)
         dataloader = PromptDataLoader(dataset['train'], template, tokenizer=template_generate_tokenizer,
-                                      tokenizer_wrapper_class=template_tokenizer_wrapper, batch_size=len(dataset['train']),
+                                      tokenizer_wrapper_class=template_tokenizer_wrapper, batch_size=args.batch_size),
                                       decoder_max_length=128, max_seq_length=128, shuffle=False, teacher_forcing=False)
         for data in dataloader:
             data = data.cuda()
