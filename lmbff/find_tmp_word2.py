@@ -296,7 +296,7 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
                                         tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
                                         batch_size=args.batch_size)
 
-    model = PromptForClassification(copy.deepcopy(plm), template, verbalizer)
+    model = PromptForClassification(plm, template, verbalizer)
 
     loss_func = torch.nn.CrossEntropyLoss()
     no_decay = ['bias', 'LayerNorm.weight']
@@ -310,7 +310,7 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
     optimizer = AdamW(optimizer_grouped_parameters, lr=1e-5)
     model = model.cuda()
     score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
-    del plm
+    del plm, model
     torch.cuda.empty_cache()
     return score
 
@@ -334,11 +334,11 @@ def do_train(args):
 
     if 'roberta' in args.model_name_or_path:
         plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
-        plm = plm.cuda()
+        # plm = plm.cuda()
     else:
         tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
         config = AutoConfig.from_pretrained(args.model_name_or_path)
-        plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
+        plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config)#.cuda()
         wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                   label_words=WORDS[args.task])
@@ -389,7 +389,7 @@ def do_train(args):
             # template_generator._show_template()
             template_generator.release_memory()
             template_texts_all.extend(template_texts)
-            del template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper, template_generator
+            del template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper, template_generator, dataloader, data
             torch.cuda.empty_cache()
         template_texts_all.append('{"placeholder":"text_a"}' + TEMPLATE[args.task])
 
@@ -405,7 +405,7 @@ def do_train(args):
     if len(template_texts) > 1:
         best_template_text = None
         for template_text in tqdm(template_texts):
-            score = evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, copy.deepcopy(plm))
+            score = evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, copy.deepcopy(plm).cuda())
             with open(args.name, 'a', encoding='utf-8') as f:
                 f.write(template_text + '\n')
                 f.write('{:.5f}'.format(score) + '\n')
@@ -430,10 +430,10 @@ def do_train(args):
     # load generation model for word generation
     if args.generate_word == 1:
         if 'roberta' in args.model_name_or_path:
-            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=50,
+            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=50,
                                                               label_word_num_per_class=100)
         else:
-            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=50,
+            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=50,
                                                                label_word_num_per_class=100)
         dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
                                       tokenizer_wrapper_class=MLMTokenizerWrapper,
@@ -444,7 +444,7 @@ def do_train(args):
         label_words_list = verbalizer_generator.generate()
         label_words_list.append(WORDS[args.task])
         verbalizer_generator.release_memory()
-        del verbalizer_generator
+        del verbalizer_generator, dataloader, data
         torch.cuda.empty_cache()
     else:
         label_words_list = [WORDS[args.task]]
@@ -461,7 +461,7 @@ def do_train(args):
                 continue
             current_verbalizer = copy.deepcopy(verbalizer)
             current_verbalizer.label_words = label_words
-            score = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm))
+            score = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm).cuda())
             with open(args.name, 'a', encoding='utf-8') as f:
                 f.write(' '.join(label_words) + '\n')
                 f.write('{:.5f}'.format(score) + '\n')
