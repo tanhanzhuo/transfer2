@@ -383,8 +383,8 @@ def do_train(args):
     print(template_texts)
 
     #####################evaluate template
+    best_metrics = 0.0
     if len(template_texts) > 1:
-        best_metrics = 0.0
         best_template_text = None
         for template_text in tqdm(template_texts):
             # template = ManualTemplate(tokenizer, template_text)
@@ -441,8 +441,8 @@ def do_train(args):
     # iterate over each candidate and select the best one
 
     current_verbalizer = copy.deepcopy(verbalizer)
+    best_metrics = 0.0
     if len(label_words_list) > 1:
-        best_metrics = 0.0
         best_label_words = None
         for label_words in tqdm(label_words_list):
             current_verbalizer.label_words = label_words
