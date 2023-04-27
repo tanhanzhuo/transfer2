@@ -482,7 +482,7 @@ def do_train(args):
         f.write('{:.5f}'.format(best_metrics) + '\n')
 
 
-    del plm, tokenizer, model_config, WrapperClass
+    del plm
     torch.cuda.empty_cache()
 
 
