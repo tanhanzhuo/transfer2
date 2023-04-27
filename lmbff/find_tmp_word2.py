@@ -430,10 +430,10 @@ def do_train(args):
     # load generation model for word generation
     if args.generate_word == 1:
         if 'roberta' in args.model_name_or_path:
-            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=50,
+            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=100,
                                                               label_word_num_per_class=50)
         else:
-            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=50,
+            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=100,
                                                                label_word_num_per_class=50)
         dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
                                       tokenizer_wrapper_class=MLMTokenizerWrapper,
