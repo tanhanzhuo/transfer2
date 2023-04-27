@@ -188,6 +188,8 @@ def parse_args():
     parser.add_argument(
         "--beam", default=10, type=int, help="label word generation")
     parser.add_argument(
+        "--word", default=50, type=int, help="label word generation")
+    parser.add_argument(
         "--name", default='roberta', type=str, help="write name")
     args = parser.parse_args()
     return args
@@ -349,10 +351,10 @@ def do_train(args):
     # load generation model for word generation
     if args.generate_word == 1:
         if 'roberta' in args.model_name_or_path:
-            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=50,
+            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=args.word,
                                                               label_word_num_per_class=100)
         else:
-            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=50,
+            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=args.word,
                                                                label_word_num_per_class=100)
         dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
                                       tokenizer_wrapper_class=MLMTokenizerWrapper,
