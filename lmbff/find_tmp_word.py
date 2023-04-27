@@ -479,8 +479,11 @@ def do_train(args):
     with open(args.name, 'a', encoding='utf-8') as f:
         f.write(' '.join(best_label_words) + '\n')
         f.write('{:.5f}'.format(best_metrics) + '\n')
-    verbalizer = ManualVerbalizer(tokenizer, num_classes=2, label_words=best_label_words)
-
+    del template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper
+    del plm, tokenizer, model_config, WrapperClass
+    del template_generator
+    torch.cuda.empty_cache()
+    
 if __name__ == "__main__":
     args = parse_args()
     for task in args.task.split(','):
@@ -491,3 +494,4 @@ if __name__ == "__main__":
             args_tmp.input_dir = args.input_dir + task + '/'
             args_tmp.seed = int(seed)
             do_train(args_tmp)
+
