@@ -446,12 +446,16 @@ def do_train(args):
     ###########################verberlizer
     # load generation model for word generation
     if args.generate_word == 1:
+        if len(label2idx.keys()) > 3:
+            label_word_num_per_class = 50
+        else:
+            label_word_num_per_class = int( 100 * (3/len(label2idx.keys())) )
         if 'roberta' in args.model_name_or_path:
             verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=args.word,
-                                                              label_word_num_per_class=100)
+                                                              label_word_num_per_class=label_word_num_per_class)
         else:
             verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm).cuda(), tokenizer=tokenizer, candidate_num=args.word,
-                                                               label_word_num_per_class=100)
+                                                               label_word_num_per_class=label_word_num_per_class)
         if args.shot != 'full':
             sampler = FewShotSampler(num_examples_per_label=int(args.shot))
             dataset_gen = sampler(dataset['train'])
