@@ -75,7 +75,7 @@ from openprompt.pipeline_base import PromptDataLoader, PromptForClassification
 from openprompt.prompts import ManualTemplate
 from openprompt.trainer import ClassificationRunner
 from transformers import  AdamW, get_linear_schedule_with_warmup
-from openprompt.prompts.prompt_generator import RobertaVerbalizerGenerator
+from openprompt.prompts.prompt_generator import RobertaVerbalizerGenerator,VerbalizerGenerator
 from transformers import RobertaForMaskedLM
 
 CONVERT = {
@@ -113,6 +113,23 @@ TEMPLATE = {
     'sem21-task7-humor':' It was {"mask"}. '
 }
 
+class BertweetVerbalizerGenerator(VerbalizerGenerator):
+    def __init__(self,
+                 model: RobertaForMaskedLM,
+                 tokenizer: RobertaTokenizer,
+                 candidate_num: Optional[int] = 100,
+                 label_word_num_per_class: Optional[int] = 100):
+        super().__init__(
+                        model = model,
+                        tokenizer = tokenizer,
+                        candidate_num = candidate_num,
+                        label_word_num_per_class = label_word_num_per_class)
+
+    def invalid_label_word(self, word: str):
+        return ('@@' in word)
+
+    def post_process(self, word: str):
+        return word.lstrip('Ġ')
 
 class ManualTemplateWithoutParse(ManualTemplate):
     """The generated template from TemplateGenerator is a list of dict of parsed template_text. So no further parsing is needed."""
@@ -423,8 +440,12 @@ def do_train(args):
     ###########################verberlizer
     # load generation model for template generation
     if args.generate_word == 1:
-        verbalizer_generator = RobertaVerbalizerGenerator(model=plm, tokenizer=tokenizer, candidate_num=20,
-                                                          label_word_num_per_class=20)
+        if 'roberta' in args.model_name_or_path:
+            verbalizer_generator = RobertaVerbalizerGenerator(model=plm, tokenizer=tokenizer, candidate_num=20,
+                                                              label_word_num_per_class=20)
+        else:
+            verbalizer_generator = BertweetVerbalizerGenerator(model=plm, tokenizer=tokenizer, candidate_num=20,
+                                                              label_word_num_per_class=20)
         dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer, tokenizer_wrapper_class=MLMTokenizerWrapper,
                                       batch_size=args.batch_size, max_seq_length=128)
         for data in dataloader:
