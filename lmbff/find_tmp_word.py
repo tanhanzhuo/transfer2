@@ -114,17 +114,6 @@ TEMPLATE = {
 }
 
 class BertweetVerbalizerGenerator(VerbalizerGenerator):
-    def __init__(self,
-                 model: RobertaForMaskedLM,
-                 tokenizer: RobertaTokenizer,
-                 candidate_num: Optional[int] = 100,
-                 label_word_num_per_class: Optional[int] = 100):
-        super().__init__(
-                        model = model,
-                        tokenizer = tokenizer,
-                        candidate_num = candidate_num,
-                        label_word_num_per_class = label_word_num_per_class)
-
     def invalid_label_word(self, word: str):
         return ('@@' in word)
 
