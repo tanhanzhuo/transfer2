@@ -130,31 +130,6 @@ class ManualTemplateWithoutParse(ManualTemplate):
         pass
 
 class T5TemplateGenerator(TemplateGenerator):
-    r"""
-    Automatic template search using T5 model. This class inherits from ``TemplateGenerator``.
-    """
-    def __init__(self,
-                 model: T5ForConditionalGeneration,
-                 tokenizer: T5Tokenizer,
-                 tokenizer_wrapper: Tokenizer,
-                 verbalizer: Verbalizer,
-                 max_length: Optional[int] = 20,
-                 target_number: Optional[int] = 2,
-                 beam_width: Optional[int] = 100,
-                 length_limit: Optional[List[int]] = None,
-                 forbidden_word_ids: Optional[List[int]] = [3, 19794, 22354],
-                 config: CfgNode = None):
-        super().__init__(model = model,
-                        tokenizer = tokenizer,
-                        tokenizer_wrapper=tokenizer_wrapper,
-                        verbalizer = verbalizer,
-                        max_length = max_length,
-                        target_number= target_number,
-                        beam_width = beam_width,
-                        length_limit = length_limit,
-                        forbidden_word_ids = forbidden_word_ids,
-                        config=config)
-
     def get_part_token_id(self, part_id):
         return self.tokenizer.additional_special_tokens_ids[part_id]
     def _get_templates(self):
