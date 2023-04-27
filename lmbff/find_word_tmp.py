@@ -161,15 +161,19 @@ class T5TemplateGenerator(TemplateGenerator):
                 turn = input_ids.size(0) // batch_size
                 if input_ids.size(0) % batch_size != 0:
                     turn += 1
-                aggr_output = []
+                # aggr_output = []
                 for t in range(turn):
                     start = t * batch_size
                     end = min((t + 1) * batch_size, input_ids.size(0))
 
                     with torch.no_grad():
-                        aggr_output.append(self.model(input_ids[start:end], attention_mask=attention_mask[start:end], decoder_input_ids=decoder_input_ids.to(input_ids.device)[start:end])[0].to(torch.float16))
-                aggr_output = torch.cat(aggr_output, 0)
+                        tmp = self.model(input_ids[start:end], attention_mask=attention_mask[start:end], decoder_input_ids=decoder_input_ids.to(input_ids.device)[start:end])[0].to(torch.float16)
+                    if t == 0:
+                        aggr_output = tmp
+                    else:
+                        aggr_output = torch.cat((aggr_output,tmp), 0)
 
+                # aggr_output = torch.cat(aggr_output, 0)
                 # Gather results across all input sentences, and sort generated tokens by log likelihood
                 aggr_output = aggr_output.mean(0)
                 log_denominator = torch.logsumexp(aggr_output[i], -1).item()
