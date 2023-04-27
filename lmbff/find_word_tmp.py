@@ -349,11 +349,11 @@ def do_train(args):
     # load generation model for word generation
     if args.generate_word == 1:
         if 'roberta' in args.model_name_or_path:
-            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=20,
-                                                              label_word_num_per_class=20)
+            verbalizer_generator = RobertaVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=50,
+                                                              label_word_num_per_class=50)
         else:
-            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=20,
-                                                               label_word_num_per_class=20)
+            verbalizer_generator = BertweetVerbalizerGenerator(model=copy.deepcopy(plm), tokenizer=tokenizer, candidate_num=50,
+                                                               label_word_num_per_class=50)
         dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
                                       tokenizer_wrapper_class=MLMTokenizerWrapper,
                                       batch_size=args.batch_size, max_seq_length=128)
@@ -375,6 +375,9 @@ def do_train(args):
     if len(label_words_list) > 1:
         best_label_words = None
         for label_words in tqdm(label_words_list):
+            label_uni = set(label_words)
+            if len(label_uni) != len(label_words):
+                continue
             current_verbalizer = copy.deepcopy(verbalizer)
             current_verbalizer.label_words = label_words
             score = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm))
