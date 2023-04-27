@@ -129,99 +129,99 @@ class ManualTemplateWithoutParse(ManualTemplate):
     def on_text_set(self):
         pass
 
-# class T5TemplateGenerator(TemplateGenerator):
-#     def get_part_token_id(self, part_id):
-#         return self.tokenizer.additional_special_tokens_ids[part_id]
-#     def _get_templates(self):
-#         inner_model = self.model
-#         input_ids = self.input_ids_buffer
-#         attention_mask = self.attention_mask_buffer
-#
-#         ori_decoder_input_ids = torch.zeros((input_ids.size(0), self.max_length)).long()
-#         ori_decoder_input_ids[..., 0] = inner_model.config.decoder_start_token_id
-#
-#
-#         # decoder_input_ids: decoder inputs for next regressive generation
-#         # ll: log likelihood
-#         # output_id: which part of generated contents we are at
-#         # output: generated content so far
-#         # last_length (deprecated): how long we have generated for this part
-#         current_output = [{'decoder_input_ids': ori_decoder_input_ids, 'll': 0, 'output_id': 1, 'output': [], 'last_length': -1}]
-#         for i in tqdm(range(self.max_length - 2)):
-#             new_current_output = []
-#             for item in current_output:
-#                 if item['output_id'] > self.target_number:
-#                     # Enough contents
-#                     new_current_output.append(item)
-#                     continue
-#                 decoder_input_ids = item['decoder_input_ids']
-#
-#                 # Forward
-#                 batch_size = 16
-#                 turn = input_ids.size(0) // batch_size
-#                 if input_ids.size(0) % batch_size != 0:
-#                     turn += 1
-#                 # aggr_output = []
-#                 for t in range(turn):
-#                     start = t * batch_size
-#                     end = min((t + 1) * batch_size, input_ids.size(0))
-#
-#                     with torch.no_grad():
-#                         tmp = self.model(input_ids[start:end], attention_mask=attention_mask[start:end], decoder_input_ids=decoder_input_ids.to(input_ids.device)[start:end])[0].to(torch.float16)
-#                     if t == 0:
-#                         aggr_output = tmp
-#                     else:
-#                         aggr_output = torch.cat((aggr_output,tmp), 0)
-#
-#                 # aggr_output = torch.cat(aggr_output, 0)
-#                 # Gather results across all input sentences, and sort generated tokens by log likelihood
-#                 aggr_output = aggr_output.mean(0)
-#                 log_denominator = torch.logsumexp(aggr_output[i], -1).item()
-#                 ids = list(range(inner_model.config.vocab_size))
-#                 ids.sort(key=lambda x: aggr_output[i][x].item(), reverse=True)
-#                 ids = ids[:self.beam_width+3]
-#
-#                 for word_id in ids:
-#                     output_id = item['output_id']
-#
-#                     if word_id == self.get_part_token_id(output_id) or word_id == self.tokenizer.eos_token_id:
-#                         # Finish one part
-#                         if self.length_limit is not None and item['last_length'] < self.length_limit[output_id - 1]:
-#                             check = False
-#                         else:
-#                             check = True
-#                         output_id += 1
-#                         last_length = 0
-#                     else:
-#                         last_length = item['last_length'] + 1
-#                         check = True
-#
-#                     output_text = item['output'] + [word_id]
-#                     ll = item['ll'] + aggr_output[i][word_id] - log_denominator
-#                     new_decoder_input_ids = decoder_input_ids.new_zeros(decoder_input_ids.size())
-#                     new_decoder_input_ids[:] = decoder_input_ids
-#                     new_decoder_input_ids[..., i + 1] = word_id
-#
-#                     if word_id in self.forbidden_word_ids:
-#                         check = False
-#
-#                     # Forbid continuous "."
-#                     if len(output_text) > 1 and output_text[-2] == self.sent_end_id and output_text[-1] == self.sent_end_id:
-#                         check = False
-#
-#                     if check:
-#                         # Add new results to beam search pool
-#                         new_item = {'decoder_input_ids': new_decoder_input_ids, 'll': ll, 'output_id': output_id, 'output': output_text, 'last_length': last_length}
-#                         new_current_output.append(new_item)
-#
-#             if len(new_current_output) == 0:
-#                 break
-#
-#             new_current_output.sort(key=lambda x: x['ll'], reverse=True)
-#             new_current_output = new_current_output[:self.beam_width]
-#             current_output = new_current_output
-#
-#         return [self.tokenizer.convert_ids_to_tokens(item['output']) for item in current_output]
+class T5TemplateGenerator(TemplateGenerator):
+    def get_part_token_id(self, part_id):
+        return self.tokenizer.additional_special_tokens_ids[part_id]
+    def _get_templates(self):
+        inner_model = self.model
+        input_ids = self.input_ids_buffer
+        attention_mask = self.attention_mask_buffer
+
+        ori_decoder_input_ids = torch.zeros((input_ids.size(0), self.max_length)).long()
+        ori_decoder_input_ids[..., 0] = inner_model.config.decoder_start_token_id
+
+
+        # decoder_input_ids: decoder inputs for next regressive generation
+        # ll: log likelihood
+        # output_id: which part of generated contents we are at
+        # output: generated content so far
+        # last_length (deprecated): how long we have generated for this part
+        current_output = [{'decoder_input_ids': ori_decoder_input_ids, 'll': 0, 'output_id': 1, 'output': [], 'last_length': -1}]
+        for i in tqdm(range(self.max_length - 2)):
+            new_current_output = []
+            for item in current_output:
+                if item['output_id'] > self.target_number:
+                    # Enough contents
+                    new_current_output.append(item)
+                    continue
+                decoder_input_ids = item['decoder_input_ids']
+
+                # Forward
+                batch_size = 16
+                turn = input_ids.size(0) // batch_size
+                if input_ids.size(0) % batch_size != 0:
+                    turn += 1
+                # aggr_output = []
+                for t in range(turn):
+                    start = t * batch_size
+                    end = min((t + 1) * batch_size, input_ids.size(0))
+
+                    with torch.no_grad():
+                        tmp = self.model(input_ids[start:end], attention_mask=attention_mask[start:end], decoder_input_ids=decoder_input_ids.to(input_ids.device)[start:end])[0]#.to(torch.float16)
+                    if t == 0:
+                        aggr_output = tmp
+                    else:
+                        aggr_output = torch.cat((aggr_output,tmp), 0)
+
+                # aggr_output = torch.cat(aggr_output, 0)
+                # Gather results across all input sentences, and sort generated tokens by log likelihood
+                aggr_output = aggr_output.mean(0)
+                log_denominator = torch.logsumexp(aggr_output[i], -1).item()
+                ids = list(range(inner_model.config.vocab_size))
+                ids.sort(key=lambda x: aggr_output[i][x].item(), reverse=True)
+                ids = ids[:self.beam_width+3]
+
+                for word_id in ids:
+                    output_id = item['output_id']
+
+                    if word_id == self.get_part_token_id(output_id) or word_id == self.tokenizer.eos_token_id:
+                        # Finish one part
+                        if self.length_limit is not None and item['last_length'] < self.length_limit[output_id - 1]:
+                            check = False
+                        else:
+                            check = True
+                        output_id += 1
+                        last_length = 0
+                    else:
+                        last_length = item['last_length'] + 1
+                        check = True
+
+                    output_text = item['output'] + [word_id]
+                    ll = item['ll'] + aggr_output[i][word_id] - log_denominator
+                    new_decoder_input_ids = decoder_input_ids.new_zeros(decoder_input_ids.size())
+                    new_decoder_input_ids[:] = decoder_input_ids
+                    new_decoder_input_ids[..., i + 1] = word_id
+
+                    if word_id in self.forbidden_word_ids:
+                        check = False
+
+                    # Forbid continuous "."
+                    if len(output_text) > 1 and output_text[-2] == self.sent_end_id and output_text[-1] == self.sent_end_id:
+                        check = False
+
+                    if check:
+                        # Add new results to beam search pool
+                        new_item = {'decoder_input_ids': new_decoder_input_ids, 'll': ll, 'output_id': output_id, 'output': output_text, 'last_length': last_length}
+                        new_current_output.append(new_item)
+
+            if len(new_current_output) == 0:
+                break
+
+            new_current_output.sort(key=lambda x: x['ll'], reverse=True)
+            new_current_output = new_current_output[:self.beam_width]
+            current_output = new_current_output
+
+        return [self.tokenizer.convert_ids_to_tokens(item['output']) for item in current_output]
 
 def parse_args():
     parser = argparse.ArgumentParser()
