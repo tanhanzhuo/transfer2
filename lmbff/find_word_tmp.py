@@ -79,6 +79,7 @@ from openprompt.trainer import ClassificationRunner
 from transformers import AdamW, get_linear_schedule_with_warmup
 from openprompt.prompts.prompt_generator import RobertaVerbalizerGenerator, VerbalizerGenerator, TemplateGenerator
 from transformers import RobertaForMaskedLM
+from typing import List, Optional, Dict
 
 CONVERT = {
     'eval-emotion': {'0': 0, '1': 1, '2': 2, '3': 3},
@@ -132,6 +133,40 @@ class ManualTemplateWithoutParse(ManualTemplate):
 class T5TemplateGenerator(TemplateGenerator):
     def get_part_token_id(self, part_id):
         return self.tokenizer.additional_special_tokens_ids[part_id]
+    def convert_template(self, generated_template: List[str], original_template: List[Dict]) -> str:
+        r"""
+        Given original template used for template generation,convert the generated template into a standard template for downstream prompt model, return a ``str``
+        Example:
+        generated_template: ['<extra_id_0>', 'it', 'is', '<extra_id_1>', 'one', '</s>']
+        original_template: [{'add_prefix_space': '', 'placeholder': 'text_a'}, {'add_prefix_space': ' ', 'mask': None}, {'add_prefix_space': ' ', 'meta': 'labelword'}, {'add_prefix_space': ' ', 'mask': None}, {'add_prefix_space': '', 'text': '.'}]
+        return: "{'placeholder':'text_a'} it is {"mask"} one."
+        """
+        i = 0
+        part_id = 0
+        while generated_template[i] != self.tokenizer.additional_special_tokens[part_id] and i < len(generated_template) - 1:
+            i += 1
+        assert generated_template[i] == self.tokenizer.additional_special_tokens[part_id], print('invalid generated_template {}, missing token {}'.format(generated_template, self.tokenizer.additional_special_tokens[part_id]))
+        i += 1
+
+        output = []
+        for d in original_template:
+            if 'mask' in d:
+                j = i + 1
+                part_id += 1
+                while generated_template[j] != self.tokenizer.additional_special_tokens[part_id] and j < len(generated_template) - 1:
+                    j += 1
+                output.append(d.get('add_prefix_space', '') + self.tokenizer.convert_tokens_to_string(generated_template[i:j]))
+                i = j + 1
+            elif 'meta' in d and d['meta'] == 'labelword':
+                output.append(d.get('add_prefix_space', '') + '{"mask"}')
+            elif 'text' in d:
+                output.append(d.get('add_prefix_space', '') + d['text'])
+            else:
+                prefix = d.get('add_prefix_space', '')
+                if 'add_prefix_space' in d:
+                    d.pop('add_prefix_space')
+                output.append(prefix + json.dumps(d))
+        return ''.join(output)
     def _get_templates(self):
         inner_model = self.model
         input_ids = self.input_ids_buffer
