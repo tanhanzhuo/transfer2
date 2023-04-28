@@ -483,10 +483,10 @@ def do_train(args):
         del verbalizer_generator, dataloader, data
         torch.cuda.empty_cache()
     else:
-        if len(args.pre_word) == 0:
+        if len(args.pre_word[0].split(',')) < 1:
             label_words_list = [WORDS[args.task]]
         else:
-            label_words_list = args.pre_word
+            label_words_list = [i.split(',') for i in args.pre_word]
     print('label word list:')
     print(label_words_list)
 
@@ -572,7 +572,10 @@ def do_train(args):
         template_texts_all.append('{"placeholder":"text_a"}' + TEMPLATE[args.task])
 
     else:
-        template_texts_all = ['{"placeholder":"text_a"}' + TEMPLATE[args.task]]
+        if len(args.pre_tmp[0]) < 10:
+            template_texts_all = ['{"placeholder":"text_a"}' + TEMPLATE[args.task]]
+        else:
+            template_texts_all = args.pre_tmp
 
     template_texts = template_texts_all
     print('all the templates:')
