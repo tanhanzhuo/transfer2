@@ -323,9 +323,9 @@ def parse_args():
     parser.add_argument(
         "--name", default='roberta', type=str, help="write name")
     parser.add_argument(
-        "--pre_tmp", default=[''], nargs='+', help="write name")
+        "--pre_tmp", default=[], nargs='+', help="write name")
     parser.add_argument(
-        "--pre_word", default=[''], nargs='+', help="write name")
+        "--pre_word", default=[], nargs='+', help="write name")
     args = parser.parse_args()
     return args
 
@@ -486,7 +486,7 @@ def do_train(args):
         wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                   label_words=WORDS[args.task])
-    if len(args.pre_tmp) == 0:
+    if len(args.pre_tmp) < 1:
         template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
     else:
         template_text = args.pre_tmp[0]
@@ -522,7 +522,7 @@ def do_train(args):
         del verbalizer_generator, dataloader, data
         torch.cuda.empty_cache()
     else:
-        if len(args.pre_word[0].split(',')) < 1:
+        if len(args.pre_word) < 1:
             label_words_list = [WORDS[args.task]]
         else:
             label_words_list = [i.split(',') for i in args.pre_word]
@@ -627,7 +627,7 @@ def do_train(args):
         template_texts_all = list(set(template_texts_all))
 
     else:
-        if len(args.pre_tmp[0]) < 10:
+        if len(args.pre_tmp) < 1:
             template_texts_all = ['{"placeholder":"text_a"}' + TEMPLATE[args.task]]
         else:
             template_texts_all = args.pre_tmp
