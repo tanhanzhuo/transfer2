@@ -425,34 +425,41 @@ def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
 
 
 def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
-    if isinstance(template_text, list):
-        template = ManualTemplateWithoutParse(tokenizer, template_text)
-    else:
-        template = ManualTemplate(tokenizer, template_text)
-    train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
-                                        tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128,
-                                        batch_size=args.batch_size)
-    valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
-                                        tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
-                                        batch_size=args.batch_size)
+    score_all = []
+    plm_base = plm.cpu()
+    for seed in args.seed.split(','):
+        set_seed(int(seed))
 
-    model = PromptForClassification(plm, template, verbalizer)
+        if isinstance(template_text, list):
+            template = ManualTemplateWithoutParse(tokenizer, template_text)
+        else:
+            template = ManualTemplate(tokenizer, template_text)
+        train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128,
+                                            batch_size=args.batch_size)
+        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                            batch_size=args.batch_size)
 
-    loss_func = torch.nn.CrossEntropyLoss()
-    no_decay = ['bias', 'LayerNorm.weight']
-    # it's always good practice to set no decay to biase and LayerNorm parameters
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-         'weight_decay': 0.01},
-        {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-    ]
+        model = PromptForClassification(copy.deepcopy(plm_base).cuda(), template, verbalizer)
 
-    optimizer = AdamW(optimizer_grouped_parameters, lr=1e-5)
-    model = model.cuda()
-    score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
-    del model, plm
-    torch.cuda.empty_cache()
-    return score
+        loss_func = torch.nn.CrossEntropyLoss()
+        no_decay = ['bias', 'LayerNorm.weight']
+        # it's always good practice to set no decay to biase and LayerNorm parameters
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+             'weight_decay': 0.01},
+            {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        ]
+
+        optimizer = AdamW(optimizer_grouped_parameters, lr=1e-5)
+        model = model.cuda()
+        score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
+        score_all.append(score)
+        del model, plm
+        torch.cuda.empty_cache()
+    del plm_base
+    return np.mean(score_all)
 
 
 def do_train(args):
