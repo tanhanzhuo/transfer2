@@ -487,7 +487,7 @@ def do_train(args):
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                   label_words=WORDS[args.task])
     if len(args.pre_tmp) < 1:
-        template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
+        template_text = '{"placeholder":"text_b"} {"placeholder":"text_a"}' + TEMPLATE[args.task]
     else:
         template_text = args.pre_tmp[0]
     template = ManualTemplate(tokenizer, text=template_text)
@@ -623,12 +623,12 @@ def do_train(args):
                 template_texts_all.extend(template_texts)
                 del template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper, template_generator, dataloader,data
                 torch.cuda.empty_cache()
-        template_texts_all.append('{"placeholder":"text_a"}' + TEMPLATE[args.task])
+        template_texts_all.append('{"placeholder":"text_b"} {"placeholder":"text_a"}' + TEMPLATE[args.task])
         template_texts_all = list(set(template_texts_all))
 
     else:
         if len(args.pre_tmp) < 1:
-            template_texts_all = ['{"placeholder":"text_a"}' + TEMPLATE[args.task]]
+            template_texts_all = ['{"placeholder":"text_b"} {"placeholder":"text_a"}' + TEMPLATE[args.task]]
         else:
             template_texts_all = args.pre_tmp
 
