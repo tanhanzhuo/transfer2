@@ -286,6 +286,10 @@ def parse_args():
         "--shot", default='2000', type=str, help="samples for generation")
     parser.add_argument(
         "--name", default='roberta', type=str, help="write name")
+    parser.add_argument(
+        "--pre_tmp", default=['{"placeholder":"text_a"} It was {"mask"}. '], type=list, help="write name")
+    parser.add_argument(
+        "--pre_word", default=[["neutral", "offensive"]], type=list, help="write name")
     args = parser.parse_args()
     return args
 
@@ -385,7 +389,10 @@ def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
 
 
 def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
-    template = ManualTemplate(tokenizer, template_text)
+    if isinstance(template_text, list):
+        template = ManualTemplateWithoutParse(tokenizer, template_text)
+    else:
+        template = ManualTemplate(tokenizer, template_text)
     train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
                                         tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128,
                                         batch_size=args.batch_size)
@@ -440,7 +447,10 @@ def do_train(args):
         wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                   label_words=WORDS[args.task])
-    template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
+    if len(args.pre_tmp) == 0:
+        template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
+    else:
+        template_text = args.pre_tmp[0]
     template = ManualTemplate(tokenizer, text=template_text)
 
     ###########################verberlizer
@@ -473,7 +483,10 @@ def do_train(args):
         del verbalizer_generator, dataloader, data
         torch.cuda.empty_cache()
     else:
-        label_words_list = [WORDS[args.task]]
+        if len(args.pre_word) == 0:
+            label_words_list = [WORDS[args.task]]
+        else:
+            label_words_list = args.pre_word
     print('label word list:')
     print(label_words_list)
 
