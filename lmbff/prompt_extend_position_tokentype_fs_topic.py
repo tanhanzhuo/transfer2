@@ -108,6 +108,27 @@ TEMPLATE = {
     'sem21-task7-humor':' It was {"mask"}. '
 }
 
+WORDS2 = {
+    # 'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
+    'eval-stance': ["neutral", "against", "favor"],
+    'eval-emotion': ["disgusting", "magical", "love", "sad"],
+    'eval-irony': ["hard", "unexpected"],
+    'eval-offensive': ["neutral", "offensive"],
+    'eval-hate': ["interesting", "disgusting"],
+    'sem21-task7-humor': ["real", "funny"],
+    'sem22-task6-sarcasm': ["neutral", "sarcastic"]
+}
+
+TEMPLATE2 = {
+    'eval-stance': ' D #SemSTD is {"mask"}.',
+    'eval-emotion': ' . {"mask"}.',
+    'eval-irony': ' . {"mask"}.',
+    'eval-offensive': ' . This is so {"mask"}.',
+    'eval-hate': ' . It was {"mask"}. ',
+    'sem21-task7-humor': ' . It was {"mask"}. ',
+    'sem22-task6-sarcasm': ' It was {"mask"}. '
+
+}
 
 # class RobertaForMulti(RobertaPreTrainedModel):
 #
@@ -398,6 +419,8 @@ def parse_args():
         "--demo", default=1, type=int, help="with demo")
     parser.add_argument(
         "--soft", default=1, type=int, help="soft verberlizer")
+    parser.add_argument(
+        "--choice", default=0, type=int, help="words and templates to choice")
     args = parser.parse_args()
     return args
 
@@ -527,7 +550,9 @@ def do_train(args):
     #
     # optimizer = AdamW(optimizer_grouped_parameters, lr=lr)
 
-
+    if args.choice == 1:
+        WORDS = WORDS2
+        TEMPLATE = TEMPLATE2
     print(args)
     label2idx = CONVERT[args.task]
     dataset = {}
