@@ -427,7 +427,6 @@ def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
 
 def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
     score_all = []
-    plm_base = plm.cpu()
     for seed in args.seed.split(','):
         set_seed(int(seed))
 
@@ -442,7 +441,7 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
                                             tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
                                             batch_size=args.batch_size)
 
-        model = PromptForClassification(copy.deepcopy(plm_base).cuda(), template, verbalizer)
+        model = PromptForClassification(copy.deepcopy(plm).cuda(), template, verbalizer)
 
         loss_func = torch.nn.CrossEntropyLoss()
         no_decay = ['bias', 'LayerNorm.weight']
@@ -459,7 +458,6 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
         score_all.append(score)
         del model, plm
         torch.cuda.empty_cache()
-    del plm_base
     return np.mean(score_all)
 
 
@@ -544,7 +542,7 @@ def do_train(args):
                 continue
             current_verbalizer = copy.deepcopy(verbalizer)
             current_verbalizer.label_words = label_words
-            score = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm).cuda())
+            score = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm))
             with open(args.name, 'a', encoding='utf-8') as f:
                 f.write(' '.join(label_words) + '\n')
                 f.write('{:.5f}'.format(score) + '\n')
@@ -636,7 +634,7 @@ def do_train(args):
     if len(template_texts) > 1:
         best_template_text = None
         for template_text in tqdm(template_texts):
-            score = evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, copy.deepcopy(plm).cuda())
+            score = evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, copy.deepcopy(plm))
             with open(args.name, 'a', encoding='utf-8') as f:
                 f.write(template_text + '\n')
                 f.write('{:.5f}'.format(score) + '\n')
