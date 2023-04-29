@@ -322,9 +322,11 @@ def parse_args():
     parser.add_argument(
         "--name", default='roberta', type=str, help="write name")
     parser.add_argument(
-        "--pre_tmp", default=['{"placeholder":"text_a"} It was {"mask"}. '], nargs='+', help="write name")
+        "--pre_tmp", default=[],#['{"placeholder":"text_a"} It was {"mask"}. '],
+        nargs='+', help="write name")
     parser.add_argument(
-        "--pre_word", default=["neutral,offensive"], nargs='+', help="write name")
+        "--pre_word", default=[],#["neutral,offensive"],
+        nargs='+', help="write name")
     parser.add_argument(
         "--small", default=0, type=int, help="t5 base")
     args = parser.parse_args()
