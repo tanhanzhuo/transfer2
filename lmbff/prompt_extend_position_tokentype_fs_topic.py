@@ -85,7 +85,8 @@ CONVERT = {
 #     'sem21-task7-humor': [["neutral"], ["humorous"]]
 # }
 
-WORDS = {
+WORDS = [
+    {
     # 'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
     'eval-emotion': ["angerous", "joyful", "optimistic","sad"],
     'eval-hate': ["neutral", "hateful"],
@@ -95,20 +96,8 @@ WORDS = {
     'stance': ["neutral", "favor","against"],
     'sem22-task6-sarcasm': ["neutral", "sarcastic"],
     'sem21-task7-humor': ["neutral", "humorous"]
-}
-
-TEMPLATE = {
-    'eval-emotion':' It was {"mask"}. ',
-    'eval-hate':' It was {"mask"}. ',
-    'eval-irony':' It was {"mask"}. ',
-    'eval-offensive':' It was {"mask"}. ',
-    'eval-stance':' It was {"mask"}. ',
-    'stance':' It was {"mask"}. ',
-    'sem22-task6-sarcasm':' It was {"mask"}. ',
-    'sem21-task7-humor':' It was {"mask"}. '
-}
-
-WORDS2 = {
+    },
+    {
     # 'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
     'eval-stance': ["neutral", "against", "favor"],
     'eval-emotion': ["disgusting", "magical", "love", "sad"],
@@ -117,9 +106,21 @@ WORDS2 = {
     'eval-hate': ["interesting", "disgusting"],
     'sem21-task7-humor': ["real", "funny"],
     'sem22-task6-sarcasm': ["neutral", "sarcastic"]
-}
+    }
+    ]
 
-TEMPLATE2 = {
+TEMPLATE = [
+    {
+    'eval-emotion':' It was {"mask"}. ',
+    'eval-hate':' It was {"mask"}. ',
+    'eval-irony':' It was {"mask"}. ',
+    'eval-offensive':' It was {"mask"}. ',
+    'eval-stance':' It was {"mask"}. ',
+    'stance':' It was {"mask"}. ',
+    'sem22-task6-sarcasm':' It was {"mask"}. ',
+    'sem21-task7-humor':' It was {"mask"}. '
+    },
+    {
     'eval-stance': ' D #SemSTD is {"mask"}.',
     'eval-emotion': ' . {"mask"}.',
     'eval-irony': ' . {"mask"}.',
@@ -127,8 +128,9 @@ TEMPLATE2 = {
     'eval-hate': ' . It was {"mask"}. ',
     'sem21-task7-humor': ' . It was {"mask"}. ',
     'sem22-task6-sarcasm': ' It was {"mask"}. '
+    }
+    ]
 
-}
 
 # class RobertaForMulti(RobertaPreTrainedModel):
 #
@@ -550,9 +552,6 @@ def do_train(args):
     #
     # optimizer = AdamW(optimizer_grouped_parameters, lr=lr)
 
-    if args.choice == 1:
-        WORDS = WORDS2
-        TEMPLATE = TEMPLATE2
     print(args)
     label2idx = CONVERT[args.task]
     dataset = {}
@@ -596,7 +595,7 @@ def do_train(args):
         # plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
         wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=args.max_seq_length-2, tokenizer=tokenizer, truncate_method="head")
 
-        template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
+        template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.choice][args.task]
         mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
 
         train_data_loader = PromptDataLoader(dataset=dataset["train"], template=mytemplate, tokenizer=tokenizer,
@@ -614,10 +613,10 @@ def do_train(args):
         if args.soft == 1:
             myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()))
         elif args.soft == 2:
-            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()), label_words=WORDS[args.task])
+            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()), label_words=WORDS[args.choice][args.task])
         else:
             myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
-                                        label_words=WORDS[args.task])
+                                        label_words=WORDS[args.choice][args.task])
         model = PromptForClassification(plm=plm.cuda(), template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
         model = model.cuda()
 
