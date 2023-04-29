@@ -325,6 +325,8 @@ def parse_args():
         "--pre_tmp", default=['{"placeholder":"text_a"} It was {"mask"}. '], nargs='+', help="write name")
     parser.add_argument(
         "--pre_word", default=["neutral,offensive"], nargs='+', help="write name")
+    parser.add_argument(
+        "--small", default=0, type=int, help="t5 base")
     args = parser.parse_args()
     return args
 
@@ -424,34 +426,41 @@ def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
 
 
 def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
-    if isinstance(template_text, list):
-        template = ManualTemplateWithoutParse(tokenizer, template_text)
-    else:
-        template = ManualTemplate(tokenizer, template_text)
-    train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
-                                        tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128,
-                                        batch_size=args.batch_size)
-    valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
-                                        tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
-                                        batch_size=args.batch_size)
+    score_all = []
+    plm_base = plm.cpu()
+    for seed in args.seed.split(','):
+        set_seed(int(seed))
 
-    model = PromptForClassification(plm, template, verbalizer)
+        if isinstance(template_text, list):
+            template = ManualTemplateWithoutParse(tokenizer, template_text)
+        else:
+            template = ManualTemplate(tokenizer, template_text)
+        train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128,
+                                            batch_size=args.batch_size)
+        valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                            batch_size=args.batch_size)
 
-    loss_func = torch.nn.CrossEntropyLoss()
-    no_decay = ['bias', 'LayerNorm.weight']
-    # it's always good practice to set no decay to biase and LayerNorm parameters
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-         'weight_decay': 0.01},
-        {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-    ]
+        model = PromptForClassification(copy.deepcopy(plm_base).cuda(), template, verbalizer)
 
-    optimizer = AdamW(optimizer_grouped_parameters, lr=1e-5)
-    model = model.cuda()
-    score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
-    del model, plm
-    torch.cuda.empty_cache()
-    return score
+        loss_func = torch.nn.CrossEntropyLoss()
+        no_decay = ['bias', 'LayerNorm.weight']
+        # it's always good practice to set no decay to biase and LayerNorm parameters
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+             'weight_decay': 0.01},
+            {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        ]
+
+        optimizer = AdamW(optimizer_grouped_parameters, lr=1e-5)
+        model = model.cuda()
+        score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
+        score_all.append(score)
+        del model, plm
+        torch.cuda.empty_cache()
+    del plm_base
+    return np.mean(score_all)
 
 
 def do_train(args):
@@ -561,49 +570,55 @@ def do_train(args):
                         '{"placeholder":"text_a"} {"mask"} {"mask"} {"meta":"labelword"}.', \
                         '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"} {"mask"}.', \
                         '{"placeholder":"text_a"} {"mask"} {"meta":"labelword"}.']:
-            template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
-                't5', 't5-large')
-            template = LMBFFTemplateGenerationTemplate(tokenizer=template_generate_tokenizer, verbalizer=verbalizer,
-                                                       text=tmp_txt)
-            # wrapped_example = template.wrap_one_example(dataset['train'][0])
-            # print(wrapped_example)
+            for seed in args.seed.split(','):
+                set_seed(int(seed))
+                if args.small == 1:
+                    template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
+                        't5', 't5-base')
+                else:
+                    template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
+                        't5', 't5-large')
+                template = LMBFFTemplateGenerationTemplate(tokenizer=template_generate_tokenizer, verbalizer=verbalizer,
+                                                           text=tmp_txt)
+                # wrapped_example = template.wrap_one_example(dataset['train'][0])
+                # print(wrapped_example)
 
-            #################generate template
-            print('performing auto_t...')
-            template_generate_model = template_generate_model.cuda()
-            template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
-                                                     template_tokenizer_wrapper, verbalizer, beam_width=args.beam,
-                                                     target_number=tmp_txt.count('{"mask"}'), max_length=20)
-            if args.shot != 'full':
-                sampler = FewShotSampler(num_examples_per_label=int(args.shot))
-                dataset_gen = sampler(dataset['train'])
-            else:
-                dataset_gen = dataset['train']
-            dataloader = PromptDataLoader(dataset_gen, template, tokenizer=template_generate_tokenizer,
-                                          tokenizer_wrapper_class=template_tokenizer_wrapper,
-                                          batch_size=args.batch_size,
-                                          decoder_max_length=128, max_seq_length=128, shuffle=False,
-                                          teacher_forcing=False)
-            for data in dataloader:
-                data = data.cuda()
-                template_generator._register_buffer(data)
-            template_generate_model.eval()
-            # print('generating...')
-            template_texts_format = template_generator._get_templates()
-            original_template = template.text
-            template_texts = []
-            for template_text in template_texts_format:
-                try:
-                    template_text1 = template_generator.convert_template(template_text, original_template)
-                    template_texts.append(template_text1)
-                except:
-                    print(template_text)
+                #################generate template
+                print('performing auto_t...')
+                template_generate_model = template_generate_model.cuda()
+                template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
+                                                         template_tokenizer_wrapper, verbalizer, beam_width=args.beam,
+                                                         target_number=tmp_txt.count('{"mask"}'), max_length=20)
+                if args.shot != 'full':
+                    sampler = FewShotSampler(num_examples_per_label=int(args.shot))
+                    dataset_gen = sampler(dataset['train'])
+                else:
+                    dataset_gen = dataset['train']
+                dataloader = PromptDataLoader(dataset_gen, template, tokenizer=template_generate_tokenizer,
+                                              tokenizer_wrapper_class=template_tokenizer_wrapper,
+                                              batch_size=args.batch_size,
+                                              decoder_max_length=128, max_seq_length=128, shuffle=False,
+                                              teacher_forcing=False)
+                for data in dataloader:
+                    data = data.cuda()
+                    template_generator._register_buffer(data)
+                template_generate_model.eval()
+                # print('generating...')
+                template_texts_format = template_generator._get_templates()
+                original_template = template.text
+                template_texts = []
+                for template_text in template_texts_format:
+                    try:
+                        template_text1 = template_generator.convert_template(template_text, original_template)
+                        template_texts.append(template_text1)
+                    except:
+                        print(template_text)
 
-            # template_generator._show_template()
-            template_generator.release_memory()
-            template_texts_all.extend(template_texts)
-            del template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper, template_generator, dataloader,data
-            torch.cuda.empty_cache()
+                # template_generator._show_template()
+                template_generator.release_memory()
+                template_texts_all.extend(template_texts)
+                del template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper, template_generator, dataloader,data
+                torch.cuda.empty_cache()
         template_texts_all.append('{"placeholder":"text_a"}' + TEMPLATE[args.task])
 
     else:
@@ -648,11 +663,8 @@ def do_train(args):
 if __name__ == "__main__":
     args = parse_args()
     for task in args.task.split(','):
-        for seed in args.seed.split(','):
-            set_seed(int(seed))
-            args_tmp = copy.deepcopy(args)
-            args_tmp.task = task.split('_')[0]
-            args_tmp.input_dir = args.input_dir + task + '/'
-            args_tmp.seed = int(seed)
-            do_train(args_tmp)
+        args_tmp = copy.deepcopy(args)
+        args_tmp.task = task.split('_')[0]
+        args_tmp.input_dir = args.input_dir + task + '/'
+        do_train(args_tmp)
 

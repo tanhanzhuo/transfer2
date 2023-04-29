@@ -326,6 +326,8 @@ def parse_args():
         "--pre_tmp", default=[], nargs='+', help="write name")
     parser.add_argument(
         "--pre_word", default=[], nargs='+', help="write name")
+    parser.add_argument(
+        "--small", default=0, type=int, help="t5 base")
     args = parser.parse_args()
     return args
 
@@ -585,8 +587,12 @@ def do_train(args):
             tmp_txt1 = tmp_txt + TEMPLATE[args.task].replace('{"mask"}', '{"meta":"labelword"}')
             for seed in args.seed.split(','):
                 set_seed(int(seed))
-                template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
-                    't5', 't5-large')
+                if args.small == 1:
+                    template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
+                        't5', 't5-base')
+                else:
+                    template_generate_model, template_generate_tokenizer, template_generate_model_config, template_tokenizer_wrapper = load_plm(
+                        't5', 't5-large')
                 template = LMBFFTemplateGenerationTemplate(tokenizer=template_generate_tokenizer, verbalizer=verbalizer,
                                                            text=tmp_txt1)
                 # wrapped_example = template.wrap_one_example(dataset['train'][0])
