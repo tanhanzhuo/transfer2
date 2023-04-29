@@ -398,30 +398,6 @@ def parse_args():
         "--demo", default=1, type=int, help="with demo")
     parser.add_argument(
         "--soft", default=1, type=int, help="soft verberlizer")
-    parser.add_argument(
-        "--WORDS", default={
-        'eval-emotion': ["angerous", "joyful", "optimistic","sad"],
-        'eval-hate': ["neutral", "hateful"],
-        'eval-irony': ["neutral", "ironic"],
-        'eval-offensive': ["neutral", "offensive"],
-        'eval-stance': ["neutral", "against","favor"],
-        'stance': ["neutral", "favor","against"],
-        'sem22-task6-sarcasm': ["neutral", "sarcastic"],
-        'sem21-task7-humor': ["neutral", "humorous"]
-        },
-        type=dict, help="label words")
-    parser.add_argument(
-        "--TEMPLATE", default={
-        'eval-emotion':' It was {"mask"}. ',
-        'eval-hate':' It was {"mask"}. ',
-        'eval-irony':' It was {"mask"}. ',
-        'eval-offensive':' It was {"mask"}. ',
-        'eval-stance':' It was {"mask"}. ',
-        'stance':' It was {"mask"}. ',
-        'sem22-task6-sarcasm':' It was {"mask"}. ',
-        'sem21-task7-humor':' It was {"mask"}. '
-        },
-        type=dict, help="prompt template")
     args = parser.parse_args()
     return args
 
@@ -595,7 +571,7 @@ def do_train(args):
         # plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
         wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=args.max_seq_length-2, tokenizer=tokenizer, truncate_method="head")
 
-        template_text = '{"placeholder":"text_a"}' + args.TEMPLATE[args.task]
+        template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
         mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
 
         train_data_loader = PromptDataLoader(dataset=dataset["train"], template=mytemplate, tokenizer=tokenizer,
@@ -613,10 +589,10 @@ def do_train(args):
         if args.soft == 1:
             myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()))
         elif args.soft == 2:
-            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()), label_words=args.WORDS[args.task])
+            myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()), label_words=WORDS[args.task])
         else:
             myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
-                                        label_words=args.WORDS[args.task])
+                                        label_words=WORDS[args.task])
         model = PromptForClassification(plm=plm.cuda(), template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
         model = model.cuda()
 
