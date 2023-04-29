@@ -457,7 +457,7 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
         model = model.cuda()
         score = fit(model, train_dataloader, valid_dataloader, loss_func, optimizer, args.task)
         score_all.append(score)
-        del model, plm
+        del model
         torch.cuda.empty_cache()
     return np.mean(score_all)
 
