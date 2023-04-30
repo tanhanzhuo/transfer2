@@ -328,6 +328,8 @@ def parse_args():
         "--pre_word", default=[], nargs='+', help="write name")
     parser.add_argument(
         "--small", default=0, type=int, help="t5 base")
+    parser.add_argument(
+        "--max", default=20, type=int, help="t5 base")
     args = parser.parse_args()
     return args
 
@@ -601,7 +603,7 @@ def do_train(args):
             template_generate_model = template_generate_model.cuda()
             template_generator = T5TemplateGenerator(template_generate_model, template_generate_tokenizer,
                                                      template_tokenizer_wrapper, verbalizer, beam_width=args.beam,
-                                                     target_number=tmp_txt1.count('{"mask"}'), max_length=20)
+                                                     target_number=tmp_txt1.count('{"mask"}'), max_length=args.max)
 
 
             if args.shot != 'full':
