@@ -262,7 +262,7 @@ def run_model(args):
         label_map = json.loads(args.label_map)
         logger.info(f"Label map: {label_map}")
     else:
-        task = args.train.split('/')[-2]
+        task = args.train._str.split('/')[-2]
         label_map = dict( zip( list(CONVERT[task].keys()), WORDS[task] ) )
         logger.info(f"Label map: {label_map}")
 
