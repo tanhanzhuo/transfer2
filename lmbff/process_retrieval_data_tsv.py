@@ -20,7 +20,7 @@ def write_json(data, fileName):
 def write_tsv_one(data, fileName):
     with open(fileName + '.tsv', 'w', encoding='utf-8') as f:
         tsv_writer = csv.writer(f, delimiter='\t')
-        tsv_writer.writerow(['sentence', 'labels'])
+        tsv_writer.writerow(['sentence', 'label'])
         for one in data:
             tsv_writer.writerow([one['text'], one['labels']])
 
@@ -29,7 +29,7 @@ def write_tsv_two(data, fileName):
         tsv_writer = csv.writer(f, delimiter='\t')
         tsv_writer.writerow(['sentence_A', 'sentence_B', 'label'])
         for one in data:
-            tsv_writer.writerow([one['text'], one['text0'], one['label']])
+            tsv_writer.writerow([one['text'], one['text0'], one['labels']])
 
 if __name__ == "__main__":
     args = parser.parse_args()
