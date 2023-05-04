@@ -34,7 +34,7 @@ WORDS = {
     'eval-irony': [["hard"], ["unexpected"]],
     'eval-offensive': [["neutral"], ["offensive"]],
     'eval-hate': [["interesting"], ["disgusting"]],
-    'sem21-task7-humor': [["real", ["funny"]],
+    'sem21-task7-humor': [["real"], ["funny"]],
     'sem22-task6-sarcasm': [["neutral"], ["sarcastic"]]
 }
 
