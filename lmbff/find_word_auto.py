@@ -4,6 +4,7 @@ good set of label strings. The idea is to train a linear classifier over the pre
 then look at the most similar tokens.
 """
 import argparse
+import copy
 import json
 import logging
 from pathlib import Path
@@ -179,6 +180,13 @@ def main(args):
             _, top = row.topk(args.k)
             decoded = tokenizer.convert_ids_to_tokens(top)
             logger.info(f"Top k for class {reverse_label_map[i]}: {', '.join(decoded)}")
+    final_labels = []
+    for i, row in enumerate(scores):
+        _, top = row.topk(args.k)
+        decoded = tokenizer.convert_ids_to_tokens(top)
+        final_labels.append(decoded)
+    return final_labels
+
 
 
 
@@ -197,7 +205,7 @@ if __name__ == '__main__':
                         help='Number of iterations to run label search')
     parser.add_argument('--model-name', type=str, default='bert-base-cased',
                         help='Model name passed to HuggingFace AutoX classes.')
-    parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--seed', type=str, default='0,1,2,3,4,5,6,7,8,9')
     parser.add_argument('--use-ctx', action='store_true',
                         help='Use context sentences.')
     parser.add_argument('--debug', action='store_true')
@@ -225,4 +233,34 @@ if __name__ == '__main__':
     # logging.basicConfig(filename=args.log_name, level=level)
     logger.info(args)
 
-    main(args)
+    args_tmp = copy.deepcopy(args)
+    final_labels_all = []
+    for seed in args.seed.split(','):
+        args_tmp.seed = int(seed)
+        final_labels = main(args)
+        if len(final_labels_all) == 0:
+            final_labels_all = final_labels
+        else:
+            for idx in range(len(final_labels)):
+                final_labels_all[idx].extend(final_labels[idx])
+
+    task = args.train._str.split('/')[-2]
+    label_map = CONVERT[task]
+    label_map_keys = list(label_map.keys())
+    for idx in range(len(final_labels_all)):
+        words_list = final_labels_all[idx]
+        words_dict = {}
+        for word in words_list:
+            if word in words_dict.keys():
+                words_dict[word] += 1
+            else:
+                words_dict[word] = 1
+        for word in list(words_dict.keys()):
+            if words_dict[word] < len(args.seed.split(','))*0.5:
+                words_dict.pop(word)
+        words_dict_sort = dict(sorted(words_dict.items(), key=lambda x: x[1], reverse=True))
+        logger.info(f"final Top k for class {label_map_keys[idx]}: {words_dict_sort}")
+        label_map[label_map_keys[idx]] = words_dict_sort
+    with open(task+'.json', 'a', encoding='utf-8') as f:
+        tmp = json.dumps(label_map, ensure_ascii=False)
+        f.write(tmp+'\n')
