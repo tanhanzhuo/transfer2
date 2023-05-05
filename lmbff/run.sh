@@ -38,8 +38,13 @@
 #CUDA_VISIBLE_DEVICES=7 python prompt_extend_position_tokentype_fs_topic.py --model_name_or_path vinai/bertweet-base --method _modelT100N100M_fileT100N100S_num10_cluster_top20_textfirst_sp --max_seq_length 200 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot 16,32,64,128,256,512,full --demo 1 --soft 2 --choice 0 --results_name results_bt_soft_old.txt
 #CUDA_VISIBLE_DEVICES=7 python prompt_extend_position_tokentype_fs_topic.py --model_name_or_path vinai/bertweet-base --method _modelT100N100M_fileT100N100S_num10_cluster_top20_textfirst_sp --max_seq_length 200 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot 16,32,64,128,256,512,full --demo 1 --soft 2 --choice 1 --results_name results_bt_soft_new.txt
 
+#for TASK in eval-stance eval-emotion eval-irony eval-offensive eval-hate sem21-task7-humor
+#do
+#CUDA_VISIBLE_DEVICES=0 python find_tmp_auto.py --train ../finetune/data/${TASK}/train.tsv --dev ../finetune/data/${TASK}/dev.tsv --template '<s> {sentence} [T] [T] [T] [P] . </s>' --num-cand 100 --accumulation-steps 30 --bsz 24 --eval-size 48 --iters 100 --model-name vinai/bertweet-base --log_name bt.log
+#done
+#CUDA_VISIBLE_DEVICES=1 python find_tmp_auto.py --train ../finetune/data/eval-emotion/train_fuldata_bt_hashseg_top20_textfirst.tsv --dev ../finetune/data/eval-emotion/dev_fuldata_bt_hashseg_top20_textfirst.tsv --template '<s> [T] [T] [T] {sentence_A} [T] [T] [T] {sentence_B} [T] [T] [T] [P] . </s>' --num-cand 100 --accumulation-steps 30 --bsz 32 --eval-size 48 --iters 100 --model-name vinai/bertweet-base --log_name bt_emotion_retri_test.log --max_seq_length 200
+
 for TASK in eval-stance eval-emotion eval-irony eval-offensive eval-hate sem21-task7-humor
 do
-CUDA_VISIBLE_DEVICES=0 python find_tmp_auto.py --train ../finetune/data/${TASK}/train.tsv --dev ../finetune/data/${TASK}/dev.tsv --template '<s> {sentence} [T] [T] [T] [P] . </s>' --num-cand 100 --accumulation-steps 30 --bsz 24 --eval-size 48 --iters 100 --model-name vinai/bertweet-base --log_name bt.log
+CUDA_VISIBLE_DEVICES=0 python find_word_auto.py --train ../finetune/data/${TASK}/train.tsv --template '<s> {sentence} [T] [T] [T] [P] . </s>' --iters 100 --model-name vinai/bertweet-base --log_name auto_words.log --initial-trigger '. It was' --seed 0,1,2,3,4,5,6,7,8,9 --k 10
 done
-#CUDA_VISIBLE_DEVICES=1 python find_tmp_auto.py --train ../finetune/data/eval-emotion/train_fuldata_bt_hashseg_top20_textfirst.tsv --dev ../finetune/data/eval-emotion/dev_fuldata_bt_hashseg_top20_textfirst.tsv --template '<s> [T] [T] [T] {sentence_A} [T] [T] [T] {sentence_B} [T] [T] [T] [P] . </s>' --num-cand 100 --accumulation-steps 30 --bsz 32 --eval-size 48 --iters 100 --model-name vinai/bertweet-base --log_name bt_emotion_retri_test.log --max_seq_length 200
