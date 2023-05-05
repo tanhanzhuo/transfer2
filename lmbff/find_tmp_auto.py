@@ -253,7 +253,7 @@ def run_model(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     logger.info('Loading model, tokenizer, etc.')
-    config, model, tokenizer = load_pretrained(args.model_name)
+    config, model, tokenizer = load_pretrained(args.model_name, args.max_seq_length)
     model.to(device)
     embeddings = get_embeddings(model, config)
     embedding_gradient = GradientStorage(embeddings)
