@@ -126,7 +126,7 @@ class AccuracyFn:
 
 
 from transformers import RobertaForMaskedLM
-
+import torch.nn as nn
 
 class RobertaForMulti(RobertaForMaskedLM):
     def resize_position_embeddings(self, new_num_position_embeddings: int):
