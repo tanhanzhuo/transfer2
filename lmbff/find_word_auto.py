@@ -245,7 +245,7 @@ if __name__ == '__main__':
             for idx in range(len(final_labels)):
                 final_labels_all[idx].extend(final_labels[idx])
 
-    task = args.train._str.split('/')[-2]
+    task = args_tmp.train._str.split('/')[-2]
     label_map = CONVERT[task]
     label_map_keys = list(label_map.keys())
     for idx in range(len(final_labels_all)):
