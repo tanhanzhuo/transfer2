@@ -163,11 +163,12 @@ def load_pretrained(model_name, max_seq_length=130):
         model.resize_position_embeddings(max_seq_length)
         model.eval()
         tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True, normalization=True)
+        tokenizer.model_max_length = max_seq_length - 2
     else:
         model = AutoModelWithLMHead.from_pretrained(model_name)
         model.eval()
         tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
-    tokenizer.model_max_length = max_seq_length - 2
+
     utils.add_task_specific_tokens(tokenizer)
     return config, model, tokenizer
 
