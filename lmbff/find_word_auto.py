@@ -101,7 +101,7 @@ def get_word_embeddings(model):
 
 
 def main(args):
-    ct.set_seed(args.seed)
+    ct.set_seed(int(args.seed))
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     logger.info('Loading model, tokenizer, etc.')
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     args_tmp = copy.deepcopy(args)
     final_labels_all = []
     for seed in args.seed.split(','):
-        args_tmp.seed = int(seed)
+        args_tmp.seed = seed
         task = args_tmp.train._str.split('/')[-2]
         final_labels = main(args_tmp)
         if len(final_labels_all) == 0:
