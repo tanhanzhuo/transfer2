@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 import autoprompt.utils as utils
 import autoprompt.create_trigger as ct
-
+import emoji
 
 logger = logging.getLogger(__name__)
 
@@ -184,7 +184,7 @@ def main(args):
     for i, row in enumerate(scores):
         _, top = row.topk(args.k)
         decoded = tokenizer.convert_ids_to_tokens(top)
-        final_labels.append(decoded)
+        final_labels.append([emoji.emojize(i) for i in decoded])
     return final_labels
 
 
