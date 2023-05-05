@@ -232,11 +232,11 @@ if __name__ == '__main__':
     logger.addHandler(fHandler)
     # logging.basicConfig(filename=args.log_name, level=level)
     logger.info(args)
-    task = args.train._str.split('/')[-2]
     args_tmp = copy.deepcopy(args)
     final_labels_all = []
     for seed in args.seed.split(','):
         args_tmp.seed = seed
+        logger.info(args_tmp)
         task = args_tmp.train._str.split('/')[-2]
         final_labels = main(args_tmp)
         if len(final_labels_all) == 0:
