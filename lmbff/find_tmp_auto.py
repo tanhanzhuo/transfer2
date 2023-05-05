@@ -561,7 +561,7 @@ if __name__ == '__main__':
                         help='Prints best trigger in LAMA format.')
 
     parser.add_argument('--initial-trigger', nargs='+', type=str, default=None, help='Manual prompt')
-    parser.add_argument('--label-field', type=str, default='3',
+    parser.add_argument('--label-field', type=str, default='label',
                         help='Name of the label field')
 
     parser.add_argument('--bsz', type=int, default=32, help='Batch size')
