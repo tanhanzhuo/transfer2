@@ -237,7 +237,7 @@ if __name__ == '__main__':
     final_labels_all = []
     for seed in args.seed.split(','):
         args_tmp.seed = int(seed)
-        final_labels = main(args)
+        final_labels = main(args_tmp)
         if len(final_labels_all) == 0:
             final_labels_all = final_labels
         else:
