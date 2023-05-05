@@ -3,6 +3,6 @@ for task in eval-stance eval-emotion eval-irony eval-offensive eval-hate sem21-t
 do
   for sp in train dev test
     do
-    scp -r thz@10.21.4.51:/home/thz/transfer2/finetune/data/${task}/${sp}__fuldata_bt_hashseg_top20_textfirst.json ./finetune/data/${task}/
+    scp -r thz@10.21.4.51:/home/thz/transfer2/finetune/data/${task}/${sp}_fuldata_bt_hashseg_top20_textfirst.json ./finetune/data/${task}/
     done
 done
