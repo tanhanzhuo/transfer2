@@ -259,11 +259,18 @@ def run_model(args):
     embedding_gradient = GradientStorage(embeddings)
     predictor = PredictWrapper(model)
 
+    task = args.train._str.split('/')[-2]
     if args.label_map is not None:
-        label_map = json.loads(args.label_map)
+        # label_map = json.loads(args.label_map)
+        label_map = {}
+        with open(task+'.json', 'r', encoding='utf-8') as f:
+            label_map_tmp = json.load(f)
+        for label_tmp in list(label_map_tmp.keys()):
+            label_map[label_tmp] = list(label_map_tmp[label_tmp].keys())[:int(args.label_map)]
+
         logger.info(f"Label map: {label_map}")
     else:
-        task = args.train._str.split('/')[-2]
+
         label_map = dict( zip( list(CONVERT[task].keys()), WORDS[task] ) )
         logger.info(f"Label map: {label_map}")
 
