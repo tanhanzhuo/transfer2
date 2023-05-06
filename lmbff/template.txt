@@ -1,0 +1,7 @@
+eval-stance*#SBSPopAsia@@ ce@@ apse {"placeholder":"text_b"} law Filed against {"placeholder":"text_a"} . It was {"mask"}.
+eval-emotion*#LoveIsland dayILove@@ <s> {"placeholder":"text_b"} AGAIN filming ‘ {"placeholder":"text_a"} . It was {"mask"}.
+eval-irony*ANSW@@ coronavirus elong {"placeholder":"text_b"} Challeng@@ ㅠㅠ 0,0 {"placeholder":"text_a"} . It was {"mask"}.
+eval-offensive*It ℴ@@ neutral {"placeholder":"text_b"} neutral was neutral {"placeholder":"text_a"} . It was {"mask"}.
+eval-hate*:globe@@ Starplaza endment {"placeholder":"text_b"} Interesting doc@@ show {"placeholder":"text_a"} . It was {"mask"}.
+sem21-task7-humor*grins inth@@ Isab@@ {"placeholder":"text_b"} inspiration of recall {"placeholder":"text_a"} . It was {"mask"}.
+sem22-task6-sarcasm*{"placeholder":"text_b"} {"placeholder":"text_a"} . It was {"mask"}.
