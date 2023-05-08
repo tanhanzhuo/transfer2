@@ -675,12 +675,12 @@ def do_train(args):
         )
 
         loss_fct = nn.CrossEntropyLoss().cuda()
-        if args.weight == 1:# or 'sarcasm' in args.task:
+        if args.weight == 1 or 'sarcasm' in args.task:
             num_dic = {}
             for val in label2idx.values():
                 num_dic[val] = 0.0
-            for idx in range(len(train_ds)):
-                label_tmp = train_ds[idx]['labels']
+            for idx in range(len(dataset['train'])):
+                label_tmp = dataset['train'][idx].label
                 num_dic[label_tmp] += 1.0
             num_max = max(num_dic.values())
             class_weights = [num_max / i for i in num_dic.values()]
