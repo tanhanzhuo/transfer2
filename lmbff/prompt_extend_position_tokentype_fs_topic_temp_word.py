@@ -634,7 +634,8 @@ def do_train(args):
             label_words = []
             with open(args.task + '.json', 'r', encoding='utf-8') as f:
                 label_map_tmp = json.load(f)
-            for words in list(label_map_tmp.values().keys()):
+            for words in list(label_map_tmp.values()):
+                words = list(words.keys())
                 label_words.append(words[:args.label_num])
             myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                             label_words=label_words)
@@ -642,7 +643,8 @@ def do_train(args):
             label_words = []
             with open(args.task + '.json', 'r', encoding='utf-8') as f:
                 label_map_tmp = json.load(f)
-            for words in list(label_map_tmp.values().keys()):
+            for words in list(label_map_tmp.values()):
+                words = list(words.keys())
                 label_words.append(words[:args.label_num])
             myverbalizer = SoftVerbalizer(tokenizer, plm, num_classes=len(label2idx.keys()),
                                           label_words=label_words)
