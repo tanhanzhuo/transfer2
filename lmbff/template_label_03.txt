@@ -1,0 +1,7 @@
+eval-stance*{"placeholder":"text_b"} </s> Blame sberg milk {"placeholder":"text_a"} . It was {"mask"}.
+eval-emotion*{"placeholder":"text_b"} </s> #MOTAVATORMONDAY #BethanyMotaGiveaway pressed {"placeholder":"text_a"} . It was {"mask"}.
+eval-irony*{"placeholder":"text_b"} </s> #Christmas #ch@@ turkey {"placeholder":"text_a"} . It was {"mask"}.
+eval-offensive*{"placeholder":"text_b"} </s> Just duh Maxine {"placeholder":"text_a"} . It was {"mask"}.
+eval-hate*{"placeholder":"text_b"} </s>  #ToMyFuture@@ child orig@@ {"placeholder":"text_a"} . It was {"mask"}.@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+sem21-task7-humor*{"placeholder":"text_b"} </s> #MTVSTARS #StoryOfMyLife@@ uch {"placeholder":"text_a"} . It was {"mask"}.
+sem22-task6-sarcasm*{"placeholder":"text_b"} {"placeholder":"text_a"} . It was {"mask"}.
