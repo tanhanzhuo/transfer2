@@ -537,7 +537,7 @@ def do_train(args):
 
     learning_rate = args.learning_rate.split(',')
     best_metric = [0, 0, 0]
-
+    model_best = None
     for lr in learning_rate:
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
@@ -653,13 +653,15 @@ def do_train(args):
                 break
         del model
         torch.cuda.empty_cache()
-
-    model = model_best.cuda()
-    cur_metric = evaluate(model, test_data_loader,args.task,args.write_result)
+    if model_best is None:
+        cur_metric = [0.0,0.0,0.0]
+    else:
+        model = model_best.cuda()
+        cur_metric = evaluate(model, test_data_loader,args.task,args.write_result)
+        del model
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
-    del model
     return cur_metric
 
 if __name__ == "__main__":
