@@ -499,6 +499,15 @@ def run_model(args):
     best_trigger_tokens = tokenizer.convert_ids_to_tokens(best_trigger_ids.squeeze(0))
     logger.info(f'Best tokens: {best_trigger_tokens}')
     logger.info(f'Best dev metric: {best_dev_metric}')
+    final_txt = task + '*' + args.template[4:-5]
+    final_txt.replace('[P]', '{"mask"}')
+    final_txt.replace('{sentence_B}', '{"placeholder":"text_b"}')
+    final_txt.replace('{sentence_A}', '{"placeholder":"text_a"}')
+    final_txt.replace('{sentence}', '{"placeholder":"text_a"}')
+    logger.info(final_txt)
+    for token in best_trigger_tokens:
+        final_txt.replace('[T]', token, 1)
+    logger.info(args.template[3:-5])
     if args.print_lama:
         # Templatize with [X] and [Y]
         if args.use_ctx:
