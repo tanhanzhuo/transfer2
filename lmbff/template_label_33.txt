@@ -1,0 +1,7 @@
+eval-stance*Ingre@@ art emaker {"placeholder":"text_b"} </s> gd@@ sberg triggers {"placeholder":"text_a"} . It was {"mask"}.
+eval-emotion*cuse endment Hadid {"placeholder":"text_b"} </s> #MOTAVATORMONDAY NewVideo ANSWER {"placeholder":"text_a"} . It was {"mask"}.
+eval-irony*onous dough@@ Lig@@ {"placeholder":"text_b"} </s> hashtag uch lunch {"placeholder":"text_a"} . It was {"mask"}.
+eval-offensive*Scam@@ jri@@ #Replace@@ {"placeholder":"text_b"} </s> Forgotten Congressional Coup {"placeholder":"text_a"} . It was {"mask"}.
+eval-hate*escu time.@@ mine {"placeholder":"text_b"} </s> #ToMy@@ child BRI@@ {"placeholder":"text_a"} . It was {"mask"}.
+sem21-task7-humor*【 ˏ@@ macar@@ {"placeholder":"text_b"} </s> Cinderella 「 stool {"placeholder":"text_a"} . It was {"mask"}.
+sem22-task6-sarcasm*{"placeholder":"text_b"} {"placeholder":"text_a"} . It was {"mask"}.
