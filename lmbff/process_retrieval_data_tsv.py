@@ -22,6 +22,8 @@ def write_tsv_one(data, fileName):
         tsv_writer = csv.writer(f, delimiter='\t')
         tsv_writer.writerow(['sentence', 'label'])
         for one in data:
+            if len(one['text']) > 500:
+                one['text'] = one['text'][:500]
             tsv_writer.writerow([one['text'], one['labels']])
 
 def write_tsv_two(data, fileName):
@@ -29,6 +31,10 @@ def write_tsv_two(data, fileName):
         tsv_writer = csv.writer(f, delimiter='\t')
         tsv_writer.writerow(['sentence_A', 'sentence_B', 'label'])
         for one in data:
+            if len(one['text']) > 500:
+                one['text'] = one['text'][:500]
+            if len(one['text0']) > 500:
+                one['text0'] = one['text0'][:500]
             tsv_writer.writerow([one['text'], one['text0'], one['labels']])
 
 if __name__ == "__main__":
