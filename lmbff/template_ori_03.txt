@@ -1,0 +1,7 @@
+eval-stance*{"placeholder":"text_b"} </s> its crime war {"placeholder":"text_a"} . It was {"mask"}.
+eval-emotion*{"placeholder":"text_b"} </s> Unbelievable speech <s> {"placeholder":"text_a"} . It was {"mask"}.
+eval-irony*{"placeholder":"text_b"} </s> man said i {"placeholder":"text_a"} . It was {"mask"}.
+eval-offensive*{"placeholder":"text_b"} </s> its, neutral, " {"placeholder":"text_a"} . It was {"mask"}.
+eval-hate*{"placeholder":"text_b"} </s> Looked interesting ort {"placeholder":"text_a"} . It was {"mask"}.
+sem21-task7-humor*{"placeholder":"text_b"} </s> #quote yesterday .. {"placeholder":"text_a"} . It was {"mask"}.
+sem22-task6-sarcasm*{"placeholder":"text_b"} {"placeholder":"text_a"} . It was {"mask"}.
