@@ -67,7 +67,7 @@
 #  CUDA_VISIBLE_DEVICES=0 python find_tmp_auto.py --train ../finetune/data/${TASK}/train_fuldata_bt_hashseg_top20_textfirst.tsv --dev ../finetune/data/${TASK}/dev_fuldata_bt_hashseg_top20_textfirst.tsv --template '<s> {sentence_B} </s> [T] [T] [T] {sentence_A} . It was [P] . </s>' --num-cand 100 --accumulation-steps 30 --bsz 24 --eval-size 48 --iters 100 --model-name vinai/bertweet-base --log_name bt_retri_03.log --max_seq_length 400 --label-map 3
 #done
 
-for SEED in 0,1,2,3,4
+for SEED in 0 1 2 3 4
 do
   for TASK in eval-stance eval-emotion eval-irony eval-offensive eval-hate sem21-task7-humor
   do
