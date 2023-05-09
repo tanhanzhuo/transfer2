@@ -500,10 +500,9 @@ def run_model(args):
     final_txt.replace('{sentence_B}', '{"placeholder":"text_b"}')
     final_txt.replace('{sentence_A}', '{"placeholder":"text_a"}')
     final_txt.replace('{sentence}', '{"placeholder":"text_a"}')
-    logger.info(final_txt)
     for token in best_trigger_tokens:
-        final_txt.replace('[T]', token, 1)
-    logger.info(args.template[3:-5])
+        final_txt = final_txt.replace('[T]', token, 1)
+    logger.info(final_txt)
     if args.print_lama:
         # Templatize with [X] and [Y]
         if args.use_ctx:
