@@ -93,4 +93,4 @@ model_new.eval()
 
 compare(model_ori,model_new)
 
-model_lm = RobertaForMaskedLM.from_pretrained(args.save)
+model_lm = RobertaForMaskedLM.from_pretrained(args.save[:-1]+'_mlm/')
