@@ -22,5 +22,5 @@
 for epoch in 10 18
 do
   #CUDA_VISIBLE_DEVICES=4 python finetune_lrtune_fs_early.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../lmbff/contrastive_models/three/${epoch}_new/ --results_name results_ft_fs_contrastivethree${epoch}.txt --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot full
-  CUDA_VISIBLE_DEVICES=6 python finetune_lrtune_extend_position_tokentype_fs.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path .../lmbff/contrastive_models/three/${epoch}_new/ --method hash_fuldata_bt_hashseg_top_1 --results_name results_ft_fs_contrastivethree${epoch}_retri.txt --max_seq_length 514 --token_type 1 --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot full
+  CUDA_VISIBLE_DEVICES=6 python finetune_lrtune_extend_position_tokentype_fs.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../lmbff/contrastive_models/three/${epoch}_new/ --method hash_fuldata_bt_hashseg_top_1 --results_name results_ft_fs_contrastivethree${epoch}_retri.txt --max_seq_length 514 --token_type 1 --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot full
 done
