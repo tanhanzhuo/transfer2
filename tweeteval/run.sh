@@ -24,8 +24,14 @@
 #  CUDA_VISIBLE_DEVICES=3 python finetune_lrtune_fs_early.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../pretrain/hashtag/hash_group_111_20/${epoch}/ --results_name results_ft_fs_20_${epoch}.txt --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot 16,32,64,128,256,512,full
 #done
 
-for epoch in 99999 199999
+#for epoch in 99999 199999
+#do
+#  CUDA_VISIBLE_DEVICES=4 python finetune_lrtune_extend_position_tokentype_fs.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../pretrain/hashtag/hash_group_111_sep_rep0_100/${epoch}/ --method hash_fuldata_bt_hashseg_top_1 --results_name results_ft_fs_sep${epoch}_retri.txt --max_seq_length 514 --token_type 1 --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot 16,32,64,128,256,512,full
+#  CUDA_VISIBLE_DEVICES=4 python finetune_lrtune_fs_early.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../pretrain/hashtag/hash_group_111_sep_rep0_100/${epoch}/ --results_name results_ft_fs_sep${epoch}.txt --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot 16,32,64,128,256,512,full
+#done
+
+for epoch in 10 20
 do
-  CUDA_VISIBLE_DEVICES=4 python finetune_lrtune_extend_position_tokentype_fs.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../pretrain/hashtag/hash_group_111_sep_rep0_100/${epoch}/ --method hash_fuldata_bt_hashseg_top_1 --results_name results_ft_fs_sep${epoch}_retri.txt --max_seq_length 514 --token_type 1 --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot 16,32,64,128,256,512,full
-  CUDA_VISIBLE_DEVICES=4 python finetune_lrtune_fs_early.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../pretrain/hashtag/hash_group_111_sep_rep0_100/${epoch}/ --results_name results_ft_fs_sep${epoch}.txt --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot 16,32,64,128,256,512,full
+  CUDA_VISIBLE_DEVICES=3 python finetune_lrtune_fs_early.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path ../lmbff/contrastive_models/one/${epoch}_new/ --results_name results_ft_fs_contrastiveone${epoch}.txt --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot full
+  #CUDA_VISIBLE_DEVICES=3 python finetune_lrtune_extend_position_tokentype_fs.py --task_name eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor --model_name_or_path .../lmbff/contrastive_models/one/${epoch}_new/ --method hash_fuldata_bt_hashseg_top_1 --results_name results_ft_fs_contrastiveone${epoch}_retri.txt --max_seq_length 514 --token_type 1 --learning_rate 1e-5 --batch_size 16 --seed 0,1,2,3,4,5,6,7,8,9 --shot full
 done
