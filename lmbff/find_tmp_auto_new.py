@@ -503,6 +503,8 @@ def run_model(args):
     for token in best_trigger_tokens:
         final_txt = final_txt.replace('[T]', token, 1)
     logger.info(final_txt)
+    with open(args.log_name.split('.')[0]+'.txt', 'a', encoding='utf-8') as f:
+        f.write(final_txt+'\n')
     if args.print_lama:
         # Templatize with [X] and [Y]
         if args.use_ctx:
