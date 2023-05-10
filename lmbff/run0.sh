@@ -41,5 +41,5 @@
 #done
 for TASK in eval-stance eval-emotion eval-irony eval-offensive eval-hate sem21-task7-humor sem22-task6-sarcasm
 do
-  CUDA_VISIBLE_DEVICES=0 python find_tmp_auto_new.py --train ../finetune/data/${TASK}/train_fulldata_simcse_top20_textfirst.tsv --dev ../finetune/data/${TASK}/dev_fulldata_simcse_top20_textfirst.tsv --template '<s> {sentence_B} </s> [T] [T] [T] {sentence_A} . It was [P] . </s>' --num-cand 100 --accumulation-steps 30 --bsz 20 --eval-size 48 --iters 100 --model-name vinai/bertweet-base --log_name template_bt_retrisimcse_labelori_tmp03.log --max_seq_length 400 --filter --seed 0
+  CUDA_VISIBLE_DEVICES=1 python find_tmp_auto_new.py --train ../finetune/data/${TASK}/train_fulldata_simcse_top20_textfirst.tsv --dev ../finetune/data/${TASK}/dev_fulldata_simcse_top20_textfirst.tsv --template '<s> {sentence_B} </s> [T] [T] [T] {sentence_A} . It was [P] . </s>' --num-cand 100 --accumulation-steps 30 --bsz 20 --eval-size 48 --iters 100 --model-name vinai/bertweet-base --log_name template_bt_retrisimcse_labelori_tmp03.log --max_seq_length 400 --filter --seed 0
 done
