@@ -21,7 +21,7 @@ parser.add_argument("--dataset_path", default='../finetune/data/', type=str, req
 parser.add_argument("--task_name", default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=100, type=int)
 parser.add_argument('--method',default='_seg_one20',type=str)
-parser.add_argument("--split", default=100, type=int)#for gpu memory
+parser.add_argument("--split", default=50, type=int)#for gpu memory
 parser.add_argument("--hashprocess", default='seg', type=str)#for gpu memory
 
 args = parser.parse_args()
@@ -126,7 +126,7 @@ for task in args.task_name.split(','):
     # for fileName in ['test']:
         train_dataset = read_data(args.dataset_path + task + '/' + fileName + '.json')
         data_hash_all = copy.deepcopy(train_dataset)
-        train_dataset = read_data_hashremove(args.dataset_path + task + '/' + fileName + '.json')
+        train_dataset = read_data_hashremove(args.dataset_path + task + '/' + fileName + '.json', args)
         for idx in trange(len(train_dataset)):
             one = train_dataset[idx]
             input = tokenizer(one['text'],truncation=True)
