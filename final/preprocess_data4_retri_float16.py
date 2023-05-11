@@ -109,10 +109,12 @@ for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.append(tmp['samples'])
     # hash_embs.extend(tmp['center_embs'])
-    if idx < args.split/2:
-        hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16).cuda(0))
-    else:
-        hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(1))
+    # if idx < args.split/2:
+    #     hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16).cuda(0))
+    # else:
+    #     hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(1))
+    hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16))###############save gpu memory
+
     tmp.close()
 
 # hash_embs= torch.tensor(np.array(hash_embs))
@@ -131,17 +133,17 @@ for task in args.task_name.split(','):
                                 attention_mask=torch.tensor([input['attention_mask']]).cuda(0),
                                 token_type_ids=torch.tensor([input['token_type_ids']]).cuda(0),
                                 output_hidden_states=True, return_dict=True).pooler_output
-                # dis = -np.linalg.norm(outputs.cpu().numpy()-hash_embs,axis=1)
                 best_distance = []
                 best_text = []
                 for sp in range(args.split):
-                    if sp < args.split/2:
-                        outputs = torch.tensor(outputs, dtype=torch.float16).cuda(0)
-                    else:
-                        outputs = torch.tensor(outputs, dtype=torch.float16).cuda(1)
-                    dis = cos_sim(outputs,hash_embs[sp])
-                    # dis = dis.view(-1,args.num_samples).sum(dim=-1)##################################hash each
-                    # best_idx = np.argpartition(np.array(dis), -args.best)[-args.best:]
+                    # if sp < args.split/2:
+                    #     outputs = torch.tensor(outputs, dtype=torch.float16).cuda(0)
+                    # else:
+                    #     outputs = torch.tensor(outputs, dtype=torch.float16).cuda(1)
+                    # dis = cos_sim(outputs, hash_embs[sp])
+                    outputs = torch.tensor(outputs, dtype=torch.float16).cuda()
+                    dis = cos_sim(outputs,hash_embs[sp].cuda())
+
                     val,best_idx = dis.topk(args.best)
                     for tmp_idx in best_idx.cpu().numpy():
                         best_distance.append(dis[tmp_idx].cpu().numpy())
