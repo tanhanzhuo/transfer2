@@ -1,0 +1,83 @@
+import json
+import datasets
+import argparse
+import torch
+import numpy as np
+from tqdm import tqdm,trange
+import emoji
+from scipy.spatial.distance import pdist, squareform
+import time
+import copy
+import faiss
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--hash_file',default='./tweet_hash_clean_seg_one20/tweet_hash_clean_seg',type=str)
+# parser.add_argument('--model',default='/work/SimCSE-main/result/thre1000_num1000/',type=str)
+# parser.add_argument('--model_name',default='/work/SimCSE-main/result/thre100_num100_remove/1399999',type=str)
+parser.add_argument('--model_name',default='../lmbff/contrastive_models/one/20_new/',type=str)
+parser.add_argument("--max_seq_length", default=128, type=int)
+
+parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
+parser.add_argument("--task_name", default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
+parser.add_argument("--best", default=100, type=int)
+parser.add_argument('--method',default='_seg_one20',type=str)
+parser.add_argument("--split", default=50, type=int)#for gpu memory
+parser.add_argument("--hashprocess", default='seg', type=str)#for gpu memory
+parser.add_argument("--gpu", default=8, type=int)#for gpu memory
+
+args = parser.parse_args()
+
+
+hash_samples = []
+hash_embs = []
+cuda_batch = int(args.split / args.gpu)
+for idx in trange(args.split):
+    tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
+    hash_samples.extend(tmp['samples'])
+    hash_embs.extend(tmp['embs'])
+    tmp.close()
+
+hash_embs = np.array(hash_embs)
+probs = hash_embs[:10]
+
+print('input dimension:')
+print(hash_embs.shape)
+
+time1 = time.time()
+cpu_index = faiss.IndexFlatIP(probs.shape[1])  # 构建索引index
+gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
+gpu_index.add(hash_embs)
+time2 = time.time()
+print('direct build time:{}'.format(time2-time1))
+k = 100  # 返回结果个数
+query = hash_embs[:1000]  # 查询本身
+
+time1 = time.time()
+dis, ind = gpu_index.search(query, k)
+time2 = time.time()
+print('direct search time:{}'.format(time2-time1))
+print('shape of dis and idx')
+print(dis.shape)
+print(ind.shape)
+
+del cpu_index, gpu_index
+
+
+train_s = time.time()
+quantizer = faiss.IndexFlatIP(probs.shape[1])  # def the method of calculating distance (L2 distance, here)
+cpu_index = faiss.IndexIVFPQ(quantizer, probs.shape[1], int(len(hash_embs)/100), 8, 8)  # construct the index
+gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
+gpu_index.train(hash_embs)                       # train the index on the data
+train_e = time.time()
+print('ivfpq build time: {}'.format(train_e - train_s))
+
+k = 100  # 返回结果个数
+query = hash_embs[:1000]  # 查询本身
+gpu_index.nprobe = 10000
+time1 = time.time()
+dis, ind = gpu_index.search(query, k)
+time2 = time.time()
+print('direct search time:{}'.format(time2-time1))
+print('shape of dis and idx')
+print(dis.shape)
+print(ind.shape)
