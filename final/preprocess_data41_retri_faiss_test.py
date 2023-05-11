@@ -30,19 +30,19 @@ args = parser.parse_args()
 
 
 hash_samples = []
-hash_embs = []
-cuda_batch = int(args.split / args.gpu)
+hash_embs = np.array([]).reshape((-1,768))
+
 for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.extend(tmp['samples'])
-    hash_embs.extend(tmp['embs'])
+    hash_embs = np.concatenate(hash_embs,tmp['embs'])
     tmp.close()
 
 # hash_embs = np.array(hash_embs)
 dim = len(hash_embs[0])
 
 print('input dimension:')
-print(len(hash_embs))
+print(hash_embs.shape)
 
 time1 = time.time()
 cpu_index = faiss.IndexFlatIP(dim)  # 构建索引index
