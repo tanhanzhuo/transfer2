@@ -23,6 +23,7 @@ parser.add_argument("--best", default=100, type=int)
 parser.add_argument('--method',default='_seg_one20',type=str)
 parser.add_argument("--split", default=50, type=int)#for gpu memory
 parser.add_argument("--hashprocess", default='seg', type=str)#for gpu memory
+parser.add_argument("--gpus", default=8, type=int)#for gpu memory
 
 args = parser.parse_args()
 
@@ -107,6 +108,7 @@ def write_json(data, fileName):
 
 hash_samples = []
 hash_embs = []
+cuda_batch = int(args.split / args.gpu)
 for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.append(tmp['samples'])
@@ -115,7 +117,11 @@ for idx in trange(args.split):
     #     hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16).cuda(0))
     # else:
     #     hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(1))
-    hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16))###############save gpu memory
+
+    # hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16))###############save gpu memory
+
+    cuda_idx = min(int(idx/cuda_batch), args.gpu-1)
+    hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(cuda_idx))
 
     tmp.close()
 
@@ -143,8 +149,13 @@ for task in args.task_name.split(','):
                     # else:
                     #     outputs = torch.tensor(outputs, dtype=torch.float16).cuda(1)
                     # dis = cos_sim(outputs, hash_embs[sp])
-                    outputs = torch.tensor(outputs, dtype=torch.float16).cuda()
-                    dis = cos_sim(outputs,hash_embs[sp].cuda())
+
+                    # outputs = torch.tensor(outputs, dtype=torch.float16).cuda()
+
+                    cuda_idx = min(int(sp / cuda_batch), args.gpu - 1)
+                    outputs = torch.tensor(outputs, dtype=torch.float16).cuda(cuda_idx)
+
+                    dis = cos_sim(outputs,hash_embs[sp])
 
                     val,best_idx = dis.topk(args.best)
                     for tmp_idx in best_idx.cpu().numpy():
