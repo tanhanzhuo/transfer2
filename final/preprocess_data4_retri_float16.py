@@ -120,7 +120,7 @@ for idx in trange(args.split):
 
     # hash_embs.append(torch.tensor(tmp['embs'],dtype=torch.float16))###############save gpu memory
 
-    cuda_idx = min(int(idx/cuda_batch), args.gpu-1)
+    cuda_idx = min(int((idx+1)/cuda_batch), args.gpu-1)
     hash_embs.append(torch.tensor(tmp['embs'], dtype=torch.float16).cuda(cuda_idx))
 
     tmp.close()
@@ -152,7 +152,7 @@ for task in args.task_name.split(','):
 
                     # outputs = torch.tensor(outputs, dtype=torch.float16).cuda()
 
-                    cuda_idx = min(int(sp / cuda_batch), args.gpu - 1)
+                    cuda_idx = min(int((idx+1)/cuda_batch), args.gpu-1)
                     outputs = torch.tensor(outputs, dtype=torch.float16).cuda(cuda_idx)
 
                     dis = cos_sim(outputs,hash_embs[sp])
