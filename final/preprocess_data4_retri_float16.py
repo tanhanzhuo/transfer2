@@ -23,7 +23,7 @@ parser.add_argument("--best", default=100, type=int)
 parser.add_argument('--method',default='_seg_one20',type=str)
 parser.add_argument("--split", default=50, type=int)#for gpu memory
 parser.add_argument("--hashprocess", default='seg', type=str)#for gpu memory
-parser.add_argument("--gpus", default=8, type=int)#for gpu memory
+parser.add_argument("--gpu", default=8, type=int)#for gpu memory
 
 args = parser.parse_args()
 
