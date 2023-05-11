@@ -31,7 +31,7 @@ args = parser.parse_args()
 
 hash_samples = []
 # hash_embs = np.array([]).reshape((-1,768))
-hash_embs =  = []
+hash_embs = []
 for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.extend(tmp['samples'])
