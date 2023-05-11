@@ -45,7 +45,8 @@ def read_data(fileName):
         data = []
         lines = f.readlines()
         for line in lines:
-            data.append({'labels': line.split('\t')[0], 'text': line.split('\t')[1]})
+            # data.append({'labels': line.split('\t')[0], 'text': line.split('\t')[1]})
+            data.append(json.loads(line))
     return data
 
 import re
@@ -77,7 +78,8 @@ def read_data_hashremove(fileName, args):
         data = []
         lines = f.readlines()
         for line in lines:
-            data_tmp = line.split('\t')[1].strip()
+            # data_tmp = line.split('\t')[1].strip()
+            data_tmp = json.loads(line)['text']
             hash_tmp = process(data_tmp)
 
             if args.hashprocess == 'same':
@@ -93,7 +95,7 @@ def read_data_hashremove(fileName, args):
                     else:
                         data_tmp = data_tmp.replace(hash_two, hash_two[1:])
 
-            data.append({'labels': line.split('\t')[0], 'text':data_tmp })
+            data.append({'labels': json.loads(line)['labels'], 'text':data_tmp })
     return data
 
 import json
@@ -122,9 +124,9 @@ cos_sim = torch.nn.CosineSimilarity(dim=1).cuda(0)
 for task in args.task_name.split(','):
     for fileName in ['train', 'dev', 'test']:
     # for fileName in ['test']:
-        train_dataset = read_data(args.dataset_path + task + '/' + fileName)
+        train_dataset = read_data(args.dataset_path + task + '/' + fileName + '.json')
         data_hash_all = copy.deepcopy(train_dataset)
-        train_dataset = read_data_hashremove(args.dataset_path + task + '/' + fileName)
+        train_dataset = read_data_hashremove(args.dataset_path + task + '/' + fileName + '.json')
         for idx in trange(len(train_dataset)):
             one = train_dataset[idx]
             input = tokenizer(one['text'],truncation=True)
