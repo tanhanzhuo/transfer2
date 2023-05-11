@@ -24,6 +24,7 @@ parser.add_argument('--method',default='_seg_one20',type=str)
 parser.add_argument("--split", default=50, type=int)#for gpu memory
 parser.add_argument("--hashprocess", default='seg', type=str)#for gpu memory
 parser.add_argument("--gpu", default=8, type=int)#for gpu memory
+parser.add_argument("--num", default=1000, type=int)#for gpu memory
 
 args = parser.parse_args()
 
@@ -37,20 +38,20 @@ for idx in trange(args.split):
     hash_embs.extend(tmp['embs'])
     tmp.close()
 
-hash_embs = np.array(hash_embs)
-probs = hash_embs[:10]
+# hash_embs = np.array(hash_embs)
+dim = len(hash_embs[0])
 
 print('input dimension:')
-print(hash_embs.shape)
+print(len(hash_embs))
 
 time1 = time.time()
-cpu_index = faiss.IndexFlatIP(probs.shape[1])  # 构建索引index
+cpu_index = faiss.IndexFlatIP(dim)  # 构建索引index
 gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
 gpu_index.add(hash_embs)
 time2 = time.time()
 print('direct build time:{}'.format(time2-time1))
 k = 100  # 返回结果个数
-query = hash_embs[:1000]  # 查询本身
+query = hash_embs[:args.num]  # 查询本身
 
 time1 = time.time()
 dis, ind = gpu_index.search(query, k)
@@ -64,16 +65,16 @@ del cpu_index, gpu_index
 
 
 train_s = time.time()
-quantizer = faiss.IndexFlatIP(probs.shape[1])  # def the method of calculating distance (L2 distance, here)
-cpu_index = faiss.IndexIVFPQ(quantizer, probs.shape[1], int(len(hash_embs)/100), 8, 8)  # construct the index
+quantizer = faiss.IndexFlatIP(dim)  # def the method of calculating distance (L2 distance, here)
+cpu_index = faiss.IndexIVFPQ(quantizer, dim, int(len(hash_embs)/100), 8, 8)  # construct the index
 gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
 gpu_index.train(hash_embs)                       # train the index on the data
 train_e = time.time()
 print('ivfpq build time: {}'.format(train_e - train_s))
 
 k = 100  # 返回结果个数
-query = hash_embs[:1000]  # 查询本身
-gpu_index.nprobe = 10000
+query = hash_embs[:args.num]  # 查询本身
+gpu_index.nprobe = int(len(hash_embs)/1000)
 time1 = time.time()
 dis, ind = gpu_index.search(query, k)
 time2 = time.time()
