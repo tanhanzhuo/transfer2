@@ -28,7 +28,7 @@ parser.add_argument("--num", default=1000, type=int)#for gpu memory
 
 args = parser.parse_args()
 
-
+time1 = time.time()
 hash_samples = []
 # hash_embs = np.array([]).reshape((-1,768))
 hash_embs = []
@@ -36,10 +36,13 @@ for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     hash_samples.extend(tmp['samples'])
     # hash_embs = np.concatenate((hash_embs,tmp['embs']))
-    hash_embs.extend(tmp['embs'])
+    hash_embs.extend(tmp['embs'].astype(np.float16))
     tmp.close()
 
-hash_embs = np.asarray(hash_embs)
+hash_embs = np.asarray(hash_embs,dtype=np.float16)
+time2 = time.time()
+print('read time:{}'.format(time2-time1))
+
 dim = len(hash_embs[0])
 
 print('input dimension:')
