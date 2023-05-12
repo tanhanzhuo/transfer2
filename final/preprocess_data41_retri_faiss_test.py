@@ -75,9 +75,19 @@ train_s = time.time()
 cpu_index = faiss.index_factory(dim, "IVF262144_HNSW32,Flat")
 gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
 gpu_index.train(hash_embs)                       # train the index on the data
-gpu_index.add(hash_embs)
 train_e = time.time()
-print('ivfpq build time: {}'.format(train_e - train_s))
+print('index build time: {}'.format(train_e - train_s))
+
+cpu_index = faiss.index_gpu_to_cpu(gpu_index)
+faiss.write_index(cpu_index, 'tweet_hash_clean_seg_one20_index.index')
+
+time1 = time.time()
+gpu_index.add(hash_embs)
+time2 = time.time()
+print('index add time:{}'.format(time2-time1))
+cpu_index = faiss.index_gpu_to_cpu(gpu_index)
+faiss.write_index(cpu_index, 'tweet_hash_clean_seg_one20_index_add.index')
+
 
 k = 100  # 返回结果个数
 query = hash_embs[:args.num]  # 查询本身
@@ -89,3 +99,4 @@ print('direct search time:{}'.format(time2-time1))
 print('shape of dis and idx')
 print(dis.shape)
 print(ind.shape)
+
