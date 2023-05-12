@@ -6,6 +6,7 @@ import argparse
 from tqdm import tqdm
 import os
 import numpy as np
+from sklearn.preprocessing import normalize
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset_path", default='tweet_hash_clean_seg', type=str, required=False, help="dataset name")
 parser.add_argument("--model_name", default='../lmbff/contrastive_models/one/20_new/', type=str, required=False, help="tokenizer name")
@@ -75,7 +76,8 @@ with torch.no_grad():
         embs.extend(embeddings.cpu().numpy())
         progress_bar.update(1)
         if len(samples) >= BATCH or step == len(data_loader)-1:
-            np.savez(args.save+args.dataset_path+'_'+str(BATCH_IDX),embs=np.array(embs),samples=np.array(samples))
+            embs = normalize(embs)
+            np.savez(args.save+args.dataset_path+'_'+str(BATCH_IDX),embs=embs.astype(np.float16),samples=np.array(samples))
             # with open(args.save+args.dataset_path+'_'+str(BATCH_IDX)+'.txt', 'w',encoding='utf-8') as f:
             #     for line in samples:
             #         f.write(line+ ' \n')
