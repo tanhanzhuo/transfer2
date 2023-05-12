@@ -42,12 +42,13 @@ print('number of hashtags:{}'.format(len(hash_data.keys())))
 # print('number of lower hashtags:{}'.format(low))
 # print('number of final samples:{}'.format(len(hash_data_high)))
 
-
-hash_data_high = set()
-for hash_one in hash_data.keys():
-    hash_data_one = hash_data[hash_one]
-    if len(hash_data_one) > args.thre:
-        hash_data_one = random.sample(hash_data_one, args.thre)
-    for sample in hash_data_one:
-        hash_data_high.add(sample)
-print('number of final samples:{}'.format(len(hash_data_high)))
+for thre in [500,700,900]:
+    hash_data_high = set()
+    for hash_one in hash_data.keys():
+        hash_data_one = hash_data[hash_one]
+        if len(hash_data_one) > thre:
+            hash_data_one = random.sample(hash_data_one, thre)
+        for sample in hash_data_one:
+            hash_data_high.add(sample)
+    print('threshold:{}'.format(thre))
+    print('number of final samples:{}'.format(len(hash_data_high)))
