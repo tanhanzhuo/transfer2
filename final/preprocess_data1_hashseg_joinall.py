@@ -7,11 +7,12 @@ import re
 import string
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file',default='tweet_hash_clean_group.txt',type=str)
+parser.add_argument('--file',default='../pretrain/hashtag/tweet_hash_clean_group.txt',type=str)
 parser.add_argument('--name',default='tweet_hash_clean',type=str)
 parser.add_argument('--root', default='..', type=str)
 parser.add_argument('--hashprocess', default='same', type=str)
-parser.add_argument('--thre', default=1000, type=int)
+parser.add_argument('--num', default=500, type=int)
+parser.add_argument('--thre', default=100, type=int)
 
 args = parser.parse_args()
 
@@ -73,9 +74,13 @@ with open(args.file, 'r', encoding='utf-8') as f:
 hash_data_select = set()
 for hash_one in hash_data.keys():
     hash_data_one = hash_data[hash_one]
-    for sample_one in random.sample(hash_data_one, args.thre):
+    if len(hash_data_one) < args.thre:
+        continue
+    if len(hash_data_one) > args.num:
+        hash_data_one = random.sample(hash_data_one, args.num)
+    for sample_one in hash_data_one:
         hash_data_select.add(sample_one)
 
-with open(args.name+'_'+args.hashprocess+'_'+str(args.thre)+'.txt', 'w', encoding='utf-8') as f:
+with open(args.name+'_'+args.hashprocess+'_'+str(args.num)+'.txt', 'w', encoding='utf-8') as f:
     for one in hash_data:
         f.write(one+'\n')
