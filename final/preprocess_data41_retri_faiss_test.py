@@ -34,13 +34,15 @@ hash_samples = []
 hash_embs = []
 for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
-    print(tmp['embs'].dtype)
+    # print(tmp['embs'].dtype)
     hash_samples.extend(tmp['samples'])
     # hash_embs = np.concatenate((hash_embs,tmp['embs']))
     hash_embs.extend(tmp['embs'])#,dtype=np.float16)
     tmp.close()
 
 hash_embs = np.asarray(hash_embs)#,dtype=np.float16)
+print(hash_embs.dtype)
+
 time2 = time.time()
 print('read time:{}'.format(time2-time1))
 
@@ -72,7 +74,7 @@ print(hash_embs.shape)
 train_s = time.time()
 # quantizer = faiss.IndexFlatIP(dim)  # def the method of calculating distance (L2 distance, here)
 # cpu_index = faiss.IndexIVFPQ(quantizer, dim, int(len(hash_embs)/100), 8, 8)  # construct the index
-cpu_index = faiss.index_factory(dim, "OPQ32,IVF262144_HNSW32,PQ32")
+cpu_index = faiss.index_factory(dim, "OPQ8,IVF262144,PQ8")
 gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
 gpu_index.train(hash_embs)                       # train the index on the data
 train_e = time.time()
