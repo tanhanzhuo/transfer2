@@ -11,6 +11,7 @@ parser.add_argument('--file',default='tweet_hash_clean_group.txt',type=str)
 parser.add_argument('--name',default='tweet_hash_clean',type=str)
 parser.add_argument('--root', default='..', type=str)
 parser.add_argument('--hashprocess', default='same', type=str)
+parser.add_argument('--thre', default=1000, type=int)
 
 args = parser.parse_args()
 
@@ -43,13 +44,14 @@ def process(line):
 
     return hash_tmp_clean
 
-hash_data = set()
+hash_data = {}
 with open(args.file, 'r', encoding='utf-8') as f:
     cur_hash = ''
     # lines = f.readlines()
     for line in tqdm(f):
         if line[:10] == 'TANS_HASH:':
             cur_hash = line.strip().split(':')[-1]
+            hash_data[cur_hash] = []
             continue
         data_tmp = line.strip()
         hash_tmp = process(data_tmp)
@@ -66,8 +68,14 @@ with open(args.file, 'r', encoding='utf-8') as f:
                     data_tmp = data_tmp.replace(hash_two, tmp2)
                 else:
                     data_tmp = data_tmp.replace(hash_two, hash_two[1:])
-        hash_data.add(data_tmp)
+        hash_data[cur_hash].append(data_tmp)
 
-with open(args.name+'_'+args.hashprocess+'.txt', 'w', encoding='utf-8') as f:
+hash_data_select = set()
+for hash_one in hash_data.keys():
+    hash_data_one = hash_data[hash_one]
+    for sample_one in random.sample(hash_data_one, args.thre):
+        hash_data_select.add(sample_one)
+
+with open(args.name+'_'+args.hashprocess+'_'+str(args.thre)+'.txt', 'w', encoding='utf-8') as f:
     for one in hash_data:
         f.write(one+'\n')
