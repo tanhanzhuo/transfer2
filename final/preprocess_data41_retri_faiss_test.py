@@ -49,24 +49,24 @@ dim = len(hash_embs[0])
 print('input dimension:')
 print(hash_embs.shape)
 
-time1 = time.time()
-cpu_index = faiss.IndexFlatIP(dim)  # 构建索引index
-gpu_index = cpu_index#faiss.index_cpu_to_all_gpus(cpu_index)
-gpu_index.add(hash_embs)
-time2 = time.time()
-print('direct build time:{}'.format(time2-time1))
-k = 100  # 返回结果个数
-query = hash_embs[:args.num]  # 查询本身
-
-time1 = time.time()
-dis, ind = gpu_index.search(query, k)
-time2 = time.time()
-print('direct search time:{}'.format(time2-time1))
-print('shape of dis and idx')
-print(dis.shape)
-print(ind.shape)
-
-del cpu_index, gpu_index
+# time1 = time.time()
+# cpu_index = faiss.IndexFlatIP(dim)  # 构建索引index
+# gpu_index = cpu_index#faiss.index_cpu_to_all_gpus(cpu_index)
+# gpu_index.add(hash_embs)
+# time2 = time.time()
+# print('direct build time:{}'.format(time2-time1))
+# k = 100  # 返回结果个数
+# query = hash_embs[:args.num]  # 查询本身
+#
+# time1 = time.time()
+# dis, ind = gpu_index.search(query, k)
+# time2 = time.time()
+# print('direct search time:{}'.format(time2-time1))
+# print('shape of dis and idx')
+# print(dis.shape)
+# print(ind.shape)
+#
+# del cpu_index, gpu_index
 
 
 train_s = time.time()
