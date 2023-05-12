@@ -51,7 +51,7 @@ print(hash_embs.shape)
 
 time1 = time.time()
 cpu_index = faiss.IndexFlatIP(dim)  # 构建索引index
-gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
+gpu_index = cpu_index#faiss.index_cpu_to_all_gpus(cpu_index)
 gpu_index.add(hash_embs)
 time2 = time.time()
 print('direct build time:{}'.format(time2-time1))
@@ -72,7 +72,7 @@ del cpu_index, gpu_index
 train_s = time.time()
 quantizer = faiss.IndexFlatIP(dim)  # def the method of calculating distance (L2 distance, here)
 cpu_index = faiss.IndexIVFPQ(quantizer, dim, int(len(hash_embs)/100), 8, 8)  # construct the index
-gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
+gpu_index = cpu_index#faiss.index_cpu_to_all_gpus(cpu_index)
 gpu_index.train(hash_embs)                       # train the index on the data
 train_e = time.time()
 print('ivfpq build time: {}'.format(train_e - train_s))
