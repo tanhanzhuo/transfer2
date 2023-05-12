@@ -82,5 +82,5 @@ for hash_one in hash_data.keys():
         hash_data_select.add(sample_one)
 
 with open(args.name+'_'+args.hashprocess+'_'+str(args.num)+'.txt', 'w', encoding='utf-8') as f:
-    for one in hash_data:
+    for one in hash_data_select:
         f.write(one+'\n')
