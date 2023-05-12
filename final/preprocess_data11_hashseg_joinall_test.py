@@ -28,15 +28,26 @@ with open(args.file, 'r', encoding='utf-8') as f:
         hash_data[cur_hash].append(data_tmp)
 
 print('number of hashtags:{}'.format(len(hash_data.keys())))
-low = 0
+
+# low = 0
+# hash_data_high = set()
+# for hash_one in hash_data.keys():
+#     hash_data_one = hash_data[hash_one]
+#     if len(hash_data_one) < args.thre:
+#         low += 1
+#         continue
+#     else:
+#         for sample in hash_data_one:
+#             hash_data_high.add(sample)
+# print('number of lower hashtags:{}'.format(low))
+# print('number of final samples:{}'.format(len(hash_data_high)))
+
+
 hash_data_high = set()
 for hash_one in hash_data.keys():
     hash_data_one = hash_data[hash_one]
-    if len(hash_data_one) < args.thre:
-        low += 1
-        continue
-    else:
-        for sample in hash_data_one:
-            hash_data_high.add(sample)
-print('number of lower hashtags:{}'.format(low))
+    if len(hash_data_one) > args.thre:
+        hash_data_one = random.sample(hash_data_one, args.thre)
+    for sample in hash_data_one:
+        hash_data_high.add(sample)
 print('number of final samples:{}'.format(len(hash_data_high)))
