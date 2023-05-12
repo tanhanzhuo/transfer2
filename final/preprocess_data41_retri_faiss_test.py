@@ -72,7 +72,7 @@ print(hash_embs.shape)
 
 
 train_s = time.time()
-quantizer = faiss.IndexFlatIP(dim)  # def the method of calculating distance (L2 distance, here)
+quantizer = faiss.IndexFlatL2(dim)  # def the method of calculating distance (L2 distance, here)
 cpu_index = faiss.IndexIVFPQ(quantizer, dim, int(len(hash_embs)/100), 8, 8)  # construct the index
 # cpu_index = faiss.index_factory(dim, "OPQ8,IVF262144,PQ8")
 gpu_index = faiss.index_cpu_to_all_gpus(cpu_index)
