@@ -37,10 +37,10 @@ for idx in trange(args.split):
     print(tmp['embs'].dtype)
     hash_samples.extend(tmp['samples'])
     # hash_embs = np.concatenate((hash_embs,tmp['embs']))
-    hash_embs.extend(tmp['embs'].astype(np.float16))
+    hash_embs.extend(tmp['embs'])#,dtype=np.float16)
     tmp.close()
 
-hash_embs = np.asarray(hash_embs,dtype=np.float16)
+hash_embs = np.asarray(hash_embs)#,dtype=np.float16)
 time2 = time.time()
 print('read time:{}'.format(time2-time1))
 
