@@ -11,6 +11,7 @@ from sklearn.preprocessing import normalize
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash_file',default='./tweet_hash_clean_seg_one20/tweet_hash_clean_seg',type=str)
+parser.add_argument("--split", default=50, type=int)#for gpu memory
 args = parser.parse_args()
 
 time1 = time.time()
