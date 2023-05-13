@@ -35,7 +35,7 @@ hash_embs = []
 for idx in trange(args.split):
     tmp = np.load(args.hash_file+'_'+str(idx)+'.npz',allow_pickle=True)
     # print(tmp['embs'].dtype)
-    hash_samples.extend(tmp['samples'])
+    hash_samples.extend(tmp['samples'].tolist())
     # hash_embs = np.concatenate((hash_embs,tmp['embs']))
     hash_embs.extend(tmp['embs'])#,dtype=np.float16)
     tmp.close()
