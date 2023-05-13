@@ -41,7 +41,7 @@ def tokenization(args,tokenizer):
         if idx != args.top-1:
             remove_column_name.append('text'+str(idx))
     for sp in ['train', 'dev', 'test']:
-        raw_datasets[sp].remove_columns(remove_column_name)
+        raw_datasets[sp] = raw_datasets[sp].remove_columns(remove_column_name)
         raw_datasets[sp] = raw_datasets[sp].shuffle()
     # First we tokenize all the texts.
 
