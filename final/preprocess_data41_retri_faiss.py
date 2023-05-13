@@ -138,7 +138,10 @@ for task in args.task_name.split(','):
                 fea_embds.append(outputs[0].cpu().numpy())
         fea_embds = np.asarray(fea_embds,dtype=np.float16)
         print(fea_embds.shape)
+        time_s = time.time()
         dis, ind = cpu_index.search(fea_embds, args.best)
+        time_e = time.time()
+        print('task:{}, split:{}, search time:{}'.format(task,fileName,time_e-time_s))
         for idx in range(len(train_dataset)):
             best_idx = ind[idx]
             for cur_idx in range(0,len(best_idx)):
