@@ -234,7 +234,7 @@ def parse_args():
     parser.add_argument(
         "--task_name",
         # default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
-        default='stance,sem-18,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm,sem18-task1-affect,sem21-task7-humor',
+        default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
@@ -260,14 +260,14 @@ def parse_args():
     )
     parser.add_argument(
         "--method",
-        default='hash_modelT100N100R_fileT100N100R_num10_top_9',
+        default='hash_seg_500_one20_top_1',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
     )
     parser.add_argument(
         "--results_name",
-        default='results_all.txt',
+        default='results_ft_retrione20.txt',
         type=str,
         required=False,
         help="The output directory where the model predictions and checkpoints will be written.",
@@ -280,11 +280,11 @@ def parse_args():
              "than this will be truncated, sequences shorter will be padded.", )
     parser.add_argument(
         "--token_type",
-        default=2,
+        default=1,
         type=int)
     parser.add_argument(
         "--learning_rate",
-        default='1e-3,1e-4,1e-5,1e-6',
+        default='1e-5',#'1e-3,1e-4,1e-5,1e-6',
         type=str,
         help="The initial learning rate for Adam.")
     parser.add_argument(
@@ -304,7 +304,7 @@ def parse_args():
         help="Save checkpoint every X updates steps.")
     parser.add_argument(
         "--batch_size",
-        default=32,
+        default=16,
         type=int,
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
@@ -329,13 +329,13 @@ def parse_args():
         help="If > 0: set total number of training steps to perform. Override num_train_epochs.",
     )
     parser.add_argument(
-        "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
+        "--seed", default='0,1,2,3,4,5,6,7,8,9', type=str, help="random seed for initialization")
     parser.add_argument(
-        "--shot", default='10,20,40,80,160,320,640,1280,full', type=str, help="random seed for initialization")
+        "--shot", default='full', type=str, help="random seed for initialization")
     parser.add_argument(
         "--stop", default=5, type=int, help="early stop")
     parser.add_argument(
-        "--weight", default=1, type=int, help="weighted loss")
+        "--weight", default=0, type=int, help="weighted loss")
     parser.add_argument(
         "--write_result", default='', type=str, help="weighted loss")
     args = parser.parse_args()
