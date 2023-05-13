@@ -115,7 +115,7 @@ for idx in trange(args.split):
     tmp.close()
 hash_embs = np.asarray(hash_embs)
 dim = len(hash_embs[0])
-cpu_index = faiss.IndexFlatIP(dim)  # 构建索引index
+cpu_index = faiss.IndexFlatL2(dim)  # 构建索引index
 cpu_index.add(hash_embs)
 
 # hash_embs= torch.tensor(np.array(hash_embs))
