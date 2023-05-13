@@ -178,7 +178,7 @@ def parse_args():
         type=int,
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
-        "--seed", default='0', type=str, help="random seed for initialization")
+        "--seed", default='0,1,2,3,4,5,6,7,8,9', type=str, help="random seed for initialization")
     parser.add_argument(
         "--generate_tmp", default=0, type=int, help="template generation")
     parser.add_argument(
@@ -282,7 +282,7 @@ def train_epoch(model, train_dataloader, loss_func, optimizer):
 
 def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
     best_score = 0.0
-    for epoch in range(10):
+    for epoch in range(15):
         train_loss = train_epoch(model, train_dataloader, loss_func, optimizer)
         if train_loss > 0.5:
             continue
