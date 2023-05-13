@@ -17,7 +17,7 @@ cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 parser = argparse.ArgumentParser()
 parser.add_argument('--tasks',default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm',type=str)
 parser.add_argument('--target',default='_clean',type=str)
-parser.add_argument('--method',default='_seg_500_one20',type=str)#'_fulldata_simcse_top20_textfirst'
+parser.add_argument('--method',default='_seg_500_one20_top100_sp',type=str)#'_fulldata_simcse_top20_textfirst'
 parser.add_argument('--num',default=100,type=int)
 args = parser.parse_args()
 
