@@ -178,7 +178,7 @@ def parse_args():
         type=int,
         help="Batch size per GPU/CPU for training.", )
     parser.add_argument(
-        "--seed", default='0,1,2,3,4,5,6,7,8,9', type=str, help="random seed for initialization")
+        "--seed", default='0,1,2,3,4', type=str, help="random seed for initialization")
     parser.add_argument(
         "--generate_tmp", default=0, type=int, help="template generation")
     parser.add_argument(
