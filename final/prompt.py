@@ -60,6 +60,7 @@ from openprompt import PromptDataLoader
 from openprompt import PromptForClassification
 from openprompt.prompts import SoftVerbalizer
 from openprompt.prompts import ManualVerbalizer
+import emoji
 
 CONVERT = {
     'eval-emotion':{'0':0,'1':1,'2':2,'3':3},
@@ -408,7 +409,7 @@ def do_train(args):
             with open(args.template, 'r', encoding='utf-8') as f:
                 for line in f:
                     if args.task in line:
-                        template_text = line.strip().split('*')[-1]
+                        template_text = emoji.emojize(line.strip().split('*')[-1])
         print(template_text)
         mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
 
