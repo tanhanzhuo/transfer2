@@ -138,7 +138,7 @@ def parse_args():
     parser.add_argument(
         "--task_name",
         # default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
-        default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm,stance',
+        default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
