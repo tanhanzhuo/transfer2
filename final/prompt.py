@@ -410,6 +410,9 @@ def do_train(args):
                 for line in f:
                     if args.task in line:
                         template_text = emoji.emojize(line.strip().split('*')[-1])
+                        template_text = template_text.replace('{sentence_B}', '{"placeholder":"text_b"}')
+                        template_text = template_text.replace('{sentence_A}', '{"placeholder":"text_a"}')
+                        template_text = template_text.replace('[P]', '{"mask"}')
         print(template_text)
         mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
 
