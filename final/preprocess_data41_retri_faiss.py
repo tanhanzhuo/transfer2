@@ -35,7 +35,7 @@ for line in lines:
     hash_seg[line.split('\t')[0]] = line.split('\t')[1]
 
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
-tokenizer = AutoTokenizer.from_pretrained('vinai/bertweet-base', normalization=True)
+tokenizer = AutoTokenizer.from_pretrained(args.model_name, normalization=True)
 config = AutoConfig.from_pretrained(args.model_name)
 # model = AutoModel.from_pretrained(args.model,config=config).cuda()
 model = AutoModel.from_pretrained(args.model_name).cuda(0)
