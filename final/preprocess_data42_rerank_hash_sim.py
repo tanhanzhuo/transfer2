@@ -16,6 +16,7 @@ parser.add_argument('--target',default='_clean',type=str)
 parser.add_argument('--method',default='_seg_500_one20_top100_sp',type=str)#'_fulldata_simcse_top20_textfirst'
 parser.add_argument('--num',default=100,type=int)
 parser.add_argument('--model',default='princeton-nlp/sup-simcse-roberta-base',type=str)
+parser.add_argument('--name',default='',type=str)
 
 args = parser.parse_args()
 
@@ -56,4 +57,4 @@ for task in args.tasks.split(','):
                     for idx_tmp in range(len(best_idx)):
                         data_one['text'+str(idx_tmp)] = one['text'+str(best_idx[idx_tmp].item())]
                     data_source.append(data_one)
-        write_json(data_source, '../finetune/data/' + task + '/' + sp + args.method + '_rerank')
+        write_json(data_source, '../finetune/data/' + task + '/' + sp + args.method + args.name+'_rerank')
