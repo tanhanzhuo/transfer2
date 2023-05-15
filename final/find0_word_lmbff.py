@@ -195,6 +195,8 @@ def parse_args():
     parser.add_argument(
         "--pre_word", default=[],#["neutral,offensive"],
         nargs='+', help="write name")
+    parser.add_argument(
+        "--max_seq_length", default=64, type=int, help="write name")
     args = parser.parse_args()
     return args
 
@@ -282,7 +284,7 @@ def train_epoch(model, train_dataloader, loss_func, optimizer):
 
 def fit(model, train_dataloader, val_dataloader, loss_func, optimizer, task):
     best_score = 0.0
-    for epoch in range(15):
+    for epoch in range(10):
         train_loss = train_epoch(model, train_dataloader, loss_func, optimizer)
         if train_loss > 0.5:
             continue
@@ -303,10 +305,10 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
         else:
             template = ManualTemplate(tokenizer, template_text)
         train_dataloader = PromptDataLoader(dataset['train'], template, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=128,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, shuffle=True, max_seq_length=args.max_seq_length,
                                             batch_size=args.batch_size)
         valid_dataloader = PromptDataLoader(dataset['dev'], template, tokenizer=tokenizer,
-                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
+                                            tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=args.max_seq_length,
                                             batch_size=args.batch_size)
 
         model = PromptForClassification(copy.deepcopy(plm).cuda(), template, verbalizer)
@@ -359,7 +361,7 @@ def do_train(args):
         tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
         config = AutoConfig.from_pretrained(args.model_name_or_path)
         plm = RobertaForMaskedLM.from_pretrained(args.model_name_or_path, config=config)#.cuda()
-        wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=128)
+        wrapped_tokenizer = MLMTokenizerWrapper(tokenizer=tokenizer, truncate_method="head", max_seq_length=args.max_seq_length)
     verbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx.keys()),
                                   label_words=WORDS[args.task])
     if len(args.pre_tmp) < 1:
@@ -388,7 +390,7 @@ def do_train(args):
             dataset_gen = dataset['train']
         dataloader = PromptDataLoader(dataset_gen, template, tokenizer=tokenizer,
                                       tokenizer_wrapper_class=MLMTokenizerWrapper,
-                                      batch_size=args.batch_size, max_seq_length=128)
+                                      batch_size=args.batch_size, max_seq_length=args.max_seq_length)
         for data in dataloader:
             data = data.cuda()
             verbalizer_generator.register_buffer(data)
