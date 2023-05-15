@@ -9,16 +9,14 @@ from scipy.spatial.distance import pdist, squareform
 import os
 import copy
 from transformers import AutoTokenizer, AutoConfig, AutoModel,DataCollatorWithPadding
-tokenizer = AutoTokenizer.from_pretrained('princeton-nlp/sup-simcse-roberta-base')
-model = AutoModel.from_pretrained('princeton-nlp/sup-simcse-roberta-base').cuda()
-model.eval()
-cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--tasks',default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm',type=str)
 parser.add_argument('--target',default='_clean',type=str)
 parser.add_argument('--method',default='_seg_500_one20_top100_sp',type=str)#'_fulldata_simcse_top20_textfirst'
 parser.add_argument('--num',default=100,type=int)
+parser.add_argument('--model',default='princeton-nlp/sup-simcse-roberta-base',type=str)
+
 args = parser.parse_args()
 
 def write_json(data, fileName):
@@ -26,6 +24,14 @@ def write_json(data, fileName):
         for one in data:
             tmp = json.dumps(one, ensure_ascii=False)
             f.write(tmp+'\n')
+
+model = AutoModel.from_pretrained(args.model).cuda()
+if 'simcse' in args.model:
+    tokenizer = AutoTokenizer.from_pretrained(args.model)
+else:
+    tokenizer = AutoTokenizer.from_pretrained(args.model, normalization=True)
+model.eval()
+cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
 
 for task in args.tasks.split(','):
     print(task)
