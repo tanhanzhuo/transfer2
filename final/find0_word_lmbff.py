@@ -395,7 +395,7 @@ def do_train(args):
             data = data.cuda()
             verbalizer_generator.register_buffer(data)
         label_words_list = verbalizer_generator.generate()
-        label_words_list.append(WORDS[args.task])
+        label_words_list.insert(0,WORDS[args.task])
         verbalizer_generator.release_memory()
         del verbalizer_generator, dataloader, data
         torch.cuda.empty_cache()
