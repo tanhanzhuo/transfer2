@@ -4,6 +4,7 @@ do
   for sp in train dev test
     do
 #    scp -r thz@10.21.4.51:/home/thz/transfer2/finetune/data/${task}/${sp}_seg_500_one20_top100_sp* ../finetune/data/${task}/
-      scp -r thz@10.21.4.51:/home/thz/transfer2/finetune/data/${task}/${sp}_seg_500_three20_top100_sp* ../finetune/data/${task}/
+#      scp -r thz@10.21.4.51:/home/thz/transfer2/finetune/data/${task}/${sp}_seg_500_three20_top100_sp* ../finetune/data/${task}/
+    scp -r thz@10.21.4.51:/home/thz/transfer2/finetune/data/${task}/${sp}_seg_500_simcse_top100_sp* ../finetune/data/${task}/
     done
 done
