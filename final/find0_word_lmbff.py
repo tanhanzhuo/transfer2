@@ -316,7 +316,7 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
         if 'sarcasm' in args.task:
             class_weights = [1,3.0]
             class_weights = torch.FloatTensor(class_weights).cuda()
-            loss_fct = nn.CrossEntropyLoss(weight=class_weights).cuda()
+            loss_func = nn.CrossEntropyLoss(weight=class_weights).cuda()
         else:
             loss_func = torch.nn.CrossEntropyLoss()
         no_decay = ['bias', 'LayerNorm.weight']
