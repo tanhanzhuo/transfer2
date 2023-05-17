@@ -281,11 +281,11 @@ def parse_args():
     parser.add_argument(
         "--demo", default=1, type=int, help="with demo")
     parser.add_argument(
-        "--soft", default=1, type=int, help="soft verberlizer")
+        "--soft", default=0, type=int, help="soft verberlizer")
     parser.add_argument(
         "--choice", default=0, type=int, help="words and templates to choice")
     parser.add_argument(
-        "--label_num", default=3, type=int, help="number of label words per class")
+        "--label_num", default=1, type=int, help="number of label words per class")
     parser.add_argument(
         "--template", default=None, type=str, help="number of label words per class")
     args = parser.parse_args()
