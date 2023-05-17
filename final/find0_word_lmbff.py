@@ -119,7 +119,14 @@ TEMPLATE = {
 class BertweetVerbalizerGenerator(VerbalizerGenerator):
     def invalid_label_word(self, word: str):
         return ('@@' in word)
-
+    def _eval_group(self, group):
+        if len(set(group)) < len(group):
+            return 0.0
+        label_logits = self.probs_buffer[:,torch.tensor(group)]
+        preds = torch.argmax(label_logits, axis=-1)
+        # correct = torch.sum(preds == self.labels_buffer)
+        # return (correct / len(self.labels_buffer)).item()
+        return f1_score(self.labels_buffer.cpu().numpy(),preds.cpu().numpy(),average='macro')
     def post_process(self, word: str):
         return word.lstrip('Ġ')
 
@@ -333,7 +340,7 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
         score_all.append(score)
         del model
         torch.cuda.empty_cache()
-    return np.mean(score_all)
+    return np.median(score_all)
 
 
 def do_train(args):
