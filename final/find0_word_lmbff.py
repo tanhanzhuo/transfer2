@@ -52,6 +52,7 @@ from transformers import (
     set_seed,
     get_linear_schedule_with_warmup
 )
+import itertools
 from transformers.modeling_outputs import MaskedLMOutput
 from accelerate import Accelerator
 from tqdm import trange, tqdm
@@ -128,6 +129,16 @@ class BertweetVerbalizerGenerator(VerbalizerGenerator):
         # correct = torch.sum(preds == self.labels_buffer)
         # return (correct / len(self.labels_buffer)).item()
         return f1_score(self.labels_buffer.cpu().numpy(),preds.cpu().numpy(),average='macro')
+    def _get_top_group(self, candidates: List[List[int]]):
+        groups = list(itertools.product(*candidates))
+        group_scores = list(map(self._eval_group, groups))
+
+        # Take top-n.
+        best_idx = np.argsort(-np.array(group_scores))[:self.candidate_num]
+        best_groups = [groups[i] for i in best_idx]
+        best_scores = [group_scores[i] for i in best_idx]
+        print(best_scores)
+        return best_groups
     def post_process(self, word: str):
         return word.lstrip('Ġ')
 
