@@ -440,7 +440,7 @@ def do_train(args):
             score, score_all = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm))
             with open(args.name, 'a', encoding='utf-8') as f:
                 f.write(','.join(['"{}"'.format(word) for word in label_words]) \
-                        + '  score:{:.5f}, iter:{}'.format(score,num_tmp) + '\n' )
+                        + '  score:{:.5f}, iter:{}, task:{}'.format(score,num_tmp,args.task) + '\n' )
                 # f.write(' '.join(label_words) + '\n')
                 # f.write('{:.5f}'.format(score) + '\n')
                 f.write(' '.join(['{:.5f}'.format(i) for i in score_all]) + '\n')
