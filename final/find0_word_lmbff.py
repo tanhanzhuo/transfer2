@@ -118,7 +118,8 @@ TEMPLATE = {
 
 class BertweetVerbalizerGenerator(VerbalizerGenerator):
     def invalid_label_word(self, word: str):
-        return ('@@' in word)
+        # return ('@@' in word)
+        return False
     def _eval_group(self, group):
         if len(set(group)) < len(group):
             return 0.0
