@@ -340,7 +340,7 @@ def evaluate_tmp_word(tokenizer, template_text, verbalizer, args, dataset, plm):
         score_all.append(score)
         del model
         torch.cuda.empty_cache()
-    return np.median(score_all)
+    return np.median(score_all), score_all
 
 
 def do_train(args):
@@ -424,10 +424,11 @@ def do_train(args):
                 continue
             current_verbalizer = copy.deepcopy(verbalizer)
             current_verbalizer.label_words = label_words
-            score = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm))
+            score, score_all = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm))
             with open(args.name, 'a', encoding='utf-8') as f:
                 f.write(' '.join(label_words) + '\n')
                 f.write('{:.5f}'.format(score) + '\n')
+                f.write(' '.join(['{:.5f}'.format(i) for i in score_all]) + '\n')
             if score > best_metrics:
                 best_metrics = score
                 best_label_words = label_words
