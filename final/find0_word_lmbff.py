@@ -428,6 +428,7 @@ def do_train(args):
 
     # iterate over each candidate and select the best one
     best_metrics = 0.0
+    num_tmp = 0
     if len(label_words_list) > 1:
         best_label_words = None
         for label_words in tqdm(label_words_list):
@@ -438,12 +439,15 @@ def do_train(args):
             current_verbalizer.label_words = label_words
             score, score_all = evaluate_tmp_word(tokenizer, template_text, current_verbalizer, args, dataset, copy.deepcopy(plm))
             with open(args.name, 'a', encoding='utf-8') as f:
-                f.write(' '.join(label_words) + '\n')
-                f.write('{:.5f}'.format(score) + '\n')
+                f.write(','.join(['"{}"'.format(word) for word in label_words]) \
+                        + '  score:{:.5f}, iter:{}'.format(score,num_tmp) + '\n' )
+                # f.write(' '.join(label_words) + '\n')
+                # f.write('{:.5f}'.format(score) + '\n')
                 f.write(' '.join(['{:.5f}'.format(i) for i in score_all]) + '\n')
             if score > best_metrics:
                 best_metrics = score
                 best_label_words = label_words
+            num_tmp += 1
     else:
         best_label_words = label_words_list[0]
     # use the best verbalizer
