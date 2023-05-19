@@ -83,56 +83,6 @@ class AccuracyFn:
     one of the label logps we know we are accurate.
     """
 
-    def __init__(self, tokenizer, label_map, device, tokenize_labels=False):
-        self._all_label_ids = []
-        self._pred_to_label = []
-        logger.info(label_map)
-        for label, label_tokens in label_map.items():
-            self._all_label_ids.append(utils.encode_label(tokenizer, label_tokens, tokenize_labels).to(device))
-            self._pred_to_label.append(label)
-        logger.info(self._all_label_ids)
-
-    def __call__(self, predict_logits, gold_label_ids):
-        # Get total log-probability for the true label
-        gold_logp = get_loss(predict_logits, gold_label_ids)
-
-        # Get total log-probability for all labels
-        bsz = predict_logits.size(0)
-        all_label_logp = []
-        for label_ids in self._all_label_ids:
-            label_logp = get_loss(predict_logits, label_ids.repeat(bsz, 1))
-            all_label_logp.append(label_logp)
-        all_label_logp = torch.stack(all_label_logp, dim=-1)
-        _, predictions = all_label_logp.max(dim=-1)
-        predictions = [self._pred_to_label[x] for x in predictions.tolist()]
-
-        # Add up the number of entries where loss is greater than or equal to gold_logp.
-        ge_count = all_label_logp.le(gold_logp.unsqueeze(-1)).sum(-1)
-        correct = ge_count.le(1)  # less than in case of num. prec. issues
-
-        return correct.float()
-
-    # TODO: @rloganiv - This is hacky. Replace with something sensible.
-    def predict(self, predict_logits):
-        bsz = predict_logits.size(0)
-        all_label_logp = []
-        for label_ids in self._all_label_ids:
-            label_logp = get_loss(predict_logits, label_ids.repeat(bsz, 1))
-            all_label_logp.append(label_logp)
-        all_label_logp = torch.stack(all_label_logp, dim=-1)
-        _, predictions = all_label_logp.max(dim=-1)
-        predictions = [self._pred_to_label[x] for x in predictions.tolist()]
-        return predictions
-
-
-class AccuracyFn:
-    """
-    Computing the accuracy when a label is mapped to multiple tokens is difficult in the current
-    framework, since the data generator only gives us the token ids. To get around this we
-    compare the target logp to the logp of all labels. If target logp is greater than all (but)
-    one of the label logps we know we are accurate.
-    """
-
     def __init__(self, tokenizer, label_map):
         label_token = []
         for word in label_map.values():
