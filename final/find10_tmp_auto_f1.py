@@ -86,9 +86,10 @@ class AccuracyFn:
     def __init__(self, tokenizer, label_map):
         label_token = []
         for word in label_map.values():
-            word_token = tokenizer.convert_tokens_to_ids(word)
+            word_token = tokenizer.convert_tokens_to_ids(word[0])
             label_token.append(word_token)
-        self.revert_lab = dict( zip( label_token, list(label_map.keys()) ) )
+
+        self.revert_lab = dict( zip( label_token, [int(i) for i in label_map.keys()] ) )
         self.label_token = torch.tensor(label_token)
 
     def __call__(self, predict_logits, gold_label_ids):
