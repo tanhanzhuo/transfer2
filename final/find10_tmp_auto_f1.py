@@ -276,7 +276,7 @@ def run_model(args):
     # requires the label map to be specified. Since producing a label map may be cumbersome (e.g.,
     # for link prediction tasks), we just use (negative) loss as the evaluation metric in these cases.
     if label_map:
-        evaluation_fn = AccuracyFn(tokenizer, label_map, device)
+        evaluation_fn = AccuracyFn(tokenizer, label_map)
     else:
         evaluation_fn = lambda x, y: -get_loss(x, y)
 
