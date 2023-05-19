@@ -328,7 +328,7 @@ def run_model(args):
         with torch.no_grad():
             predict_logits = predictor(model_inputs, trigger_ids)
         numerator += evaluation_fn(predict_logits, labels).sum().item()
-        denominator += labels.size(0)
+        denominator += 1
     dev_metric = numerator / (denominator + 1e-13)
     logger.info(f'Dev metric: {dev_metric}')
 
@@ -408,7 +408,7 @@ def run_model(args):
 
             # Update current score
             current_score += eval_metric.sum()
-            denom += labels.size(0)
+            denom += 1
 
             # NOTE: Instead of iterating over tokens to flip we randomly change just one each
             # time so the gradients don't get stale.
@@ -451,7 +451,7 @@ def run_model(args):
             with torch.no_grad():
                 predict_logits = predictor(model_inputs, trigger_ids)
             numerator += evaluation_fn(predict_logits, labels).sum().item()
-            denominator += labels.size(0)
+            denominator += 1
         dev_metric = numerator / (denominator + 1e-13)
 
         logger.info(f'Trigger tokens: {tokenizer.convert_ids_to_tokens(trigger_ids.squeeze(0))}')
