@@ -135,7 +135,7 @@ def load_pretrained(model_name, max_seq_length=130, num_classes=2):
     """
     config = AutoConfig.from_pretrained(model_name, num_labels=num_classes)
     if "bertweet" in model_name:
-        model = RobertaForMulti.from_pretrained(model_name, config)
+        model = RobertaForMulti.from_pretrained(model_name, config=config)
         model.resize_position_embeddings(max_seq_length)
         model.eval()
         tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True, normalization=True)
