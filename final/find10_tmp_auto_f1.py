@@ -28,16 +28,24 @@ CONVERT = {
     'sem21-task7-humor': {'0': 0, '1': 1}
 }
 
+# WORDS = {
+#     'eval-stance': [["neutral"], ["against"],["favor"]],
+#     'eval-emotion': [["angerous"], ["joyful"], ["optimistic"],["sad"]],
+#     'eval-irony': [["neutral"], ["ironic"]],
+#     'eval-offensive': [["neutral"], ["offensive"]],
+#     'eval-hate': [["neutral"], ["hateful"]],
+#     'sem21-task7-humor': [["neutral"], ["humorous"]],
+#     'sem22-task6-sarcasm': [["neutral"], ["sarcastic"]]
+# }
 WORDS = {
-    'eval-stance': [["neutral"], ["against"],["favor"]],
-    'eval-emotion': [["angerous"], ["joyful"], ["optimistic"],["sad"]],
+    'eval-stance': [["nothing"], ["intentional"], ["happening"]],
+    'eval-emotion': [["disgusting"], ["magical"], ["inspiring"], ["sad"]],
     'eval-irony': [["neutral"], ["ironic"]],
-    'eval-offensive': [["neutral"], ["offensive"]],
-    'eval-hate': [["neutral"], ["hateful"]],
-    'sem21-task7-humor': [["neutral"], ["humorous"]],
-    'sem22-task6-sarcasm': [["neutral"], ["sarcastic"]]
+    'eval-offensive': [["interesting"], ["sickening"]],
+    'eval-hate': [["unexpected"], ["mine"]],
+    'sem21-task7-humor': [["deep"], ["awkward"]],
+    'sem22-task6-sarcasm': [["written"], ["sarcasm"]]
 }
-
 class GradientStorage:
     """
     This object stores the intermediate gradients of the output a the given PyTorch module, which
