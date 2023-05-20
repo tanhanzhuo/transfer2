@@ -100,13 +100,13 @@ WORDS = [
     },
     {
     # 'stance':[["yes"], ["agree","like","favor"], ["dis","don't","not","hate"]],
-    'eval-stance': ["neutral", "against", "favor"],
-    'eval-emotion': ["disgusting", "magical", "love", "sad"],
-    'eval-irony': ["hard", "unexpected"],
-    'eval-offensive': ["neutral", "offensive"],
-    'eval-hate': ["interesting", "disgusting"],
-    'sem21-task7-humor': ["real", "funny"],
-    'sem22-task6-sarcasm': ["neutral", "sarcastic"]
+    'eval-stance': ["nothing", "intentional", "happening"],
+    'eval-emotion': ["disgusting", "magical", "inspiring", "sad"],
+    'eval-irony': ["neutral", "ironic"],
+    'eval-offensive': ["interesting", "sickening"],
+    'eval-hate': ["unexpected", "mine"],
+    'sem21-task7-humor': ["deep", "awkward"],
+    'sem22-task6-sarcasm': ["written", "sarcasm"]
     }
     ]
 
