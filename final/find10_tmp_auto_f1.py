@@ -436,9 +436,9 @@ def run_model(args):
         # TODO: Something cleaner. LAMA templates can't have mask tokens, so if
         # there are still mask tokens in the trigger then set the current score
         # to -inf.
-        if args.print_lama:
-            if trigger_ids.eq(tokenizer.mask_token_id).any():
-                current_score = float('-inf')
+
+        if trigger_ids.eq(tokenizer.mask_token_id).any():
+            current_score = float('-inf')
 
         if (candidate_scores > current_score).any():
             logger.info('Better trigger detected.')
