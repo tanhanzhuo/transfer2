@@ -122,14 +122,24 @@ TEMPLATE = [
     'sem21-task7-humor':' . It was {"mask"}. '
     },
     {
-    'eval-stance': ' D #SemSTD is {"mask"}.',
-    'eval-emotion': ' . {"mask"}.',
-    'eval-irony': ' . {"mask"}.',
-    'eval-offensive': ' . This is so {"mask"}.',
-    'eval-hate': ' . It was {"mask"}. ',
-    'sem21-task7-humor': ' . It was {"mask"}. ',
-    'sem22-task6-sarcasm': ' It was {"mask"}. '
-    }
+        'eval-emotion': ' . It was {"mask"}. ',
+        'eval-hate': ' . It was {"mask"}. ',
+        'eval-irony': ' . It was {"mask"}. ',
+        'eval-offensive': ' . It was {"mask"}. ',
+        'eval-stance': ' . It was {"mask"}. ',
+        'stance': ' . It was {"mask"}. ',
+        'sem22-task6-sarcasm': ' . It was {"mask"}. ',
+        'sem21-task7-humor': ' . It was {"mask"}. '
+    },
+    # {
+    # 'eval-stance': ' D #SemSTD is {"mask"}.',
+    # 'eval-emotion': ' . {"mask"}.',
+    # 'eval-irony': ' . {"mask"}.',
+    # 'eval-offensive': ' . This is so {"mask"}.',
+    # 'eval-hate': ' . It was {"mask"}. ',
+    # 'sem21-task7-humor': ' . It was {"mask"}. ',
+    # 'sem22-task6-sarcasm': ' It was {"mask"}. '
+    # }
     ]
 
 class RobertaForMulti(RobertaForMaskedLM):
