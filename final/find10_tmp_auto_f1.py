@@ -343,7 +343,7 @@ def run_model(args):
     best_dev_metric = -float('inf')
     # Measure elapsed time of trigger search
     start = time.time()
-    cur_flip = 2
+    cur_flip = templatizer.num_trigger_tokens
     for i_e in range(args.iters):
 
         logger.info(f'Iteration: {i_e}')
