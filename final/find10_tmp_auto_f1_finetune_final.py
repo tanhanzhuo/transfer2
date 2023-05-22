@@ -527,7 +527,7 @@ def run_model(args, model=None):
     with open(args.log_name.split('.')[0]+'.txt', 'a', encoding='utf-8') as f:
         f.write(final_txt+'\n')
 
-    return best_trigger_ids
+    return best_trigger_ids.squeeze(0).tolist()
 
 
 
