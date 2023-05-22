@@ -967,8 +967,6 @@ if __name__ == '__main__':
     # logging.basicConfig(filename=args.log_name, level=level)
     logger.info(args)
 
-    run_model(args)
-
     for shot in args.shot.split(','):
         for task in args.task_name.split(','):
             for model_name in args.model_name_or_path.split(','):  # [r_dir+'bertweet/']:
