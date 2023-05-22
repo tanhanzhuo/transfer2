@@ -783,7 +783,7 @@ def do_train(args, model=None):
                        loss, args.logging_steps / (time.time() - tic_train),
                        args.seed,float(lr),args.input_dir))
                 tic_train = time.time()
-            if (epoch + 1) % args.save_steps == 0 and (epoch + 1) > 3:
+            if (epoch + 1) % args.save_steps == 0 and (epoch + 1) > args.eval_start:
                 tic_eval = time.time()
                 cur_metric = evaluate(model, dev_data_loader, args.task)
                 print("eval done total : %s s" % (time.time() - tic_eval))
@@ -942,6 +942,10 @@ if __name__ == '__main__':
         default=5,
         type=int)
     parser.add_argument(
+        "--eval_start",
+        default=3,
+        type=int)
+    parser.add_argument(
         "--weight",
         default=0,
         type=int)
@@ -1002,6 +1006,7 @@ if __name__ == '__main__':
 
                     ##train again
                     args_tmp.template = tmp
+                    args_tmp.eval_start = 0
                     ave_metri_one, model = do_train(args_tmp,model=model)
 
                     ave_metric.append(ave_metri_one)
