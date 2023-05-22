@@ -988,8 +988,10 @@ if __name__ == '__main__':
 
                     args_tmp.train =args.input_dir + task + '/' + \
                                     'train' + args.method.split('hash')[1].split('top')[0] + 'top100_sp.tsv'
+                    args_tmp.train = Path(args_tmp.train)
                     args_tmp.dev = args.input_dir + task + '/' + \
                                      'dev' + args.method.split('hash')[1].split('top')[0] + 'top100_sp.tsv'
+                    args_tmp.dev = Path(args_tmp.dev)
                     tmp = run_model(args_tmp, model)
 
                     ##train again
