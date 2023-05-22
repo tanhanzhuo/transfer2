@@ -424,8 +424,9 @@ def run_model(args, model=None):
         train_iter = iter(train_loader)
 
         token_to_flip = random.randrange(templatizer.num_trigger_tokens)
-        while token_to_flip == cur_flip:
-            token_to_flip = random.randrange(templatizer.num_trigger_tokens)
+        if len(templatizer.num_trigger_tokens) > 1:
+            while token_to_flip == cur_flip:
+                token_to_flip = random.randrange(templatizer.num_trigger_tokens)
         cur_flip = token_to_flip
         candidates = hotflip_attack(averaged_grad[token_to_flip],
                                     embeddings.weight,
@@ -474,9 +475,9 @@ def run_model(args, model=None):
         # TODO: Something cleaner. LAMA templates can't have mask tokens, so if
         # there are still mask tokens in the trigger then set the current score
         # to -inf.
-        if i_e > 10:
-            if trigger_ids.eq(tokenizer.mask_token_id).any():
-                current_score = float('-inf')
+        # if i_e > 10:
+        #     if trigger_ids.eq(tokenizer.mask_token_id).any():
+        #         current_score = float('-inf')
 
         if (candidate_scores > current_score).any():
             logger.info('Better trigger detected.')
