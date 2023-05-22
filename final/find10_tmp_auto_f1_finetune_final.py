@@ -403,7 +403,7 @@ def run_model(args, model=None):
             model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
             labels = labels.to(device)
             predict_logits = predictor(model_inputs, trigger_ids)
-            loss = get_loss(predict_logits, labels).mean()
+            loss = get_loss(predict_logits, labels, revert_lab).mean()
             loss.backward()
 
             grad = embedding_gradient.get()
