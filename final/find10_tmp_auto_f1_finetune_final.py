@@ -816,7 +816,7 @@ if __name__ == '__main__':
     # parser.add_argument('--train', type=Path, required=True, help='Train data path')
     # parser.add_argument('--dev', type=Path, required=True, help='Dev data path')
     parser.add_argument('--template', type=str,
-                        default='<s> {sentence_B} </s> [T] [T] [T] <s> {sentence_A} </s>',
+                        default='<s> {sentence_A} </s> [T] [T] [T] <s> {sentence_B} </s>',
                         help='Template string')
     parser.add_argument('--label-map', type=str,default=None,#'{"0": ["Ġworse", "Ġincompetence", "ĠWorse", "Ġblamed", "Ġsucked"], "1": ["ĠCris", "Ġmarvelous", "Ġphilanthrop", "Ġvisionary", "Ġwonderful"]}',
                         help='JSON object defining label map')
