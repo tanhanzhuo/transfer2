@@ -983,6 +983,9 @@ if __name__ == '__main__':
                     args_tmp.shot = shot
                     args_tmp.model_name_or_path = model_name
                     ave_metri_one, model = do_train(args_tmp)
+                    if model == None:
+                        ave_metric.append([0.0,0.0,0.0])
+                        continue
 
                     #get template
                     # 'hash_seg_500_one20_top_1'
@@ -999,7 +1002,6 @@ if __name__ == '__main__':
                     ##train again
                     args_tmp.template = tmp
                     ave_metri_one, model = do_train(args_tmp,model=model)
-
 
                     ave_metric.append(ave_metri_one)
                 ave_metric = np.array(ave_metric)
