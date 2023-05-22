@@ -926,10 +926,10 @@ if __name__ == '__main__':
         "--max_train_steps",
         default=None,
         type=int)
-    parser.add_argument(
-        "--seed",
-        default='0,1,2,3,4,5,6,7,8,9',
-        type=str)
+    # parser.add_argument(
+    #     "--seed",
+    #     default='0,1,2,3,4,5,6,7,8,9',
+    #     type=str)
     parser.add_argument(
         "--shot",
         default='full',
