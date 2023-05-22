@@ -258,7 +258,7 @@ def run_model(args, model=None):
     args_tmp.train = Path(args_tmp.train)
     args_tmp.dev = Path(args_tmp.dev)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    task = args.train.split('/')[-2]
+
 
     logger.info('Loading model, tokenizer, etc.')
     if model == None:
