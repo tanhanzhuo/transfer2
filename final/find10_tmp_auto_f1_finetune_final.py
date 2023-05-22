@@ -424,7 +424,7 @@ def run_model(args, model=None):
         train_iter = iter(train_loader)
 
         token_to_flip = random.randrange(templatizer.num_trigger_tokens)
-        if len(templatizer.num_trigger_tokens) > 1:
+        if templatizer.num_trigger_tokens > 1:
             while token_to_flip == cur_flip:
                 token_to_flip = random.randrange(templatizer.num_trigger_tokens)
         cur_flip = token_to_flip
