@@ -255,8 +255,10 @@ def isupper(idx, tokenizer):
 
 def run_model(args, model=None):
     # set_seed(args.seed)
+    args_tmp.train = Path(args_tmp.train)
+    args_tmp.dev = Path(args_tmp.dev)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    task = args.train._str.split('/')[-2]
+    task = args.train.split('/')[-2]
 
     logger.info('Loading model, tokenizer, etc.')
     if model == None:
@@ -988,10 +990,10 @@ if __name__ == '__main__':
 
                     args_tmp.train =args.input_dir + task + '/' + \
                                     'train' + args.method.split('hash')[1].split('top')[0] + 'top100_sp.tsv'
-                    args_tmp.train = Path(args_tmp.train)
+                    # args_tmp.train = Path(args_tmp.train)
                     args_tmp.dev = args.input_dir + task + '/' + \
                                      'dev' + args.method.split('hash')[1].split('top')[0] + 'top100_sp.tsv'
-                    args_tmp.dev = Path(args_tmp.dev)
+                    # args_tmp.dev = Path(args_tmp.dev)
                     tmp = run_model(args_tmp, model)
 
                     ##train again
