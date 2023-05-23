@@ -455,17 +455,17 @@ def run_model(args, model=None):
             best_dev_metric = current_score / (denom + 1e-13)
         best_candidate_score = candidate_scores.max()
         best_candidate_idx = candidate_scores.argmax()
-        temp_trigger = trigger_ids.clone()
-        temp_trigger[:, token_to_flip] = candidates[best_candidate_idx]
-        # logger.info(f'Train metric: {best_candidate_score / (denom + 1e-13): 0.4f}')
+        # temp_trigger = trigger_ids.clone()
+        # temp_trigger[:, token_to_flip] = candidates[best_candidate_idx]
+        trigger_ids[:, token_to_flip] = candidates[best_candidate_idx]
         dev_metric = best_candidate_score / (denom + 1e-13)
 
-        logger.info(f'Trigger tokens: {tokenizer.convert_ids_to_tokens(temp_trigger.squeeze(0))}')
+        logger.info(f'Trigger tokens: {tokenizer.convert_ids_to_tokens(trigger_ids.squeeze(0))}')
         logger.info(f'Dev metric: {dev_metric}')
 
         if dev_metric > best_dev_metric:
             logger.info('Best performance so far')
-            trigger_ids = temp_trigger.clone()
+            # trigger_ids = temp_trigger.clone()
             best_trigger_ids = trigger_ids.clone()
             best_dev_metric = dev_metric
 
