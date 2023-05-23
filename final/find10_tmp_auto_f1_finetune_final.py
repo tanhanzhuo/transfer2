@@ -72,8 +72,8 @@ class GradientStorage:
 
     def __init__(self, module):
         self._stored_gradient = None
-        module.register_backward_hook(self.hook)
-
+        # module.register_backward_hook(self.hook)
+        module.register_full_backward_hook(self.hook)
     def hook(self, module, grad_in, grad_out):
         self._stored_gradient = grad_out[0]
 
@@ -383,7 +383,7 @@ def run_model(args, model=None):
 
         logger.info(f'Iteration: {i_e}')
 
-        logger.info('Accumulating Gradient')
+        # logger.info('Accumulating Gradient')
         model.zero_grad()
 
         pbar = tqdm(range(len(train_loader)))
@@ -419,7 +419,7 @@ def run_model(args, model=None):
             else:
                 averaged_grad += grad.sum(dim=0) / len(train_loader)
 
-        logger.info('Evaluating Candidates')
+        # logger.info('Evaluating Candidates')
         pbar = tqdm(range(len(train_loader)))
         train_iter = iter(train_loader)
 
@@ -517,7 +517,7 @@ def run_model(args, model=None):
         temp_trigger[:, token_to_flip] = candidates[best_candidate_idx]
         logger.info(f'Train metric: {best_candidate_score / (denom + 1e-13): 0.4f}')
 
-        logger.info('Evaluating')
+        # logger.info('Evaluating')
         numerator = 0
         denominator = 0
         for model_inputs, labels in tqdm(dev_loader):
