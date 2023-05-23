@@ -436,9 +436,9 @@ def run_model(args, model=None):
         denom = 0
 
         for model_inputs, labels in tqdm(dev_loader):
+            model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
+            labels = labels.to(device)
             if best_dev_metric == 0:
-                model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
-                labels = labels.to(device)
                 with torch.no_grad():
                     predict_logits = predictor(model_inputs, trigger_ids)
                 current_score += evaluation_fn(predict_logits, labels)
