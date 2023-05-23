@@ -479,15 +479,43 @@ def run_model(args, model=None):
         #     if trigger_ids.eq(tokenizer.mask_token_id).any():
         #         current_score = float('-inf')
 
-        if (candidate_scores > current_score).any():
-            logger.info('Better trigger detected.')
-            best_candidate_score = candidate_scores.max()
-            best_candidate_idx = candidate_scores.argmax()
-            trigger_ids[:, token_to_flip] = candidates[best_candidate_idx]
-            logger.info(f'Train metric: {best_candidate_score / (denom + 1e-13): 0.4f}')
-        else:
-            logger.info('No improvement detected. Skipping evaluation.')
-            continue
+        # if (candidate_scores > current_score).any():
+        #     logger.info('Better trigger detected.')
+        #     best_candidate_score = candidate_scores.max()
+        #     best_candidate_idx = candidate_scores.argmax()
+        #     trigger_ids[:, token_to_flip] = candidates[best_candidate_idx]
+        #     logger.info(f'Train metric: {best_candidate_score / (denom + 1e-13): 0.4f}')
+        # else:
+        #     logger.info('No improvement detected. Skipping evaluation.')
+        #     continue
+
+        # logger.info('Evaluating')
+        # numerator = 0
+        # denominator = 0
+        # for model_inputs, labels in tqdm(dev_loader):
+        #     model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
+        #     labels = labels.to(device)
+        #     with torch.no_grad():
+        #         predict_logits = predictor(model_inputs, trigger_ids)
+        #     numerator += evaluation_fn(predict_logits, labels).sum().item()
+        #     denominator += 1
+        # dev_metric = numerator / (denominator + 1e-13)
+        #
+        # logger.info(f'Trigger tokens: {tokenizer.convert_ids_to_tokens(trigger_ids.squeeze(0))}')
+        # logger.info(f'Dev metric: {dev_metric}')
+
+        # # TODO: Something cleaner. LAMA templates can't have mask tokens, so if
+        # # there are still mask tokens in the trigger then set the current score
+        # # to -inf.
+        # if args.print_lama:
+        #     if best_trigger_ids.eq(tokenizer.mask_token_id).any():
+        #         best_dev_metric = float('-inf')
+
+        best_candidate_score = candidate_scores.max()
+        best_candidate_idx = candidate_scores.argmax()
+        temp_trigger = trigger_ids.clone()
+        temp_trigger[:, token_to_flip] = candidates[best_candidate_idx]
+        logger.info(f'Train metric: {best_candidate_score / (denom + 1e-13): 0.4f}')
 
         logger.info('Evaluating')
         numerator = 0
@@ -496,23 +524,17 @@ def run_model(args, model=None):
             model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
             labels = labels.to(device)
             with torch.no_grad():
-                predict_logits = predictor(model_inputs, trigger_ids)
+                predict_logits = predictor(model_inputs, temp_trigger)
             numerator += evaluation_fn(predict_logits, labels).sum().item()
             denominator += 1
         dev_metric = numerator / (denominator + 1e-13)
 
-        logger.info(f'Trigger tokens: {tokenizer.convert_ids_to_tokens(trigger_ids.squeeze(0))}')
+        logger.info(f'Trigger tokens: {tokenizer.convert_ids_to_tokens(temp_trigger.squeeze(0))}')
         logger.info(f'Dev metric: {dev_metric}')
-
-        # TODO: Something cleaner. LAMA templates can't have mask tokens, so if
-        # there are still mask tokens in the trigger then set the current score
-        # to -inf.
-        if args.print_lama:
-            if best_trigger_ids.eq(tokenizer.mask_token_id).any():
-                best_dev_metric = float('-inf')
 
         if dev_metric > best_dev_metric:
             logger.info('Best performance so far')
+            trigger_ids = temp_trigger.clone()
             best_trigger_ids = trigger_ids.clone()
             best_dev_metric = dev_metric
 
