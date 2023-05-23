@@ -665,6 +665,15 @@ def do_train(args, model=None):
         else:
             model = model.cuda()
             batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, template=args.template)
+            if args.tmp_noeval == 1:
+                test_data_loader = DataLoader(
+                    test_ds, shuffle=False, collate_fn=batchify_fn, batch_size=args.batch_size
+                )
+                cur_metric = evaluate(model, test_data_loader, args.task, args.write_result)
+                del model
+                print('no eval, final')
+                print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
+                return cur_metric, model_best
         train_data_loader = DataLoader(
             train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
         )
@@ -901,6 +910,10 @@ if __name__ == '__main__':
         type=int)
     parser.add_argument(
         "--weight",
+        default=0,
+        type=int)
+    parser.add_argument(
+        "--tmp_noeval",
         default=0,
         type=int)
     parser.add_argument(
