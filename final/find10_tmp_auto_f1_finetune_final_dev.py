@@ -660,7 +660,11 @@ def do_train(args, model=None):
                 args.model_name_or_path, config=config).cuda()
             model.resize_position_embeddings(args.max_seq_length)
             # model.resize_type_embeddings(args.token_type)
-            batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer)
+            if args.finetune_mask == 1:
+                batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, \
+                                                         template=[tokenizer.mask_token_id]*args.template.count('[T]'))
+            else:
+                batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer)
         else:
             model = model.cuda()
             batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, template=args.template)
@@ -914,6 +918,10 @@ if __name__ == '__main__':
         type=int)
     parser.add_argument(
         "--tmp_noeval",
+        default=0,
+        type=int)
+    parser.add_argument(
+        "--finetune_mask",
         default=0,
         type=int)
     parser.add_argument(
