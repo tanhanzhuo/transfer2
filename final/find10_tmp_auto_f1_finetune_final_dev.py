@@ -925,6 +925,10 @@ if __name__ == '__main__':
         default=0,
         type=int)
     parser.add_argument(
+        "--rerank",
+        default='',
+        type=str)
+    parser.add_argument(
         "--write_result",
         default='',
         type=str)
@@ -958,7 +962,7 @@ if __name__ == '__main__':
                     set_seed(int(seed))
                     args_tmp = copy.deepcopy(args)
                     args_tmp.task = task
-                    args_tmp.input_dir = args.input_dir + task + '/' + args.method
+                    args_tmp.input_dir = args.input_dir + task + '/' + args.method + args.rerank
                     args_tmp.seed = int(seed)
                     args_tmp.shot = shot
                     args_tmp.model_name_or_path = model_name
@@ -972,10 +976,10 @@ if __name__ == '__main__':
                     # '../finetune/data/${TASK}/train_seg_500_three20_top100_sp.tsv'
 
                     args_tmp.train =args.input_dir + task + '/' + \
-                                    'train' + args.method.split('hash')[1].split('top')[0] + 'top100_sp.tsv'
+                                    'train' + args.method.split('hash')[1].split('top')[0] + 'top100_sp'+args.rerank+'.tsv'
                     # args_tmp.train = Path(args_tmp.train)
                     args_tmp.dev = args.input_dir + task + '/' + \
-                                     'dev' + args.method.split('hash')[1].split('top')[0] + 'top100_sp.tsv'
+                                     'dev' + args.method.split('hash')[1].split('top')[0] + 'top100_sp'+args.rerank+'.tsv'
                     # args_tmp.dev = Path(args_tmp.dev)
                     tmp = run_model(args_tmp, model)
 
