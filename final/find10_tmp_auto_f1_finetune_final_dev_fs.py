@@ -827,7 +827,7 @@ def tokenization(args):
     data_files_hash["test"] = args.input_dir + task + '/test' + method +'.json'
     raw_datasets = datasets.load_dataset('json', data_files=data_files_hash)
 
-    top = int(args.method.split('top_'))
+    top = int(args.method.split('top_')[-1])
     remove_column_name = []
     for idx in range(100):
         if idx != top-1:
