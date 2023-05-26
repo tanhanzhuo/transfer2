@@ -810,7 +810,7 @@ if __name__ == '__main__':
     parser.add_argument('--iters', type=int, default=30,
                         help='Number of iterations to run trigger search algorithm')
     parser.add_argument('--accumulation-steps', type=int, default=10)
-    parser.add_argument('--model-name', type=str, default='vinai/bertweet-base',
+    parser.add_argument('--model-name', type=str, default='bertweet',
                         help='Model name passed to HuggingFace AutoX classes.')
     parser.add_argument('--limit', type=int, default=None)
     parser.add_argument('--use-ctx', action='store_true',
@@ -833,11 +833,11 @@ if __name__ == '__main__':
         type=str,required=False)
     parser.add_argument(
         "--model_name_or_path",
-        default='vinai/bertweet-base',
+        default='bertweet',
         type=str,required=False)
     parser.add_argument(
         "--token_name_or_path",
-        default='vinai/bertweet-base',
+        default='bertweet',
         type=str,required=False)
     parser.add_argument(
         "--input_dir",
