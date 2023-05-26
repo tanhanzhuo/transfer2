@@ -921,7 +921,7 @@ if __name__ == '__main__':
     parser.add_argument('--patience', type=int, default=5)
     parser.add_argument('--num-cand', type=int, default=20)
     parser.add_argument('--sentence-size', type=int, default=50)
-    parser.add_argument('--log_name', type=str, default='tmp.log')
+    parser.add_argument('--log_name', type=str, default='ft_retrione20_03.log')
     parser.add_argument('--debug', action='store_true')
 
     parser.add_argument('--max_seq_length', type=int, default=300)
@@ -1068,6 +1068,7 @@ if __name__ == '__main__':
                     args_tmp.shot = shot
                     args_tmp.model_name_or_path = model_name
                     if shot != 'full':
+                        args_tmp.input_dir = args.input_dir
                         fewshot(args_tmp)
                         args_tmp.input_dir = args.input_dir + task + '/' + args.method + args.rerank + '_' + shot
                         args_tmp.shot = 'full'
