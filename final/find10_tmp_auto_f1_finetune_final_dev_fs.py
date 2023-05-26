@@ -818,7 +818,7 @@ def fewshot(args):
             tsv_writer.writerow([one['text'], one['text0'], one['labels']])
 
 
-def tokenization(args,tokenizer):
+def tokenization(args):
     tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
     data_files_hash = {}
     method = args.method.split('hash')[1].split('top')[0] + 'top100_sp' + args.rerank
