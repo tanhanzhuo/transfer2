@@ -800,7 +800,7 @@ def fewshot(args):
             select_idx_dic[label_tmp] += 1
     np.random.shuffle(select_idx)
 
-    with open(args.input_dir + task + '/train' + method + '_'+ args.shot +'.json', 'r', encoding='utf-8') as f:
+    with open(args.input_dir + task + '/train' + method + '_'+ args.shot +'.json', 'w', encoding='utf-8') as f:
         for idx in select_idx:
             one = json.dumps(data[idx], ensure_ascii=False)
             f.write(one+'\n')
@@ -872,9 +872,9 @@ def tokenization(args,tokenizer):
     tokenized_datasets = raw_datasets.map(
         tokenize_function,
         batched=True,
-        num_proc=args.preprocessing_num_workers,
+        num_proc=1,
         remove_columns=column_names,#############need test
-        load_from_cache_file=not args.overwrite_cache,
+        # load_from_cache_file=not args.overwrite_cache,
         desc="Running tokenizer on dataset line_by_line",
     )
 
