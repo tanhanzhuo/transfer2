@@ -962,7 +962,7 @@ if __name__ == '__main__':
                     set_seed(int(seed))
                     args_tmp = copy.deepcopy(args)
                     args_tmp.task = task
-                    args_tmp.input_dir = args.input_dir + task + '/' + args.method
+                    args_tmp.input_dir = args.input_dir + task + '/' + args.method +args.rerank
                     args_tmp.seed = int(seed)
                     args_tmp.shot = shot
                     args_tmp.model_name_or_path = model_name
