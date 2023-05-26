@@ -878,7 +878,7 @@ def tokenization(args):
         desc="Running tokenizer on dataset line_by_line",
     )
 
-    tokenized_datasets.save_to_disk(args.method + '_' + args.shot)
+    tokenized_datasets.save_to_disk(args.input_dir + task + args.method + '_' + args.shot)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
