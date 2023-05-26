@@ -1080,7 +1080,7 @@ if __name__ == '__main__':
                     #get template
                     # 'hash_seg_500_one20_top_1'
                     # '../finetune/data/${TASK}/train_seg_500_three20_top100_sp.tsv'
-                    if shot != 'full':
+                    if shot == 'full':
                         args_tmp.train =args.input_dir + task + '/' + \
                                         'train' + args.method.split('hash')[1].split('top')[0] + 'top100_sp'+args.rerank+'.tsv'
                     else:
