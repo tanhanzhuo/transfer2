@@ -404,14 +404,14 @@ def run_model(args, model=None):
                 break
             model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
             labels = labels.to(device)
-            if model_inputs['input_ids'][1][1].item() == 47 and model_inputs['input_ids'][1][2].item() == 3881:
-                print(model_inputs['input_ids'][1][:])
-                print(model_inputs['trigger_mask'][1][:])
-                print(model_inputs['predict_mask'][1][:])
-                print(step)
-                print(model_inputs['input_ids'][0][:])
-                print(model_inputs['trigger_mask'][0][:])
-                print(model_inputs['predict_mask'][0][:])
+            # if model_inputs['input_ids'][1][1].item() == 47 and model_inputs['input_ids'][1][2].item() == 3881:
+            #     print(model_inputs['input_ids'][1][:])
+            #     print(model_inputs['trigger_mask'][1][:])
+            #     print(model_inputs['predict_mask'][1][:])
+            #     print(step)
+            #     print(model_inputs['input_ids'][0][:])
+            #     print(model_inputs['trigger_mask'][0][:])
+            #     print(model_inputs['predict_mask'][0][:])
             predict_logits = predictor(model_inputs, trigger_ids)
             loss = get_loss(predict_logits, labels, revert_lab).mean()
             loss.backward()
