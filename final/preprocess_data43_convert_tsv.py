@@ -24,7 +24,7 @@ def write_tsv_one(data, fileName):
         for one in data:
             if len(one['text']) > 500:
                 one['text'] = one['text'][:500]
-            tsv_writer.writerow([one['text'], one['labels']])
+            tsv_writer.writerow([one['text'].replace('[T]',''), one['labels']])
 
 def write_tsv_two(data, fileName):
     with open(fileName + '.tsv', 'w', encoding='utf-8') as f:
@@ -35,7 +35,7 @@ def write_tsv_two(data, fileName):
                 one['text'] = one['text'][:500]
             if len(one['text0']) > 500:
                 one['text0'] = one['text0'][:500]
-            tsv_writer.writerow([one['text'], one['text0'], one['labels']])
+            tsv_writer.writerow([one['text'].replace('[T]',''), one['text0'].replace('[T]',''), one['labels']])
 
 if __name__ == "__main__":
     args = parser.parse_args()
