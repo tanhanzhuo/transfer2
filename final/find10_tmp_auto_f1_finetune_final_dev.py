@@ -408,6 +408,7 @@ def run_model(args, model=None):
                 print(model_inputs['input_ids'][1][:])
                 print(model_inputs['trigger_mask'][1][:])
                 print(model_inputs['predict_mask'][1][:])
+                print(step)
             predict_logits = predictor(model_inputs, trigger_ids)
             loss = get_loss(predict_logits, labels, revert_lab).mean()
             loss.backward()
