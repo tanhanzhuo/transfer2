@@ -404,7 +404,7 @@ def run_model(args, model=None):
                 break
             model_inputs = {k: v.to(device) for k, v in model_inputs.items()}
             labels = labels.to(device)
-            print(model_inputs['input_ids'].shape)
+            print(model_inputs)
             predict_logits = predictor(model_inputs, trigger_ids)
             loss = get_loss(predict_logits, labels, revert_lab).mean()
             loss.backward()
