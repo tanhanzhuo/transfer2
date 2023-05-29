@@ -133,7 +133,7 @@ for task in args.task_name.split(','):
             with torch.no_grad():
                 outputs = model(input_ids=torch.tensor([input['input_ids']]).cuda(0),
                                 attention_mask=torch.tensor([input['attention_mask']]).cuda(0),
-                                token_type_ids=torch.tensor([input['token_type_ids']]).cuda(0),
+                                # token_type_ids=torch.tensor([input['token_type_ids']]).cuda(0),
                                 output_hidden_states=True, return_dict=True).pooler_output
                 fea_embds.append(outputs[0].cpu().numpy())
         fea_embds = np.asarray(fea_embds,dtype=np.float16)
