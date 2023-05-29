@@ -53,8 +53,8 @@ def tokenization(args,tokenizer):
     def tokenize_function(examples):
         total = len(examples['text'])
         sentences = examples['text']
-        for idx_tmp in range(1):
-            sentences = sentences + examples['text'+str(idx_tmp)]
+        # for idx_tmp in range(1):
+        sentences = sentences + examples['text'+str(args.top-1)]
         sent_features = tokenizer(
             sentences,
             padding=padding,
