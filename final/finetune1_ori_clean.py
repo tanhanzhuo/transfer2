@@ -187,7 +187,7 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
     for batch in data_loader:
         # input_ids, segment_ids, labels = batch
         logits = model(input_ids=batch['input_ids'].cuda(),
-                       token_type_ids = batch['token_type_ids'].cuda(),
+                       # token_type_ids = batch['token_type_ids'].cuda(),
                        attention_mask=batch['attention_mask'].cuda() ).logits
         labels = batch['labels']
         preds = logits.argmax(axis=1)
