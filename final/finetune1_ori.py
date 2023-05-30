@@ -346,10 +346,11 @@ def do_train(args):
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         if 'bertweet' in args.model_name_or_path:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+            model = RobertaForMulti.from_pretrained(
+                args.model_name_or_path, config=config).cuda()
         else:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
-        model = RobertaForMulti.from_pretrained(
-            args.model_name_or_path, config=config).cuda()
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+            model = AutoModelForSequenceClassification(args.model_name_or_path)
         batchify_fn = DataCollatorMulti(tokenizer=tokenizer, ignore_label=-100)
         train_data_loader = DataLoader(
             train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size

@@ -451,15 +451,17 @@ def do_train(args):
         num_classes = len(label2idx.keys())
         if 'bertweet' in args.model_name_or_path:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+            model = RobertaForMulti.from_pretrained(
+                args.model_name_or_path, config=config).cuda()
+            model.resize_position_embeddings(args.max_seq_length)
+            model.resize_type_embeddings(args.token_type)
         else:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+            model = AutoModelForSequenceClassification(args.model_name_or_path)
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
-        model = RobertaForMulti.from_pretrained(
-            args.model_name_or_path, config=config).cuda()
-        model.resize_position_embeddings(args.max_seq_length)
-        model.resize_type_embeddings(args.token_type)
+
         batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer)
         train_data_loader = DataLoader(
             train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
