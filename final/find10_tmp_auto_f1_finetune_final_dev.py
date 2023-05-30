@@ -167,10 +167,10 @@ def load_pretrained(model_name, max_seq_length=130, num_classes=2):
         tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True, normalization=True)
         tokenizer.model_max_length = max_seq_length - 2
     else:
-        raise ValueError("not implemented")
-        # model = AutoModelWithLMHead.from_pretrained(model_name)
-        # model.eval()
-        # tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
+        # raise ValueError("not implemented")
+        model = AutoModelWithLMHead.from_pretrained(model_name)
+        model.eval()
+        tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
 
     utils.add_task_specific_tokens(tokenizer)
     return config, model, tokenizer
@@ -658,15 +658,20 @@ def do_train(args, model=None):
         num_classes = len(label2idx.keys())
         if 'bertweet' in args.model_name_or_path:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+            tokenizer._pad_token_type_id = args.token_type - 1
         else:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
-        tokenizer._pad_token_type_id = args.token_type - 1
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         if model == None:
-            model = RobertaForMulti.from_pretrained(
-                args.model_name_or_path, config=config).cuda()
-            model.resize_position_embeddings(args.max_seq_length)
+            if 'bertweet' in args.model_name_or_path:
+                model = RobertaForMulti.from_pretrained(
+                    args.model_name_or_path, config=config).cuda()
+                model.resize_position_embeddings(args.max_seq_length)
+            else:
+                model = AutoModelForSequenceClassification.from_pretrained(
+                    args.model_name_or_path, config=config).cuda()
             # model.resize_type_embeddings(args.token_type)
             if args.finetune_mask == 1:
                 batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, \
