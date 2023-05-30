@@ -350,7 +350,7 @@ def do_train(args):
                 args.model_name_or_path, config=config).cuda()
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
-            model = AutoModelForSequenceClassification(args.model_name_or_path)
+            model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path)
         batchify_fn = DataCollatorMulti(tokenizer=tokenizer, ignore_label=-100)
         train_data_loader = DataLoader(
             train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
