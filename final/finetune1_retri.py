@@ -457,7 +457,7 @@ def do_train(args):
             model.resize_type_embeddings(args.token_type)
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
-            model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path)
+            model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path).cuda()
         tokenizer._pad_token_type_id = args.token_type - 1
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
