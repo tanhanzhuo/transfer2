@@ -58,73 +58,17 @@ import torch.nn as nn
 from transformers.models.roberta.modeling_roberta import RobertaModel, RobertaPreTrainedModel
 
 CONVERT = {
-    'eval-emoji':{'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,\
-                  '9':9,'10':10,'11':11,'12':12,'13':13,'14':14,'15':15,\
-                  '16':16,'17':17,'18':18,'19':19},
     'eval-emotion':{'0':0,'1':1,'2':2,'3':3},
     'eval-hate':{'0':0,'1':1},
     'eval-irony':{'0':0,'1':1},
     'eval-offensive':{'0':0,'1':1},
-    'eval-sentiment':{'0':0,'1':1,'2':2},
-    'eval-stance/abortion':{'0':0,'1':1,'2':2},
-    'eval-stance/atheism':{'0':0,'1':1,'2':2},
-    'eval-stance/climate':{'0':0,'1':1,'2':2},
-    'eval-stance/feminist':{'0':0,'1':1,'2':2},
-    'eval-stance/hillary':{'0':0,'1':1,'2':2},
-    'eval-sarcasm': {'0': 0, '1': 1},
     'eval-stance': {'0': 0, '1': 1, '2': 2},
-    'stance': {'NONE': 0, 'FAVOR': 1, 'AGAINST': 2},
     'sem22-task6-sarcasm': {'0': 0, '1': 1},
     'sem21-task7-humor': {'0': 0, '1': 1}
 }
-
-class RobertaClassificationHead(nn.Module):
-    """Head for sentence-level classification tasks."""
-
-    def __init__(self, config):
-        super().__init__()
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
-        classifier_dropout = (
-            config.classifier_dropout if config.classifier_dropout is not None else config.hidden_dropout_prob
-        )
-        self.dropout = nn.Dropout(classifier_dropout)
-        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
-
-    def forward(self, features, **kwargs):
-        x = features[:, 0, :]  # take <s> token (equiv. to [CLS])
-        x = self.dropout(x)
-        x = self.dense(x)
-        x = torch.tanh(x)
-        x = self.dropout(x)
-        x = self.out_proj(x)
-        return x
-
-
-class RobertaForMulti(RobertaPreTrainedModel):
-
-    def __init__(self, config):
-        super().__init__(config)
-        self.roberta = RobertaModel(config, add_pooling_layer=False)
-        # self.resize_position_embeddings(max_position)
-        self.classifier = RobertaClassificationHead(config)
-
-        self.post_init()
-    def _init_weights(self, module: nn.Module):
-        """Initialize the weights."""
-        if isinstance(module, nn.Linear):
-            # Slightly different from the TF version which uses truncated_normal for initialization
-            # cf https://github.com/pytorch/pytorch/pull/5617
-            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-            if module.bias is not None:
-                module.bias.data.zero_()
-        elif isinstance(module, nn.Embedding):
-            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-            if module.padding_idx is not None:
-                module.weight.data[module.padding_idx].zero_()
-        elif isinstance(module, nn.LayerNorm):
-            module.bias.data.zero_()
-            module.weight.data.fill_(1.0)
-    ##resize position embedding
+from transformers import RobertaForSequenceClassification
+import torch.nn as nn
+class RobertaForMulti(RobertaForSequenceClassification):
     def resize_position_embeddings(self, new_num_position_embeddings: int):
         num_old = self.roberta.config.max_position_embeddings
         if num_old == new_num_position_embeddings:
@@ -140,39 +84,6 @@ class RobertaForMulti(RobertaPreTrainedModel):
         # with torch.no_grad():
         #     # self.roberta.embeddings.position_embeddings.weight[:num_old,:] = nn.Parameter(
         #     #     old_position_embeddings_weight)
-
-    def resize_type_embeddings(self, new_type_embeddings: int):
-        num_old = self.roberta.config.type_vocab_size
-        if num_old == new_type_embeddings:
-            return
-        self.roberta.config.type_vocab_size = new_type_embeddings
-        # old_position_embeddings_weight = self.roberta.embeddings.position_embeddings.weight.clone()
-        new_type = nn.Embedding(self.roberta.config.type_vocab_size, self.roberta.config.hidden_size)
-        new_type.to(self.roberta.embeddings.token_type_embeddings.weight.device,
-                        dtype=self.roberta.embeddings.token_type_embeddings.weight.dtype)
-        # self._init_weights(new_position)
-        new_type.weight.data[:num_old, :] = self.roberta.embeddings.token_type_embeddings.weight.data[:num_old, :]
-        self.roberta.embeddings.token_type_embeddings = new_type
-
-    def forward(self,
-                input_ids,
-                token_type_ids=None,
-                position_ids=None,
-                attention_mask=None):
-        return_dict = False
-
-        outputs = self.roberta(
-            input_ids,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-            position_ids=position_ids,
-            return_dict=return_dict,
-        )
-
-        sequence_output = outputs[0]
-        # sequence_cls = sequence_cls.sum(dim=1)
-        logits = self.classifier(sequence_output)
-        return logits
 
 from dataclasses import dataclass
 from typing import Optional, Union, List, Dict, Tuple
@@ -350,7 +261,7 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
         # input_ids, segment_ids, labels = batch
         # logits = model(input_ids.cuda(), segment_ids.cuda())
         logits = model(input_ids=batch['input_ids'].cuda(),
-                       token_type_ids=batch['token_type_ids'].cuda(),
+                       # token_type_ids=batch['token_type_ids'].cuda(),
                        attention_mask=batch['attention_mask'].cuda())
         labels = batch['labels']
         preds = logits.argmax(axis=1)
@@ -458,7 +369,7 @@ def do_train(args):
             model.resize_type_embeddings(args.token_type)
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
-            model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path).cuda()
+            model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config).cuda()
         tokenizer._pad_token_type_id = args.token_type - 1
 
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
@@ -521,7 +432,7 @@ def do_train(args):
                 # logits = model(input_ids.cuda(), segment_ids.cuda())
                 # loss = loss_fct(logits, labels.cuda().view(-1))
                 logits = model(input_ids=batch['input_ids'].cuda(),
-                               token_type_ids = batch['token_type_ids'].cuda(),
+                               # token_type_ids = batch['token_type_ids'].cuda(),
                                attention_mask=batch['attention_mask'].cuda() )
                 loss = loss_fct(logits, batch['labels'].cuda().view(-1))
                 # print(step)
