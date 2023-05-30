@@ -262,7 +262,7 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
         # logits = model(input_ids.cuda(), segment_ids.cuda())
         logits = model(input_ids=batch['input_ids'].cuda(),
                        # token_type_ids=batch['token_type_ids'].cuda(),
-                       attention_mask=batch['attention_mask'].cuda())
+                       attention_mask=batch['attention_mask'].cuda()).logits
         labels = batch['labels']
         preds = logits.argmax(axis=1)
         label_all += [tmp for tmp in labels.numpy()]
@@ -433,7 +433,7 @@ def do_train(args):
                 # loss = loss_fct(logits, labels.cuda().view(-1))
                 logits = model(input_ids=batch['input_ids'].cuda(),
                                # token_type_ids = batch['token_type_ids'].cuda(),
-                               attention_mask=batch['attention_mask'].cuda() )
+                               attention_mask=batch['attention_mask'].cuda() ).logits
                 loss = loss_fct(logits, batch['labels'].cuda().view(-1))
                 # print(step)
                 loss.backward()
