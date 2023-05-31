@@ -13,8 +13,8 @@ model.model.shared.register_backward_hook(grad_hook)
 
 x = ['hello,you']
 x_t = tokenizer(x)
-logits = model(input_ids=torch.tensor([x_t['input_ids']])).logits
+logits = model(input_ids=torch.tensor(x_t['input_ids'])).logits
 loss_fct = nn.CrossEntropyLoss()
-loss = loss_fct(logits, torch.tensor([1,0]))
+loss = loss_fct(logits, torch.tensor([1]))
 loss.backward()
 print(grads.abs().sum())
