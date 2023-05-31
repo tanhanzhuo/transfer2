@@ -262,10 +262,10 @@ def run_model(args, model=None):
 
     logger.info('Loading model, tokenizer, etc.')
     if model == None:
-        config, model, tokenizer = load_pretrained(args.model_name, args.max_seq_length, len(CONVERT[task].keys()))
+        config, model, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
         model.to(device)
     else:
-        config, model_tmp, tokenizer = load_pretrained(args.model_name, args.max_seq_length, len(CONVERT[task].keys()))
+        config, model_tmp, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
         del model_tmp
         model.eval()
         model.to(device)
@@ -340,7 +340,7 @@ def run_model(args, model=None):
     dev_loader = DataLoader(dev_dataset, batch_size=args.eval_size, shuffle=False, collate_fn=collator)
 
     # To "filter" unwanted trigger tokens, we subtract a huge number from their logits.
-    if "bertweet" in args.model_name:
+    if "bertweet" in args.model_name_or_path:
         filter = torch.zeros(tokenizer.vocab_size + 1, dtype=torch.float32, device=device)
     else:
         filter = torch.zeros(tokenizer.vocab_size, dtype=torch.float32, device=device)
@@ -823,8 +823,8 @@ if __name__ == '__main__':
     parser.add_argument('--iters', type=int, default=30,
                         help='Number of iterations to run trigger search algorithm')
     parser.add_argument('--accumulation-steps', type=int, default=10)
-    parser.add_argument('--model-name', type=str, default='bertweet',
-                        help='Model name passed to HuggingFace AutoX classes.')
+    # parser.add_argument('--model-name', type=str, default='bertweet',
+    #                     help='Model name passed to HuggingFace AutoX classes.')
     parser.add_argument('--limit', type=int, default=None)
     parser.add_argument('--use-ctx', action='store_true',
                         help='Use context sentences for relation extraction only')
