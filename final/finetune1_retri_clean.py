@@ -363,6 +363,7 @@ def do_train(args):
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         if 'bertweet' in args.model_name_or_path:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+            tokenizer.model_max_length = args.max_seq_length
             model = RobertaForMulti.from_pretrained(
                 args.model_name_or_path, config=config).cuda()
             model.resize_position_embeddings(args.max_seq_length)

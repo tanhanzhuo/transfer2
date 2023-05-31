@@ -659,6 +659,7 @@ def do_train(args, model=None):
         if 'bertweet' in args.model_name_or_path:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
             tokenizer._pad_token_type_id = args.token_type - 1
+            tokenizer.model_max_length = args.max_seq_length
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
 
