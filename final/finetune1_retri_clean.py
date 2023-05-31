@@ -81,9 +81,7 @@ class RobertaForMulti(RobertaForSequenceClassification):
         # self._init_weights(new_position)
         new_position.weight.data[:num_old, :] = self.roberta.embeddings.position_embeddings.weight.data[:num_old, :]
         self.roberta.embeddings.position_embeddings = new_position
-        # with torch.no_grad():
-        #     # self.roberta.embeddings.position_embeddings.weight[:num_old,:] = nn.Parameter(
-        #     #     old_position_embeddings_weight)
+
         self.roberta.embeddings.register_buffer("position_ids",
                                                 torch.arange(self.roberta.config.max_position_embeddings).expand(
                                                     (1, -1)))
@@ -372,8 +370,9 @@ def do_train(args):
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
             tokenizer.model_max_length = args.max_seq_length
             model = RobertaForMulti.from_pretrained(
-                args.model_name_or_path, config=config).cuda()
+                args.model_name_or_path, config=config)
             model.resize_position_embeddings(args.max_seq_length)
+            model = model.cuda()
             # model.resize_type_embeddings(args.token_type)
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
