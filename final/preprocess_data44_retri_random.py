@@ -10,7 +10,7 @@ import emoji
 from scipy.spatial.distance import pdist, squareform
 import time
 import copy
-import faiss
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hash_file',default='./tweet_hash_clean_seg_500_one20/tweet_hash_clean_seg_500',type=str)
@@ -22,7 +22,7 @@ parser.add_argument("--max_seq_length", default=128, type=int)
 parser.add_argument("--dataset_path", default='../finetune/data/', type=str, required=False, help="dataset name")
 parser.add_argument("--task_name", default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm', type=str, required=False, help="dataset name")
 parser.add_argument("--best", default=100, type=int)
-parser.add_argument('--method',default='_random',type=str)
+parser.add_argument('--method',default='_same_500_random',type=str)
 parser.add_argument("--split", default=50, type=int)#for gpu memory
 parser.add_argument("--hashprocess", default='seg', type=str)#for gpu memory
 parser.add_argument("--gpu", default=8, type=int)#for gpu memory
