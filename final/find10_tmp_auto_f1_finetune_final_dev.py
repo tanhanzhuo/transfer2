@@ -668,8 +668,9 @@ def do_train(args, model=None):
         if model == None:
             if 'bertweet' in args.model_name_or_path:
                 model = RobertaForMulti.from_pretrained(
-                    args.model_name_or_path, config=config).cuda()
+                    args.model_name_or_path, config=config)
                 model.resize_position_embeddings(args.max_seq_length)
+                model = model.cuda()
             else:
                 model = AutoModelForSequenceClassification.from_pretrained(
                     args.model_name_or_path, config=config).cuda()
