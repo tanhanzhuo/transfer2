@@ -7,9 +7,13 @@ def grad_hook(module, grad_input, grad_output):
     global grads
     grads = grad_output[0].clone().detach()
 
-tokenizer = AutoTokenizer.from_pretrained('facebook/bart-base')
-model = AutoModelForSequenceClassification.from_pretrained('facebook/bart-base',num_labels=2)
-model.model.shared.register_backward_hook(grad_hook)
+name = 'facebook/bart-base'
+tokenizer = AutoTokenizer.from_pretrained(name)
+model = AutoModelForSequenceClassification.from_pretrained(name,num_labels=2)
+if 'bart' in name:
+    model.model.shared.register_backward_hook(grad_hook)
+else:
+    model.roberta.embeddings.word_embeddings.register_backward_hook(grad_hook)
 
 x = ['hello,you']
 x_t = tokenizer(x)
