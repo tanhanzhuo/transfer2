@@ -366,7 +366,7 @@ def do_train(args):
             model = RobertaForMulti.from_pretrained(
                 args.model_name_or_path, config=config).cuda()
             model.resize_position_embeddings(args.max_seq_length)
-            model.resize_type_embeddings(args.token_type)
+            # model.resize_type_embeddings(args.token_type)
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
             model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config).cuda()
