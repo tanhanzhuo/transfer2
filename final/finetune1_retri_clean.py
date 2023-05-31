@@ -84,6 +84,13 @@ class RobertaForMulti(RobertaForSequenceClassification):
         # with torch.no_grad():
         #     # self.roberta.embeddings.position_embeddings.weight[:num_old,:] = nn.Parameter(
         #     #     old_position_embeddings_weight)
+        self.roberta.embeddings.register_buffer("position_ids",
+                                                torch.arange(self.roberta.config.max_position_embeddings).expand(
+                                                    (1, -1)))
+        self.roberta.embeddings.register_buffer(
+            "token_type_ids", torch.zeros([1, self.roberta.config.max_position_embeddings], dtype=torch.long),
+            persistent=False
+        )
 
 from dataclasses import dataclass
 from typing import Optional, Union, List, Dict, Tuple
@@ -362,9 +369,8 @@ def do_train(args):
         num_classes = len(label2idx.keys())
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         if 'bertweet' in args.model_name_or_path:
-            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True,
-                                                      model_max_length=args.max_seq_length)
-            # tokenizer.model_max_length = args.max_seq_length
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True)
+            tokenizer.model_max_length = args.max_seq_length
             model = RobertaForMulti.from_pretrained(
                 args.model_name_or_path, config=config).cuda()
             model.resize_position_embeddings(args.max_seq_length)
