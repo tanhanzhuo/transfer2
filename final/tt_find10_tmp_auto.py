@@ -11,9 +11,9 @@ tokenizer = AutoTokenizer.from_pretrained('facebook/bart-base')
 model = AutoModelForSequenceClassification.from_pretrained('facebook/bart-base',num_labels=2)
 model.model.shared.register_backward_hook(grad_hook)
 
-x = ['hello,you','hwojea no you']
+x = ['hello,you']
 x_t = tokenizer(x)
-logits = model(**x_t).logits
+logits = model(input_ids=torch.tensor([x_t['input_ids']])).logits
 loss_fct = nn.CrossEntropyLoss()
 loss = loss_fct(logits, torch.tensor([1,0]))
 loss.backward()
