@@ -409,7 +409,7 @@ def run_model(args, model=None):
                                     increase_loss=False,
                                     num_candidates=1,
                                     filter=filter)
-        best_trigger_ids.append(candidates[0])
+        best_trigger_ids.append(candidates[0].item())
     best_trigger_tokens = tokenizer.convert_ids_to_tokens(best_trigger_ids)
     logger.info(f'Best tokens: {best_trigger_tokens}')
     return best_trigger_ids
