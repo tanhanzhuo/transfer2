@@ -931,19 +931,6 @@ if __name__ == '__main__':
                         ave_metric.append([0.0,0.0,0.0])
                         continue
 
-                    #get template
-                    # 'hash_seg_500_one20_top_1'
-                    # '../finetune/data/${TASK}/train_seg_500_three20_top100_sp.tsv'
-
-
-                    # args_tmp.dev = Path(args_tmp.dev)
-                    tmp = run_model(args_tmp, model)
-
-                    ##train again
-                    args_tmp.template = tmp
-                    args_tmp.eval_start = 0
-                    ave_metri_one, model = do_train(args_tmp,model=model)
-
                     ave_metric.append(ave_metri_one)
                 ave_metric = np.array(ave_metric)
                 num_seed = len(args.seed.split(','))
