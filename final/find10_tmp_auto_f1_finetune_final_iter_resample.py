@@ -39,7 +39,8 @@ from accelerate import Accelerator
 from tqdm import trange,tqdm
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, classification_report
 import torch.nn as nn
-
+from datasets import concatenate_datasets
+import emoji
 
 logger = logging.getLogger(__name__)
 
@@ -256,7 +257,7 @@ def isupper(idx, tokenizer):
     return _isupper
 
 
-def run_model(args, model=None):
+def run_model(args, model=None,data_all=None):
     # set_seed(args.seed)
     args_tmp.train = Path(args_tmp.train)
     args_tmp.dev = Path(args_tmp.dev)
@@ -332,17 +333,16 @@ def run_model(args, model=None):
     logger.info('Loading datasets')
     collator = utils.Collator(pad_token_id=tokenizer.pad_token_id)
 
-    if args.perturbed:
-        train_dataset = utils.load_augmented_trigger_dataset(args.train, templatizer, limit=args.limit)
-    else:
-        train_dataset = utils.load_trigger_dataset(args.train, templatizer, use_ctx=args.use_ctx, limit=args.limit)
+    train_dataset = []
+    for sample_one in data_all['train']:
+        # text_all = tokenizer.decode( sample_one['input_ids'] )
+        sample_dic = {'sentence_A':emoji.emojize(tokenizer.decode( sample_one['input_ids'][0][1:-1] )),
+                      'sentence_B':emoji.emojize(tokenizer.decode( sample_one['input_ids'][1][1:-1] )),
+                      'label':sample_one['labels']
+                      }
+        model_inputs, label_id = templatizer(sample_dic)
+        train_dataset.append((model_inputs, label_id))
     train_loader = DataLoader(train_dataset, batch_size=args.bsz, shuffle=True, collate_fn=collator)
-
-    if args.perturbed:
-        dev_dataset = utils.load_augmented_trigger_dataset(args.dev, templatizer)
-    else:
-        dev_dataset = utils.load_trigger_dataset(args.dev, templatizer, use_ctx=args.use_ctx)
-    dev_loader = DataLoader(dev_dataset, batch_size=args.eval_size, shuffle=False, collate_fn=collator)
 
     # To "filter" unwanted trigger tokens, we subtract a huge number from their logits.
     if "bertweet" in args.model_name_or_path:
@@ -546,6 +546,10 @@ def do_train(args, model=None):
     # set_seed(args.seed)
     print(args)
     data_all = datasets.load_from_disk(args.input_dir)
+    data_tmp = concatenate_datasets([data_all['train'], data_all['dev']])
+    data_tmp = data_tmp.train_test_split(test_size=0.1)
+    data_all['train'] = data_tmp['train']
+    data_all['dev'] = data_tmp['test']
     label2idx = CONVERT[args.task.split('_')[0]]
     trans_func = partial(
         convert_example,
@@ -704,7 +708,7 @@ def do_train(args, model=None):
             if stop_sign >= args.stop:
                 break
             ################update the template
-            template_id = run_model(args,model)
+            template_id = run_model(args,model,data_all)
             args.initial_trigger = tokenizer.convert_ids_to_tokens(template_id)
             batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, template=template_id)
             train_data_loader = DataLoader(
@@ -729,7 +733,7 @@ def do_train(args, model=None):
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
 
-    return cur_metric, model_best
+    return cur_metric, model_best, data_all
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
