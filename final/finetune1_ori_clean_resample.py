@@ -56,7 +56,7 @@ from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_sc
 import torch.nn as nn
 # import paddle.nn.functional as F
 from transformers.models.roberta.modeling_roberta import RobertaModel, RobertaPreTrainedModel, RobertaClassificationHead
-
+from datasets import concatenate_datasets
 
 
 CONVERT = {
@@ -250,6 +250,10 @@ def do_train(args):
     # set_seed(args.seed)
     print(args)
     data_all = datasets.load_from_disk(args.input_dir)
+    data_tmp = concatenate_datasets([data_all['train'], data_all['dev']])
+    data_tmp = data_tmp.train_test_split(test_size=0.1)
+    data_all['train'] = data_tmp['train']
+    data_all['dev'] = data_tmp['dev']
     label2idx = CONVERT[args.task.split('_')[0]]
     trans_func = partial(
         convert_example,
