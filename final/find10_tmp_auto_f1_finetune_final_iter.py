@@ -285,7 +285,7 @@ def run_model(args, model=None):
         for label_tmp in list(label_map_tmp.keys()):
             label_map[label_tmp] = list(label_map_tmp[label_tmp].keys())[:int(args.label_map)]
 
-        logger.info(f"Label map: {label_map}")
+        # logger.info(f"Label map: {label_map}")
     else:
 
         label_map = dict( zip( list(CONVERT[task].keys()), WORDS[task] ) )
@@ -316,6 +316,7 @@ def run_model(args, model=None):
         assert len(trigger_ids) == templatizer.num_trigger_tokens
     else:
         trigger_ids = [tokenizer.mask_token_id] * templatizer.num_trigger_tokens
+    logger.info(f"initial trigger words: {args.initial_trigger}")
     trigger_ids = torch.tensor(trigger_ids, device=device).unsqueeze(0)
 
 
