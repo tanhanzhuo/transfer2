@@ -336,7 +336,7 @@ def do_train(args):
     data_tmp = concatenate_datasets([data_all['train'], data_all['dev']])
     data_tmp = data_tmp.train_test_split(test_size=0.1)
     data_all['train'] = data_tmp['train']
-    data_all['dev'] = data_tmp['dev']
+    data_all['dev'] = data_tmp['test']
     label2idx = CONVERT[args.task.split('_')[0]]
     trans_func = partial(
         convert_example,
