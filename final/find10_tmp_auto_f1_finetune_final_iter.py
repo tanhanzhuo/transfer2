@@ -161,19 +161,19 @@ def load_pretrained(model_name, max_seq_length=130, num_classes=2):
     """
     config = AutoConfig.from_pretrained(model_name, num_labels=num_classes)
     if "bertweet" in model_name:
-        model = RobertaForMulti.from_pretrained(model_name, config=config)
-        model.resize_position_embeddings(max_seq_length)
-        model.eval()
+        # model = RobertaForMulti.from_pretrained(model_name, config=config)
+        # model.resize_position_embeddings(max_seq_length)
+        # model.eval()
         tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True, normalization=True)
         tokenizer.model_max_length = max_seq_length - 2
     else:
         # raise ValueError("not implemented")
-        model = AutoModelWithLMHead.from_pretrained(model_name)
-        model.eval()
+        # model = AutoModelWithLMHead.from_pretrained(model_name)
+        # model.eval()
         tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
 
     utils.add_task_specific_tokens(tokenizer)
-    return config, model, tokenizer
+    return config, tokenizer
 
 
 # def set_seed(seed: int):
@@ -265,11 +265,11 @@ def run_model(args, model=None):
 
     logger.info('Loading model, tokenizer, etc.')
     if model == None:
-        config, model, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
+        raise ValueError('no model!!!!')
+        config, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
         model.to(device)
     else:
-        config, model_tmp, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
-        del model_tmp
+        config, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
         model.eval()
         model.to(device)
     embeddings = get_embeddings(model, config)
@@ -289,7 +289,7 @@ def run_model(args, model=None):
     else:
 
         label_map = dict( zip( list(CONVERT[task].keys()), WORDS[task] ) )
-        logger.info(f"Label map: {label_map}")
+        # logger.info(f"Label map: {label_map}")
     label_token = []
     for word in label_map.values():
         word_token = tokenizer.convert_tokens_to_ids(word[0])
