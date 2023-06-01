@@ -873,7 +873,7 @@ if __name__ == '__main__':
         type=int)
     parser.add_argument(
         "--finetune_mask",
-        default=0,
+        default=1,
         type=int)
     parser.add_argument(
         "--rerank",
