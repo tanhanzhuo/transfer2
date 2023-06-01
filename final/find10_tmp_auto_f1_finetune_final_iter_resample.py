@@ -931,7 +931,7 @@ if __name__ == '__main__':
                                    'dev' + args.method.split('hash')[1].split('top')[0] + \
                                    'top100_sp' + args.rerank + '.tsv'
 
-                    ave_metri_one, model = do_train(args_tmp)
+                    ave_metri_one, model, data_all = do_train(args_tmp)
                     if model == None:
                         ave_metric.append([0.0,0.0,0.0])
                         continue
