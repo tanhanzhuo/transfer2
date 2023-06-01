@@ -341,7 +341,7 @@ def run_model(args, model=None,data_all=None):
 
     dev_dataset = []
     for sample_one in data_all['dev']:
-        text_all = tokenizer.decode( sample_one['input_ids'] )
+        # text_all = tokenizer.decode( sample_one['input_ids'] )
         sample_dic = {'sentence_A':emoji.emojize(tokenizer.decode( sample_one['input_ids'][0][1:-1] )),
                       'sentence_B':emoji.emojize(tokenizer.decode( sample_one['input_ids'][1][1:-1] )),
                       'label':sample_one['labels']
