@@ -270,6 +270,7 @@ def run_model(args, model=None):
         model.to(device)
     else:
         config, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
+        model = model.detach().clone()
         model.eval()
         model.to(device)
     embeddings = get_embeddings(model, config)
