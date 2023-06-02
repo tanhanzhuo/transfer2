@@ -855,7 +855,7 @@ if __name__ == '__main__':
     #     type=str)
     parser.add_argument(
         "--shot",
-        default='full',
+        default='16,32,64,128,256,512',
         type=str)
     parser.add_argument(
         "--stop",
