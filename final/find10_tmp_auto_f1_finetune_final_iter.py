@@ -187,7 +187,7 @@ def load_pretrained(model_name, max_seq_length=130, num_classes=2):
 def get_embeddings(model, config):
     """Returns the wordpiece embedding module."""
     if 'bart' in config.model_type:
-        embeddings =  model.model.encoder.embed_tokens
+        embeddings =  model.model.decoder.embed_tokens
     else:
         base_model = getattr(model, config.model_type)
         embeddings = base_model.embeddings.word_embeddings
