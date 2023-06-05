@@ -116,7 +116,7 @@ import torch.nn as nn
 class RobertaForMulti(RobertaForMaskedLM):
     def resize_position_embeddings(self, new_num_position_embeddings: int):
         num_old = self.roberta.config.max_position_embeddings
-        if num_old == new_num_position_embeddings:
+        if num_old >= new_num_position_embeddings:
             return
         self.roberta.config.max_position_embeddings = new_num_position_embeddings
         # old_position_embeddings_weight = self.roberta.embeddings.position_embeddings.weight.clone()
