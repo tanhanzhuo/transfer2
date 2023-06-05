@@ -346,7 +346,10 @@ def run_model(args, model=None,data_all=None):
 
     # To "filter" unwanted trigger tokens, we subtract a huge number from their logits.
     if "bertweet" in args.model_name_or_path:
-        filter = torch.zeros(tokenizer.vocab_size + 1, dtype=torch.float32, device=device)
+        if 'large' in args.model_name_or_path:
+            filter = torch.zeros(tokenizer.vocab_size, dtype=torch.float32, device=device)
+        else:
+            filter = torch.zeros(tokenizer.vocab_size + 1, dtype=torch.float32, device=device)
     else:
         filter = torch.zeros(tokenizer.vocab_size, dtype=torch.float32, device=device)
     if args.filter:
