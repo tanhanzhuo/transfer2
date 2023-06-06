@@ -435,6 +435,7 @@ def do_train(args):
             model.train()
             for step, batch in enumerate(train_data_loader):
                 global_step += 1
+                print(batch['input_ids'].shape)
                 # input_ids, segment_ids, labels = batch
                 # logits = model(input_ids.cuda(), segment_ids.cuda())
                 # loss = loss_fct(logits, labels.cuda().view(-1))
@@ -443,7 +444,6 @@ def do_train(args):
                                attention_mask=batch['attention_mask'].cuda() ).logits
                 loss = loss_fct(logits, batch['labels'].cuda().view(-1))
                 # print(step)
-                print(batch['input_ids'].shape)
                 loss.backward()
                 optimizer.step()
                 lr_scheduler.step()
