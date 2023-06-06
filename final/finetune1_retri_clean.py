@@ -443,6 +443,7 @@ def do_train(args):
                                attention_mask=batch['attention_mask'].cuda() ).logits
                 loss = loss_fct(logits, batch['labels'].cuda().view(-1))
                 # print(step)
+                print(batch['input_ids'].shape)
                 loss.backward()
                 optimizer.step()
                 lr_scheduler.step()
