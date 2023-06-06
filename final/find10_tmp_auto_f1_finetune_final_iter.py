@@ -270,9 +270,9 @@ def run_model(args, model=None):
         model.to(device)
     else:
         config, tokenizer = load_pretrained(args.model_name_or_path, args.max_seq_length, len(CONVERT[task].keys()))
-        model = copy.deepcopy(model)
-        model.eval()
-        model.to(device)
+        # model = copy.deepcopy(model)
+        # model.eval()
+        # model.to(device)
     embeddings = get_embeddings(model, config)
     embedding_gradient = GradientStorage(embeddings)
     predictor = PredictWrapper(model)
@@ -417,6 +417,7 @@ def run_model(args, model=None):
         best_trigger_ids.append(candidates[0].item())
     best_trigger_tokens = tokenizer.convert_ids_to_tokens(best_trigger_ids)
     logger.info(f'Best tokens: {best_trigger_tokens}')
+    # model.zero_grad()
     return best_trigger_ids
 
 
