@@ -712,7 +712,7 @@ def do_train(args, model=None):
             ################update the template
             model = model.cpu()
             template_id = run_model(args,model)
-            model = model.gpu()
+            model = model.cuda()
             args.initial_trigger = tokenizer.convert_ids_to_tokens(template_id)
             batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, template=template_id)
             train_data_loader = DataLoader(
