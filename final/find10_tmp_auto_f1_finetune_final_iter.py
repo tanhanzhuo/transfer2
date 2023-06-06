@@ -418,6 +418,8 @@ def run_model(args, model=None):
     best_trigger_tokens = tokenizer.convert_ids_to_tokens(best_trigger_ids)
     logger.info(f'Best tokens: {best_trigger_tokens}')
     # model.zero_grad()
+    del model
+    torch.cuda.empty_cache()
     return best_trigger_ids
 
 
@@ -708,7 +710,9 @@ def do_train(args, model=None):
             if stop_sign >= args.stop:
                 break
             ################update the template
+            model = model.cpu()
             template_id = run_model(args,model)
+            model = model.gpu()
             args.initial_trigger = tokenizer.convert_ids_to_tokens(template_id)
             batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, template=template_id)
             train_data_loader = DataLoader(
