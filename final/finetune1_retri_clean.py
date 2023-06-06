@@ -435,7 +435,7 @@ def do_train(args):
             model.train()
             for step, batch in enumerate(train_data_loader):
                 global_step += 1
-                print(batch['input_ids'].shape)
+                # print(batch['input_ids'].shape)
                 # input_ids, segment_ids, labels = batch
                 # logits = model(input_ids.cuda(), segment_ids.cuda())
                 # loss = loss_fct(logits, labels.cuda().view(-1))
