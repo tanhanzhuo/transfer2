@@ -517,7 +517,7 @@ class OurDataCollatorWithPadding:
             if self.template is None:
                 flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:],flat_features[idx_fea]['input_ids'])
             else:
-                flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:], flat_features[idx_fea]['input_ids'] + self.template)
+                flat_features[idx_fea]['input_ids'] = sum(feature['input_ids'][1:], self.template[0] + flat_features[idx_fea]['input_ids'] + self.template[1]) + self.template[2]
             flat_features[idx_fea]['attention_mask'] = flat_features[idx_fea]['attention_mask'] + \
                                                        [1]*(len(flat_features[idx_fea]['input_ids']) - len(flat_features[idx_fea]['attention_mask']))
             flat_features[idx_fea]['token_type_ids'] = flat_features[idx_fea]['token_type_ids'] + \
@@ -594,6 +594,9 @@ def do_train(args, model=None):
 
         config = AutoConfig.from_pretrained(args.model_name_or_path, num_labels=num_classes)
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+        tmp_pre = args.template.split('<s> {sentence_A} </s>')[0].count('[T]')
+        tmp_end = args.template.split('<s> {sentence_B} </s>')[-1].count('[T]')
+        tmp_mid = args.template.count('[T]') - tmp_pre - tmp_end
         if model == None:
             if 'bertweet' in args.model_name_or_path:
                 model = RobertaForMulti.from_pretrained(
@@ -606,7 +609,12 @@ def do_train(args, model=None):
             # model.resize_type_embeddings(args.token_type)
             if args.finetune_mask == 1:
                 batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, \
-                                                         template=[tokenizer.mask_token_id]*args.template.count('[T]'))
+                                                         template=[
+                                                             [tokenizer.mask_token_id] * tmp_pre,
+                                                             [tokenizer.mask_token_id] * tmp_mid,
+                                                             [tokenizer.mask_token_id] * tmp_end,
+                                                         ]
+                                                         )
             else:
                 batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer)
         else:
@@ -714,7 +722,11 @@ def do_train(args, model=None):
             template_id = run_model(args,model)
             # model = model.cuda()
             args.initial_trigger = tokenizer.convert_ids_to_tokens(template_id)
-            batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, template=template_id)
+            batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer, template=[
+                                                    template_id[:tmp_pre],
+                                                    template_id[tmp_pre:tmp_mid+tmp_pre],
+                                                    template_id[tmp_mid+tmp_pre:],
+                                                     ])
             train_data_loader = DataLoader(
                 train_ds, shuffle=True, collate_fn=batchify_fn, batch_size=args.batch_size
             )
