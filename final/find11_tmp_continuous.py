@@ -348,7 +348,7 @@ def get_template_text(manual_template, tokenizer):
         if word.isdigit():
             tokens = int(word)
             for token in range(tokens):
-                tmp = tokenizer._convert_token_to_id(get_new_token(new_token_id))
+                tmp = tokenizer.convert_tokens_to_ids(get_new_token(new_token_id))
                 template[idx].append(tmp)
                 new_token_id += 1
         else:
