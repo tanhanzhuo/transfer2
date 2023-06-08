@@ -257,6 +257,8 @@ def parse_args():
         "--weight", default=0, type=int, help="weighted loss")
     parser.add_argument(
         "--write_result", default='', type=str, help="weighted loss")
+    parser.add_argument(
+        "--template", default='333', type=str, help="trigger words")
     args = parser.parse_args()
     return args
 
