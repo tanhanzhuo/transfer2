@@ -411,8 +411,9 @@ def do_train(args):
         tokenizer._pad_token_type_id = args.token_type - 1
 
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
-        new_tokens = [get_new_token(i) for i in range(MAX_NUM_VECTORS)]
-        tokenizer.add_tokens(new_tokens)
+        # new_tokens = [get_new_token(i) for i in range(MAX_NUM_VECTORS)]
+        # tokenizer.add_tokens(new_tokens)
+        prepare_for_dense_prompt(model,tokenizer)
         template = get_template_text(args.template.strip(), tokenizer)
 
         batchify_fn = OurDataCollatorWithPadding(tokenizer=tokenizer,template=template)
