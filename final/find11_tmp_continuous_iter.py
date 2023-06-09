@@ -580,7 +580,7 @@ def do_train(args):
                        loss, args.logging_steps / (time.time() - tic_train),
                        args.seed,float(lr),args.input_dir))
                 tic_train = time.time()
-            if (epoch + 1) % args.save_steps == 0 and (epoch + 1) > 3:
+            if (epoch + 1) % args.save_steps == 0ß:
                 tic_eval = time.time()
                 cur_metric = evaluate(model, dev_data_loader, args.task)
                 print("trigger eval done total : %s s" % (time.time() - tic_eval))
