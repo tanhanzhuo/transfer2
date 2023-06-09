@@ -526,12 +526,12 @@ def do_train(args):
                           correct_bias=False)
         num_update_steps_per_epoch = len(train_data_loader)
         args.max_train_steps = args.num_train_epochs * num_update_steps_per_epoch
-        lr_scheduler = get_scheduler(
-            name=args.lr_scheduler_type,
-            optimizer=optimizer,
-            num_warmup_steps=int(args.num_warmup_steps*args.max_train_steps),
-            num_training_steps=args.max_train_steps,
-        )
+        # lr_scheduler = get_scheduler(
+        #     name=args.lr_scheduler_type,
+        #     optimizer=optimizer,
+        #     num_warmup_steps=int(args.num_warmup_steps*args.max_train_steps),
+        #     num_training_steps=args.max_train_steps,
+        # )
 
         loss_fct = nn.CrossEntropyLoss().cuda()
         if args.weight == 1:# or 'sarcasm' in args.task:
@@ -571,7 +571,7 @@ def do_train(args):
                     p.grad[:original_vocab_size, :] = 0.0
 
                 optimizer.step()
-                lr_scheduler.step()
+                # lr_scheduler.step()
                 optimizer.zero_grad()
             if (epoch + 1) % args.logging_steps == 0:
                 print(
