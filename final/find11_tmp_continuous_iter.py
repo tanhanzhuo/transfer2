@@ -328,7 +328,7 @@ def convert_example(example, label2idx):
     example['labels'] = label2idx[example['labels']]
     return example  # ['input_ids'], example['token_type_ids'], label, prob
 
-MAX_NUM_VECTORS = 20
+MAX_NUM_VECTORS = 50
 
 def get_new_token(vid):
     assert(vid >= 0 and vid < MAX_NUM_VECTORS)
