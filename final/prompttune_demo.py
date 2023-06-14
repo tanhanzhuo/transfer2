@@ -371,7 +371,7 @@ def parse_args():
         help="If > 0: set total number of training steps to perform. Override num_train_epochs.",
     )
     parser.add_argument(
-        "--seed", default='1,10,100,1000,10000', type=str, help="random seed for initialization")
+        "--seed", default='0,1,2,3,4,5,6,7,8,9', type=str, help="random seed for initialization")
     parser.add_argument(
         "--shot", default='full',#'10,20,40,80,160,320,640,1280,full',
         type=str, help="random seed for initialization")
@@ -452,66 +452,6 @@ def evaluate(model, data_loader, task='eval-emoji',write_result=''):
 
 
 def do_train(args):
-    # print(args)
-    # label2idx = CONVERT[args.task]
-    # dataset = {}
-    # SPLITS = ['train', 'dev', 'test']
-    # for split in SPLITS:
-    #     dataset[split] = []
-    #     data_all = read_data(args.input_dir+split+args.method+'.json')
-    #     random.shuffle(data_all)
-    #     for data in data_all:
-    #         if args.demo:
-    #             text_demo = data['text']
-    #             for idx in range(len(data.keys())-1):
-    #                 text_demo = data['text'+str(idx)] + TEMPLATE[args.task].replace('{"mask"}', WORDS[args.task][str(idx)]) + text_demo
-    #             input_example = InputExample(text_a=text_demo, label=int(label2idx[data['labels']]))
-    #         else:
-    #             input_example = InputExample(text_a=data['text'], label=int(label2idx[data['labels']]))
-    #         dataset[split].append(input_example)
-    # ##################few shot
-    # if args.shot:
-    #     sampler = FewShotSampler(num_examples_per_label=args.shot)
-    #     dataset['train'] = sampler(dataset['train'])
-    #
-    # config = AutoConfig.from_pretrained(args.model_name_or_path)
-    # plm = AutoModelForMaskedLM.from_pretrained(args.model_name_or_path, config=config)
-    # tokenizer = AutoTokenizer.from_pretrained(args.token_name_or_path, normalization=True)
-    # wrapped_tokenizer = MLMTokenizerWrapper(max_seq_length=128,tokenizer=tokenizer, truncate_method="head")
-    #
-    # template_text = '{"placeholder":"text_a"}' + TEMPLATE[args.task]
-    # mytemplate = ManualTemplate(tokenizer=tokenizer, text=template_text)
-    #
-    # train_dataloader = PromptDataLoader(dataset=dataset["train"], template=mytemplate, tokenizer=tokenizer,
-    #                                     tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
-    #                                     batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
-    #                                     predict_eos_token=False, truncate_method="head")
-    # dev_dataloader = PromptDataLoader(dataset=dataset["dev"], template=mytemplate, tokenizer=tokenizer,
-    #                                   tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
-    #                                   batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
-    #                                   predict_eos_token=False, truncate_method="head")
-    # test_dataloader = PromptDataLoader(dataset=dataset["test"], template=mytemplate, tokenizer=tokenizer,
-    #                                    tokenizer_wrapper_class=MLMTokenizerWrapper, max_seq_length=128,
-    #                                    batch_size=args.batch_size, shuffle=True, teacher_forcing=False,
-    #                                    predict_eos_token=False, truncate_method="head")
-    #
-    # myverbalizer = ManualVerbalizer(tokenizer, num_classes=len(label2idx),
-    #                                 label_words=WORDS[args.task])
-    # prompt_model = PromptForClassification(plm=plm, template=mytemplate, verbalizer=myverbalizer, freeze_plm=False)
-    # prompt_model = prompt_model.cuda()
-    #
-    # loss_func = torch.nn.CrossEntropyLoss()
-    # no_decay = ['bias', 'LayerNorm.weight']
-    # # it's always good practice to set no decay to biase and LayerNorm parameters
-    # optimizer_grouped_parameters = [
-    #     {'params': [p for n, p in prompt_model.named_parameters() if not any(nd in n for nd in no_decay)],
-    #      'weight_decay': 0.01},
-    #     {'params': [p for n, p in prompt_model.named_parameters() if any(nd in n for nd in no_decay)],
-    #      'weight_decay': 0.0}
-    # ]
-    #
-    # optimizer = AdamW(optimizer_grouped_parameters, lr=lr)
-
 
     print(args)
     label2idx = CONVERT[args.task]
@@ -541,9 +481,9 @@ def do_train(args):
     for lr in learning_rate:
         best_metric_lr = [0, 0, 0]
         num_classes = len(label2idx.keys())
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length-2)
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, normalization=True, model_max_length=args.max_seq_length-2,use_fast=False)
         tokenizer.model_max_length = args.max_seq_length-2
-        tokenizer._pad_token_type_id = args.token_type - 1
+        tokenizer.return_special_tokens_mask = True
         config = AutoConfig.from_pretrained(args.model_name_or_path)
         plm = RobertaForMulti.from_pretrained(
             args.model_name_or_path, config=config).cuda()
