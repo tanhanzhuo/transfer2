@@ -86,14 +86,14 @@ WORDS = {
 }
 
 TEMPLATE = {
-    'eval-emotion':' It was {"mask"}. ',
-    'eval-hate':' It was {"mask"}. ',
-    'eval-irony':' It was {"mask"}. ',
-    'eval-offensive':' It was {"mask"}. ',
-    'eval-stance':' It was {"mask"}. ',
-    'stance':' It was {"mask"}. ',
-    'sem22-task6-sarcasm':' It was {"mask"}. ',
-    'sem21-task7-humor':' It was {"mask"}. '
+    'eval-emotion':'. It was {"mask"}. ',
+    'eval-hate':'. It was {"mask"}. ',
+    'eval-irony':'. It was {"mask"}. ',
+    'eval-offensive':'. It was {"mask"}. ',
+    'eval-stance':'. It was {"mask"}. ',
+    'stance':'. It was {"mask"}. ',
+    'sem22-task6-sarcasm':'. It was {"mask"}. ',
+    'sem21-task7-humor':'. It was {"mask"}. '
 }
 
 
@@ -276,7 +276,7 @@ def parse_args():
         "--task",
         # default='stance,hate,sem-18,sem-17,imp-hate,sem19-task5-hate,sem19-task6-offen,sem22-task6-sarcasm',
         #default='eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm,stance',
-        default='eval-stance_demo,eval-emotion_demo,eval-irony_demo,eval-offensive_demo,eval-hate_demo,sem21-task7-humor_demo',
+        default='eval-stance_demo,eval-emotion_demo,eval-irony_demo,eval-offensive_demo,eval-hate_demo,sem21-task7-humor_demo,sem22-task6-sarcasm_demo',
         type=str,
         required=False,
         help="The name of the task to train selected in the list: ")
@@ -598,7 +598,7 @@ def do_train(args):
         )
 
         loss_fct = nn.CrossEntropyLoss().cuda()
-        if args.weight == 1 or 'sarcasm' in args.task:
+        if args.weight == 1:
             num_dic = {}
             for val in label2idx.values():
                 num_dic[val] = 0.0
