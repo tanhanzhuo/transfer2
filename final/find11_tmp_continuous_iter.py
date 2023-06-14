@@ -259,6 +259,8 @@ def parse_args():
         "--write_result", default='', type=str, help="weighted loss")
     parser.add_argument(
         "--template", default='333', type=str, help="trigger words")
+    parser.add_argument(
+        "--save_model", default=0, type=int, help="save model")
     args = parser.parse_args()
     return args
 
@@ -602,6 +604,8 @@ def do_train(args):
     else:
         model = model_best.cuda()
         cur_metric = evaluate(model, test_data_loader,args.task,args.write_result)
+        if args.save_model == 1:
+            model.save_pretrained('./model/'+args.task+'/'+args.seed)
         del model
 
     print('final')
