@@ -2,14 +2,14 @@ import json
 tasks = 'eval-stance,eval-emotion,eval-irony,eval-offensive,eval-hate,sem21-task7-humor,sem22-task6-sarcasm'.split(',')
 for task in tasks:
     for sp in ['train','dev','test']:
-        with open('../finetune/data/'+task+'/'+sp+'_same_500_one20_sp.json','r') as f:
+        with open('../finetune/data/'+task+'/'+sp+'_same_500_one20_top100_sp.json','r') as f:
             data_one20 = []
             for line in f:
                 tmp = json.loads(line)
                 for idx in range(100):
                     tmp.pop('text'+str(idx))
                 data_one20.append(tmp)
-        with open('../finetune/data/' + task + '/' + sp + '_same_500_simcse_sp.json','r') as f:
+        with open('../finetune/data/' + task + '/' + sp + '_same_500_simcse_top100_sp.json','r') as f:
             data_simcse = []
             for line in f:
                 tmp = json.loads(line)
