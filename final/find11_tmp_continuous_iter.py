@@ -532,8 +532,8 @@ def do_train(args):
 
         no_decay = ["bias", "LayerNorm.weight"]
         if 'bart' in args.model_name_or_path:
-            optimizer = AdamW([{'params': model.model.decoder.embed_tokens.parameters()},
-                               {'params': model.model.encoder.embed_tokens.parameters()}
+            optimizer = AdamW([{'params': model.model.decoder.embed_tokens.parameters()}
+                               # {'params': model.model.encoder.embed_tokens.parameters()}
                                ],
                               lr=float(lr),correct_bias=False)
         else:
