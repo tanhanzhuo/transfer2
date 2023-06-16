@@ -30,7 +30,7 @@ for task in tasks:
                 data = {}
                 data['text'] = data_demo[idx]['text']
                 data['labels'] = data_demo[idx]['labels']
-                for idx2 in range(len(data_demo.keys())-2):
+                for idx2 in range(len(data_demo[idx].keys())-2):
                     data['demo'+str(idx2)] = data_demo[idx]['text'+str(idx2)]
                 data['one20'] = data_one20[idx]['text0']
                 data['simcse'] = data_simcse[idx]['text0']
