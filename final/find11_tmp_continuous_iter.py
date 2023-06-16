@@ -409,7 +409,12 @@ def do_train(args):
             # model.resize_type_embeddings(args.token_type)
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
-            model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config).cuda()
+            tokenizer.model_max_length = args.max_seq_length
+            model = RobertaForMulti.from_pretrained(
+                args.model_name_or_path, config=config)
+            model.resize_position_embeddings(args.max_seq_length)
+            model = model.cuda()
+            # model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config).cuda()
         tokenizer._pad_token_type_id = args.token_type - 1
 
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
