@@ -529,8 +529,14 @@ def do_train(args):
         best_metric_lr = [0, 0, 0]
 
         no_decay = ["bias", "LayerNorm.weight"]
-        optimizer = AdamW([{'params': model.roberta.embeddings.word_embeddings.parameters()}], lr=float(lr),
-                          correct_bias=False)
+        if 'bart' in args.model_name_or_path:
+            optimizer = AdamW([{'params': model.decoder.embed_tokens.parameters()},
+                               {'params': model.encoder.embed_tokens.parameters()}
+                               ],
+                              lr=float(lr),correct_bias=False)
+        else:
+            optimizer = AdamW([{'params': model.roberta.embeddings.word_embeddings.parameters()}], lr=float(lr),
+                              correct_bias=False)
         num_update_steps_per_epoch = len(train_data_loader)
         args.max_train_steps = args.num_train_epochs * num_update_steps_per_epoch
         # lr_scheduler = get_scheduler(
@@ -572,10 +578,15 @@ def do_train(args):
                 loss = loss_fct(logits, batch['labels'].cuda().view(-1))
                 # print(step)
                 loss.backward()
-
-                for p in model.roberta.embeddings.word_embeddings.parameters():
-                    # only update new tokens
-                    p.grad[:original_vocab_size, :] = 0.0
+                if 'bart' in args.model_name_or_path:
+                    for p in model.decoder.embed_tokens.parameters():
+                        p.grad[:original_vocab_size, :] = 0.0
+                    for p in model.encoder.embed_tokens.parameters():
+                        p.grad[:original_vocab_size, :] = 0.0
+                else:
+                    for p in model.roberta.embeddings.word_embeddings.parameters():
+                        # only update new tokens
+                        p.grad[:original_vocab_size, :] = 0.0
 
                 optimizer.step()
                 # lr_scheduler.step()
