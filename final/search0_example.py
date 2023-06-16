@@ -22,7 +22,7 @@ for task in tasks:
                 tmp = json.loads(line)
                 data_demo.append(tmp)
         with open( task + '_sample_' + sp + '.json', 'w', encoding='utf-8') as f:
-            for idx in range(data_demo):
+            for idx in range(len(data_demo)):
                 assert data_demo['text'] == data_one20['text']
                 assert data_demo['text'] == data_simcse['text']
                 if data_demo['labels'] == '0':
