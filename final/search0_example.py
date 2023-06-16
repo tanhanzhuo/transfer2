@@ -23,16 +23,16 @@ for task in tasks:
                 data_demo.append(tmp)
         with open( task + '_sample_' + sp + '.json', 'w', encoding='utf-8') as f:
             for idx in range(len(data_demo)):
-                assert data_demo['text'] == data_one20['text']
-                assert data_demo['text'] == data_simcse['text']
-                if data_demo['labels'] == '0':
+                assert data_demo[idx]['text'] == data_one20[idx]['text']
+                assert data_demo[idx]['text'] == data_simcse[idx]['text']
+                if data_demo[idx]['labels'] == '0':
                     continue
                 data = {}
-                data['text'] = data_demo['text']
-                data['labels'] = data_demo['labels']
+                data['text'] = data_demo[idx]['text']
+                data['labels'] = data_demo[idx]['labels']
                 for idx2 in range(len(data_demo.keys())-2):
-                    data['demo'+str(idx2)] = data_demo['text'+str(idx2)]
-                data['one20'] = data_one20['text0']
-                data['simcse'] = data_simcse['text0']
+                    data['demo'+str(idx2)] = data_demo[idx]['text'+str(idx2)]
+                data['one20'] = data_one20[idx]['text0']
+                data['simcse'] = data_simcse[idx]['text0']
                 data = json.dumps(data,ensure_ascii=False)
                 f.write(data+'\n')
