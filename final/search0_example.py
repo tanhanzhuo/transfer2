@@ -6,14 +6,14 @@ for task in tasks:
             data_one20 = []
             for line in f:
                 tmp = json.loads(line)
-                for idx in range(100):
+                for idx in range(1,100):
                     tmp.pop('text'+str(idx))
                 data_one20.append(tmp)
         with open('../finetune/data/' + task + '/' + sp + '_same_500_simcse_top100_sp.json','r') as f:
             data_simcse = []
             for line in f:
                 tmp = json.loads(line)
-                for idx in range(100):
+                for idx in range(1,100):
                     tmp.pop('text' + str(idx))
                 data_simcse.append(tmp)
         with open('../finetune/data/' + task + '_demo/' + sp + '.json','r') as f:
