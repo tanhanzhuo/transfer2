@@ -532,8 +532,8 @@ def do_train(args):
 
         no_decay = ["bias", "LayerNorm.weight"]
         if 'bart' in args.model_name_or_path:
-            optimizer = AdamW([{'params': model.decoder.embed_tokens.parameters()},
-                               {'params': model.encoder.embed_tokens.parameters()}
+            optimizer = AdamW([{'params': model.model.decoder.embed_tokens.parameters()},
+                               {'params': model.model.encoder.embed_tokens.parameters()}
                                ],
                               lr=float(lr),correct_bias=False)
         else:
@@ -581,9 +581,9 @@ def do_train(args):
                 # print(step)
                 loss.backward()
                 if 'bart' in args.model_name_or_path:
-                    for p in model.decoder.embed_tokens.parameters():
+                    for p in model.model.decoder.embed_tokens.parameters():
                         p.grad[:original_vocab_size, :] = 0.0
-                    for p in model.encoder.embed_tokens.parameters():
+                    for p in model.model.encoder.embed_tokens.parameters():
                         p.grad[:original_vocab_size, :] = 0.0
                 else:
                     for p in model.roberta.embeddings.word_embeddings.parameters():
