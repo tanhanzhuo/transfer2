@@ -25,7 +25,7 @@ for task in tasks:
             for idx in range(len(data_demo)):
                 assert data_demo[idx]['text'] == data_one20[idx]['text']
                 assert data_demo[idx]['text'] == data_simcse[idx]['text']
-                if data_demo[idx]['labels'] == '0':
+                if data_demo[idx]['labels'] == '0' and 'emotion' not in task:
                     continue
                 data = {}
                 data['text'] = data_demo[idx]['text']
