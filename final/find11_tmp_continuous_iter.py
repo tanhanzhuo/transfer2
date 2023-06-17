@@ -623,7 +623,7 @@ def do_train(args):
         model = model_best.cuda()
         cur_metric = evaluate(model, test_data_loader,args.task,args.write_result)
         if args.save_model != '':
-            model.save_pretrained('./'+args.save_model+'/'+args.task+'/'+args.seed)
+            model.save_pretrained('./'+args.save_model+'/'+args.task+'/'+str(args.seed))
         del model
 
     print('final')
