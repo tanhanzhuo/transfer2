@@ -43,7 +43,8 @@ from transformers import (
     get_scheduler,
     set_seed,
     get_linear_schedule_with_warmup,
-    RobertaForMaskedLM
+    RobertaForMaskedLM,
+    AutoModelForMaskedLM
 )
 from transformers.modeling_outputs import MaskedLMOutput
 from accelerate import Accelerator
@@ -485,10 +486,13 @@ def do_train(args):
         tokenizer.model_max_length = args.max_seq_length-2
         tokenizer.return_special_tokens_mask = True
         config = AutoConfig.from_pretrained(args.model_name_or_path)
-        plm = RobertaForMulti.from_pretrained(
-            args.model_name_or_path, config=config).cuda()
-        plm.resize_position_embeddings(args.max_seq_length)
-        plm.resize_type_embeddings(args.token_type)
+        if 'bart' in args.model_name_or_path:
+            plm = AutoModelForMaskedLM.from_pretrained(args.model_name_or_path, config=config).cuda()
+        else:
+            plm = RobertaForMulti.from_pretrained(
+                args.model_name_or_path, config=config).cuda()
+            plm.resize_position_embeddings(args.max_seq_length)
+            plm.resize_type_embeddings(args.token_type)
 
         # from openprompt.plms import load_plm
         # plm, tokenizer, model_config, WrapperClass = load_plm("roberta", "roberta-base")
