@@ -259,6 +259,8 @@ def parse_args():
         "--write_result", default='', type=str, help="weighted loss")
     parser.add_argument(
         "--template", default='333', type=str, help="trigger words")
+    parser.add_argument(
+        "--save_model", default='', type=str, help="save model")
     args = parser.parse_args()
     return args
 
@@ -328,7 +330,7 @@ def convert_example(example, label2idx):
     example['labels'] = label2idx[example['labels']]
     return example  # ['input_ids'], example['token_type_ids'], label, prob
 
-MAX_NUM_VECTORS = 20
+MAX_NUM_VECTORS = 50
 
 def get_new_token(vid):
     assert(vid >= 0 and vid < MAX_NUM_VECTORS)
@@ -405,6 +407,13 @@ def do_train(args):
             model.resize_position_embeddings(args.max_seq_length)
             model = model.cuda()
             # model.resize_type_embeddings(args.token_type)
+        elif 'roberta' in args.model_name_or_path:
+            tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+            tokenizer.model_max_length = args.max_seq_length
+            model = RobertaForMulti.from_pretrained(
+                args.model_name_or_path, config=config)
+            model.resize_position_embeddings(args.max_seq_length)
+            model = model.cuda()
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
             model = AutoModelForSequenceClassification.from_pretrained(args.model_name_or_path, config=config).cuda()
@@ -413,6 +422,7 @@ def do_train(args):
         # tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
         # new_tokens = [get_new_token(i) for i in range(MAX_NUM_VECTORS)]
         # tokenizer.add_tokens(new_tokens)
+        original_vocab_size = len(list(tokenizer.get_vocab()))
         prepare_for_dense_prompt(model,tokenizer)
         template = get_template_text(args.template.strip(), tokenizer)
 
@@ -507,12 +517,16 @@ def do_train(args):
                 break
         del model
         torch.cuda.empty_cache()
+
     if model_best is None:
         cur_metric = [0.0,0.0,0.0]
     else:
         model = model_best.cuda()
         cur_metric = evaluate(model, test_data_loader,args.task,args.write_result)
+        if args.save_model != '':
+            model.save_pretrained('./'+args.save_model+'/'+args.task+'/'+str(args.seed))
         del model
+
     print('final')
     print("f1macro:%.5f, acc:%.5f, acc: %.5f, " % (best_metric[0], best_metric[1], best_metric[2]))
     print("f1macro:%.5f, acc:%.5f, acc: %.5f " % (cur_metric[0], cur_metric[1], cur_metric[2]))
