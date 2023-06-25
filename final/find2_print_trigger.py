@@ -106,11 +106,12 @@ with torch.no_grad():
 
             text_json = {}
             for idx in range(args.num):
-                dis = -cos_sim(embs.weight[vocab+idx:vocab+idx+1],embs.weight[:vocab-1])
+                dis = -cos_sim(embs.weight[vocab+idx:vocab+idx+1],embs.weight[:vocab])
                 val, best_idx = dis.topk(args.top)
                 text = ''
                 for idx2 in best_idx:
-                    text += tokenizer._convert_id_to_token(idx2.item()) + ' '
+                    # text += tokenizer._convert_id_to_token(idx2.item()) + ' '
+                    text += tokenizer.decode([idx2.item()])[0] + ' '
                 text_json[idx] = text
             with open(args.input + '/' + task +'.json','a',encoding='utf-8') as f:
                 tmp = json.dumps(text_json, ensure_ascii=False)
