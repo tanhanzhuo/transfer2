@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import os
 from tqdm import tqdm
+import json
+
 class RobertaForMulti(RobertaForSequenceClassification):
     def resize_position_embeddings(self, new_num_position_embeddings: int):
         num_old = self.roberta.config.max_position_embeddings
@@ -102,12 +104,15 @@ with torch.no_grad():
             vocab = len(tokenizer)
             # words = tokenizer.get_vocab()
 
+            text_json = {}
             for idx in range(args.num):
                 dis = -cos_sim(embs.weight[vocab+idx:vocab+idx+1],embs.weight[:vocab-1])
                 val, best_idx = dis.topk(args.top)
                 text = ''
                 for idx2 in best_idx:
                     text += tokenizer._convert_id_to_token(idx2.item()) + ' '
-                with open(args.input + '_' + task +'.txt','a',encoding='utf-8') as f:
-                    f.write(text + '\n')
+                text_json[idx] = text
+            with open(args.input + '/' + task +'.json','a',encoding='utf-8') as f:
+                tmp = json.dumps(text_json, ensure_ascii=False)
+                f.write(tmp + '\n')
 
