@@ -69,14 +69,14 @@ parser.add_argument(
 )
 parser.add_argument(
     "--model",
-    default='vinai/bertweet-base',
+    default='facebook/bart-base',
     type=str,
     required=False,
 )
 
 parser.add_argument(
     "--input",
-    default='ft_retrisameone20_tmpcon050_iter',
+    default='ftbart_retrisameone20_tmpcon050_iter',
     type=str,
     required=False,
 )
@@ -108,12 +108,13 @@ with torch.no_grad():
             for idx in range(args.num):
                 dis = -cos_sim(embs.weight[vocab+idx:vocab+idx+1],embs.weight[:vocab])
                 val, best_idx = dis.topk(args.top)
-                text = ''
+                text = []
                 for idx2 in best_idx:
                     # text += tokenizer._convert_id_to_token(idx2.item()) + ' '
-                    text += tokenizer.decode([idx2.item()])[0] + ' '
+                    text.append( tokenizer.decode([idx2.item()]) )
                 text_json[idx] = text
             with open(args.input + '/' + task +'.json','a',encoding='utf-8') as f:
                 tmp = json.dumps(text_json, ensure_ascii=False)
                 f.write(tmp + '\n')
+
 
