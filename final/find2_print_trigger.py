@@ -4,6 +4,7 @@ from transformers import RobertaForSequenceClassification
 import torch
 import torch.nn as nn
 import os
+from tqdm import tqdm
 class RobertaForMulti(RobertaForSequenceClassification):
     def resize_position_embeddings(self, new_num_position_embeddings: int):
         num_old = self.roberta.config.max_position_embeddings
@@ -44,13 +45,7 @@ parser.add_argument(
     type=str,
     required=False,
     help="The name of the task to train selected in the list: ")
-parser.add_argument(
-    "--model_name_or_path",
-    default='ft_retrisameone20_tmpcon050_iter',
-    type=str,
-    required=False,
-    help="Path to pre-trained model or shortcut name selected in the list: "
-)
+
 parser.add_argument(
     "--seed",
     default='0,1,2,3,4,5,6,7,8,9',
@@ -88,7 +83,7 @@ with torch.no_grad():
     # cos_sim = torch.nn.CosineSimilarity(dim=1).cuda()
     cos_sim =  torch.nn.PairwiseDistance()
     args = parser.parse_args()
-    for task in args.task_name.strip().split(','):
+    for task in tqdm(args.task_name.strip().split(',')):
         for seed in args.seed.strip().split(','):
             label2idx = CONVERT[task.split('_')[0]]
             num_classes = len(label2idx.keys())
@@ -113,6 +108,6 @@ with torch.no_grad():
                 text = ''
                 for idx2 in best_idx:
                     text += tokenizer._convert_id_to_token(idx2.item()) + ' '
-                with open(args.input + '.txt','a',encoding='utf-8') as f:
+                with open(args.input + '_' + task +'.txt','a',encoding='utf-8') as f:
                     f.write(text + '\n')
 
