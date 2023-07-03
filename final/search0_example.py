@@ -32,7 +32,9 @@ for task in tasks:
                 data['labels'] = data_demo[idx]['labels']
                 for idx2 in range(len(data_demo[idx].keys())-2):
                     data['demo'+str(idx2)] = data_demo[idx]['text'+str(idx2)]
-                data['one20'] = data_one20[idx]['text0']
-                data['simcse'] = data_simcse[idx]['text0']
+                for idx2 in range(len(data_one20[idx].keys()) - 2):
+                    data['one20'+str(idx2)] = data_one20[idx]['text'+str(idx2)]
+                for idx2 in range(len(data_simcse[idx].keys()) - 2):
+                    data['simcse'+str(idx2)] = data_simcse[idx]['text'+str(idx2)]
                 data = json.dumps(data,ensure_ascii=False)
                 f.write(data+'\n')
