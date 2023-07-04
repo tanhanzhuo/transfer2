@@ -126,4 +126,5 @@ with torch.no_grad():
                     text.append(tokenizer.decode([idx2.item()]))
         with open(args.input + '/' + task + '.txt', 'w', encoding='utf-8') as f:
             f.write(' '.join(text))
+        del embs,model,tokenizer,vocab
 
