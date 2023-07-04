@@ -63,20 +63,20 @@ parser.add_argument(
 )
 parser.add_argument(
     "--top",
-    default=100,
+    default=5,
     type=int,
     required=False,
 )
 parser.add_argument(
     "--model",
-    default='facebook/bart-base',
+    default='bertweet',#'facebook/bart-base',
     type=str,
     required=False,
 )
 
 parser.add_argument(
     "--input",
-    default='ftbart_retrisameone20_tmpcon050_iter',
+    default='ft_retrisameone20_tmpcon050_iter',
     type=str,
     required=False,
 )
