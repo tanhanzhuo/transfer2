@@ -123,6 +123,6 @@ with torch.no_grad():
                 for idx2 in best_idx:
                     # text += tokenizer._convert_id_to_token(idx2.item()) + ' '
                     text.append(tokenizer.decode([idx2.item()]))
-            with open(args.input + '/' + task + '.txt', 'a', encoding='utf-8') as f:
+            with open(args.input + '/' + task + '.txt', 'w', encoding='utf-8') as f:
                 f.write(' '.join(text))
 
