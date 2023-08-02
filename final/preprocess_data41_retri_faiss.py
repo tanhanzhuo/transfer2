@@ -142,11 +142,11 @@ for task in args.task_name.split(','):
         dis, ind = cpu_index.search(fea_embds, args.best)
         time_e = time.time()
         print('task:{}, split:{}, search time:{}'.format(task,fileName,time_e-time_s))
-        # for idx in range(len(train_dataset)):
-        #     best_idx = ind[idx]
-        #     for cur_idx in range(0,len(best_idx)):
-        #         data_hash_all[idx]['text'+str(cur_idx)] = hash_samples[best_idx[cur_idx]].strip()
-        #
-        # write_json(data_hash_all, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(args.best) + '_sp')
+        for idx in range(len(train_dataset)):
+            best_idx = ind[idx]
+            for cur_idx in range(0,len(best_idx)):
+                data_hash_all[idx]['text'+str(cur_idx)] = hash_samples[best_idx[cur_idx]].strip()
+
+        write_json(data_hash_all, args.dataset_path + task + '/' + fileName + args.method + '_top' + str(args.best) + '_sp')
 
     print('task done! {}'.format(task))
